@@ -1,0 +1,46 @@
+<div class="page">
+      <div class="header">
+        <div class="header-inner">
+          <span class="logo-text">Gestion Immobilière</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="card">
+          <h1 class="card-title">Super Admin - Connexion</h1>
+          <p class="card-subtitle">Accès administrateur à la plateforme</p>
+
+          @if (errorMessage()) {
+            <div class="alert alert-error">{{ errorMessage() }}</div>
+          }
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="field">
+              <label class="field-label" for="email">Email</label>
+              <input id="email" class="field-input" type="email" formControlName="email" placeholder="admin@immo.com" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="password">Mot de passe</label>
+              <input id="password" class="field-input" type="password" formControlName="password" placeholder="••••••••" />
+            </div>
+            <button type="submit" class="btn-primary" [disabled]="isLoading() || loginForm.invalid">
+              @if (isLoading()) {
+                <span>Connexion en cours...</span>
+              } @else {
+                <span>Se connecter</span>
+              }
+            </button>
+          </form>
+
+          <div class="links">
+            <a routerLink="/auth/super-admin/forgot-password" class="link">Mot de passe oublié ?</a>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="alt-links">
+            <p class="alt-title">Autres connexions</p>
+            <a routerLink="/auth/bailleur/login" class="link-alt">Connexion Bailleur</a>
+          </div>
+        </div>
+      </div>
+    </div>

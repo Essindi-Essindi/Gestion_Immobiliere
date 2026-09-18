@@ -1,0 +1,65 @@
+<div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Logs & Activité</h1>
+          <p>Journal des actions effectuées sur la plateforme</p>
+        </div>
+        <button class="btn-export">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exporter
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-toolbar">
+          <div class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Rechercher dans les logs..." [(ngModel)]="searchTerm" (ngModelChange)="filterLogs()">
+          </div>
+          <div class="filters">
+            <button [class.active]="typeFilter() === 'Tous'" (click)="setTypeFilter('Tous')">Tous</button>
+            <button [class.active]="typeFilter() === 'login'" (click)="setTypeFilter('login')">Connexion</button>
+            <button [class.active]="typeFilter() === 'create'" (click)="setTypeFilter('create')">Création</button>
+            <button [class.active]="typeFilter() === 'update'" (click)="setTypeFilter('update')">Modification</button>
+            <button [class.active]="typeFilter() === 'delete'" (click)="setTypeFilter('delete')">Suppression</button>
+          </div>
+        </div>
+
+        @if (filtered().length > 0) {
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Utilisateur</th>
+                  <th>Action</th>
+                  <th>Détails</th>
+                  <th>IP</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (log of filtered(); track log.id) {
+                  <tr>
+                    <td class="cell-mono">{{ log.date }}</td>
+                    <td class="cell-bold">{{ log.utilisateur }}</td>
+                    <td>
+                      <span class="action-badge" [class]="'type-' + log.type">
+                        {{ getActionLabel(log.type) }}
+                      </span>
+                    </td>
+                    <td>{{ log.details }}</td>
+                    <td class="cell-mono">{{ log.ip }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <p>Aucun log trouvé</p>
+            <span>Aucune activité ne correspond à vos critères</span>
+          </div>
+        }
+      </div>
+    </div>

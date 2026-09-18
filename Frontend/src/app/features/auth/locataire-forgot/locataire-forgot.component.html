@@ -1,0 +1,41 @@
+<div class="page">
+      <div class="header">
+        <div class="header-inner">
+          <span class="logo-text">Gestion Immobilière</span>
+        </div>
+      </div>
+      <div class="body">
+        <div class="card">
+          <h1 class="card-title">Mot de passe oublié</h1>
+          <p class="card-subtitle">Entrez votre email pour recevoir un lien de réinitialisation</p>
+
+          @if (successMessage()) {
+            <div class="alert alert-success">{{ successMessage() }}</div>
+          }
+
+          @if (errorMessage()) {
+            <div class="alert alert-error">{{ errorMessage() }}</div>
+          }
+
+          @if (!successMessage()) {
+            <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()">
+              <div class="field">
+                <label class="field-label" for="email">Email</label>
+                <input id="email" class="field-input" type="email" formControlName="email" placeholder="votre@email.com" />
+              </div>
+              <button type="submit" class="btn-primary" [disabled]="isLoading() || forgotForm.invalid">
+                @if (isLoading()) {
+                  <span>Envoi en cours...</span>
+                } @else {
+                  <span>Envoyer le lien</span>
+                }
+              </button>
+            </form>
+          }
+
+          <div class="links">
+            <a routerLink="/auth/locataire/login" class="link">Retour à la connexion</a>
+          </div>
+        </div>
+      </div>
+    </div>

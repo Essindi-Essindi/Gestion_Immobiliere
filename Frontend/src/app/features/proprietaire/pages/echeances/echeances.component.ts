@@ -8,74 +8,7 @@ import { JourPipe, MoisCourtPipe, AnneePipe } from '@shared/pipes';
   selector: 'app-echeances',
   standalone: true,
   imports: [RouterModule, JourPipe, MoisCourtPipe, AnneePipe],
-  template: `
-    <div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-      <div style="margin-bottom: 24px;">
-        <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Échéances</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Calendrier des échéances à venir</p>
-      </div>
-
-      <!-- Legend -->
-      <div style="display: flex; gap: 16px; margin-bottom: 20px; font-size: 13px; color: #666;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <div style="width: 12px; height: 12px; background: #000;"></div>
-          <span>Urgent / En retard</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <div style="width: 12px; height: 12px; background: #888;"></div>
-          <span>Bientôt</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <div style="width: 12px; height: 12px; background: #ccc;"></div>
-          <span>À distance</span>
-        </div>
-      </div>
-
-      <!-- Echeances Timeline -->
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        @for (echeance of echeances(); track echeance.id) {
-          <div style="background: #fff; border: 1px solid #e0e0e0; display: flex; overflow: hidden;">
-            <!-- Color Bar -->
-            <div [style.background]="getEcheanceColor(echeance)" style="width: 6px; flex-shrink: 0;"></div>
-
-            <!-- Date Block -->
-            <div style="width: 100px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #e0e0e0; flex-shrink: 0;">
-              <span style="font-size: 24px; font-weight: 700; color: #000; line-height: 1;">{{ echeance.date | jour }}</span>
-              <span style="font-size: 12px; color: #666; text-transform: uppercase;">{{ echeance.date | moisCourt }}</span>
-              <span style="font-size: 11px; color: #999;">{{ echeance.date | annee }}</span>
-            </div>
-
-            <!-- Content -->
-            <div style="flex: 1; padding: 16px; display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                  <span [style.background]="getTypeBg(echeance.type)"
-                    [style.color]="getTypeColor(echeance.type)"
-                    style="font-size: 10px; padding: 2px 6px; font-weight: 600; text-transform: uppercase;">
-                    {{ echeance.type }}
-                  </span>
-                  @if (echeance.status === 'EN_RETARD') {
-                    <span style="font-size: 10px; padding: 2px 6px; font-weight: 600; background: #000; color: #fff;">EN RETARD</span>
-                  }
-                </div>
-                <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">{{ echeance.description }}</p>
-                <p style="margin: 4px 0 0; font-size: 12px; color: #666;">{{ echeance.logementAddress }}</p>
-              </div>
-              <div style="text-align: right; flex-shrink: 0; margin-left: 16px;">
-                <span style="font-size: 12px; color: #999;">{{ getDaysUntil(echeance.date) }}</span>
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-
-      @if (echeances().length === 0) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Aucune échéance à venir</p>
-        </div>
-      }
-    </div>
-  `
+  templateUrl: './echeances.component.html'
 })
 export class EcheancesComponent implements OnInit {
   echeances = signal<any[]>([]);

@@ -1,0 +1,120 @@
+<div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Gestion des abonnements</h1>
+          <p>Plans disponibles et nombre d'abonnés par plan</p>
+        </div>
+      </div>
+
+      <div class="plans-grid">
+        @for (plan of plans(); track plan.id) {
+          <div class="plan-card" [class.highlighted]="plan.highlighted" [class.suspended]="plan.suspended">
+            @if (plan.highlighted && !plan.suspended) {
+              <div class="plan-badge">Populaire</div>
+            }
+            @if (plan.suspended) {
+              <div class="plan-badge suspended-badge">Suspendu</div>
+            }
+            <div class="plan-header">
+              <h2>{{ plan.name }}</h2>
+              <div class="plan-price">
+                <span class="price">{{ plan.price }}</span>
+                <span class="period">{{ plan.period }}</span>
+              </div>
+              <span class="plan-subscribers">{{ plan.subscribers }} abonnés</span>
+            </div>
+            <div class="plan-features">
+              <p class="features-title">Fonctionnalités incluses</p>
+              @for (feature of plan.features; track feature) {
+                <div class="feature-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>{{ feature }}</span>
+                </div>
+              }
+            </div>
+            <div class="plan-actions">
+              <button class="btn-black" (click)="openEdit(plan)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+                Modifier
+              </button>
+              @if (plan.suspended) {
+                <button class="btn-outline" (click)="toggleSuspend(plan)">Reprendre</button>
+              } @else {
+                <button class="btn-outline" (click)="toggleSuspend(plan)">Suspendre</button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="card summary-card">
+        <div class="card-header">
+          <h2>Résumé des abonnements</h2>
+        </div>
+        <div class="card-body">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Revenu mensuel total</span>
+              <span class="summary-value">4 723,45 €</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Total abonnés</span>
+              <span class="summary-value">142</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Taux de conversion</span>
+              <span class="summary-value">68%</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Churn mensuel</span>
+              <span class="summary-value">2.3%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (editTarget()) {
+        <div class="modal-overlay" (click)="closeEdit()">
+          <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h2>Modifier le plan {{ editForm.name }}</h2>
+              <button class="modal-close" (click)="closeEdit()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Nom du plan</label>
+                  <input type="text" [(ngModel)]="editForm.name">
+                </div>
+                <div class="form-group">
+                  <label>Prix</label>
+                  <input type="text" [(ngModel)]="editForm.price">
+                </div>
+                <div class="form-group">
+                  <label>Période</label>
+                  <input type="text" [(ngModel)]="editForm.period">
+                </div>
+                <div class="form-group">
+                  <label>Abonnés</label>
+                  <input type="number" [(ngModel)]="editForm.subscribers">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Fonctionnalités (une par ligne)</label>
+                <textarea [(ngModel)]="editFeaturesText" rows="6"></textarea>
+              </div>
+              <label class="check-row">
+                <input type="checkbox" [(ngModel)]="editForm.highlighted">
+                <span>Mettre en avant (Populaire)</span>
+              </label>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-outline" (click)="closeEdit()">Annuler</button>
+              <button class="btn-black" (click)="saveEdit()">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
