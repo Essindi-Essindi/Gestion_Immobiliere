@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ApiService, PaginatedResponse } from './api.service';
+import { ApiService, PaginatedResponse } from '@core/http/api.service';
 import { Observable } from 'rxjs';
-import { Logement, LogementType, LogementStatus, Photo, Diagnostic, DiagnosticType } from '../models';
+import { Logement, LogementType, LogementStatus, Photo, Diagnostic, DiagnosticType } from '@core/models';
 
 @Injectable({
   providedIn: 'root'

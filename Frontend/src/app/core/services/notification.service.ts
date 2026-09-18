@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiService, PaginatedResponse } from './api.service';
+import { ApiService, PaginatedResponse } from '@core/http/api.service';
 import { Observable } from 'rxjs';
 import type {
   Notification as AppNotification,

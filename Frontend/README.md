@@ -75,16 +75,32 @@ Bailleur invites tenant ── password page ── tenant login
 
 ## Project structure (this folder)
 
+The codebase is organized by **what the application does**, not by file type:
+
 ```
 Frontend/
-├─ README.md              ← you are here
-├─ angular.json / package.json / tsconfig*.json
-├─ src/app/app.routes.ts  ← all routes (flat, loadComponent)
-├─ src/app/core/          ← models, services, guards, interceptors, layout
-├─ src/app/features/      ← super-admin / proprietaire / locataire pages
-├─ src/app/pages/         ← landing, auth, settings, unauthorized
-└─ src/environments/      ← apiUrl (backend, currently unused by the UI)
+├─ README.md                    ← you are here
+├─ src/app/app.routes.ts        ← thin route assembly (flat, loadComponent)
+├─ src/app/core/                ← used by the whole app
+│   ├─ auth/                    ← auth.service, guards, auth interceptor
+│   ├─ http/                    ← api.service, error/loading interceptors
+│   ├─ models/                  ← shared domain types
+│   ├─ services/                ← global + entity services, mock data
+│   └─ core.providers.ts        ← HttpClient + interceptors wiring
+├─ src/app/layout/              ← app shell: sidebar, header (navbar), main-layout
+├─ src/app/shared/              ← generic reusable pieces only
+│   ├─ pipes/                   ← montant, dateFr, jour, moisCourt, annee
+│   └─ utils/                   ← formatting helpers used by the pipes
+└─ src/app/features/            ← business functionality, one folder per area
+    ├─ landing/                 ← public landing page
+    ├─ auth/                    ← login / register / forgot-password + auth.routes
+    ├─ settings/                ← account settings page (used by all roles)
+    ├─ super-admin/pages/...    ← 8 screens + super-admin.routes
+    ├─ proprietaire/pages/...   ← 12 screens + proprietaire.routes
+    └─ locataire/pages/...      ← 10 screens + locataire.routes
 ```
+
+Rule of thumb: **core** = app-wide, **shared** = generic and reusable, **layout** = shell/navigation, **features** = business logic (each feature owns its `pages/` and `*.routes.ts`).
 
 ## Notes
 
