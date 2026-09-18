@@ -1,0 +1,170 @@
+import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MockDataService } from '../../../core/services/mock-data.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
+
+@Component({
+  selector: 'app-paiements',
+  standalone: true,
+  imports: [RouterModule, FormsModule],
+  template: `
+    <div style="padding:24px;background:#f5f5f5;min-height:100vh;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mes Paiements</h1>
+          <p style="margin:0;color:#757575;font-size:14px;">Historique de vos loyers</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
+          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Total payé</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#000;">{{ formatMontant(totalPaye) }} €</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
+          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En attente</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#616161;">{{ formatMontant(totalEnAttente) }} €</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
+          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En retard</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#424242;">{{ formatMontant(totalEnRetard) }} €</p>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e0e0e0;margin-bottom:24px;">
+        <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
+          <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Historique</h2>
+          <div style="display:flex;gap:8px;">
+            <select [(ngModel)]="filterYear" (change)="applyFilters()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
+              <option value="all">Toutes les années</option>
+              <option value="2026">2026</option>
+            </select>
+            <select [(ngModel)]="filterStatus" (change)="applyFilters()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
+              <option value="all">Tous les statuts</option>
+              <option value="PAYE">Payé</option>
+              <option value="EN_ATTENTE">En attente</option>
+              <option value="EN_RETARD">En retard</option>
+            </select>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:#fafafa;">
+              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Mois</th>
+              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Montant</th>
+              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Date de paiement</th>
+              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Statut</th>
+              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Rappel</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of filteredPaiements; track p.id) {
+              <tr style="border-bottom:1px solid #f0f0f0;">
+                <td style="padding:14px 20px;font-size:14px;color:#000;">{{ getMonthName(p.month) }} {{ p.year }}</td>
+                <td style="padding:14px 20px;font-size:14px;color:#000;font-weight:500;">{{ formatMontant(p.amount) }} €</td>
+                <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ p.paidAt ? formatDate(p.paidAt) : '—' }}</td>
+                <td style="padding:14px 20px;">
+                  @if (p.status === 'PAYE') {
+                    <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">Payé</span>
+                  }
+                  @else if (p.status === 'EN_ATTENTE') {
+                    <span style="padding:4px 12px;background:#e0e0e0;color:#424242;font-size:12px;font-weight:600;">En attente</span>
+                  }
+                  @else {
+                    <span style="padding:4px 12px;background:#424242;color:#fff;font-size:12px;font-weight:600;">En retard</span>
+                  }
+                </td>
+                <td style="padding:14px 20px;">
+                  @if (p.status !== 'PAYE' && p.rappelSent) {
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#666;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                      Rappel reçu
+                    </span>
+                  } @else {
+                    <span style="font-size:12px;color:#bbb;">—</span>
+                  }
+                </td>
+              </tr>
+            }
+            @empty {
+              <tr>
+                <td colspan="5" style="padding:40px 20px;text-align:center;color:#9e9e9e;font-size:14px;">Aucun paiement trouvé</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `
+})
+export class PaiementsComponent implements OnInit {
+  locataire: any = null;
+  allPaiements: any[] = [];
+  filteredPaiements: any[] = [];
+  filterYear = 'all';
+  filterStatus = 'all';
+  totalPaye = 0;
+  totalEnAttente = 0;
+  totalEnRetard = 0;
+  months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+  constructor(
+    private mockDataService: MockDataService,
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {}
+
+  ngOnInit(): void {
+    const user = this.authService.user();
+    this.locataire = this.mockDataService.resolveLocataireForUser(user);
+    this.refresh();
+  }
+
+  refresh(): void {
+    if (!this.locataire) return;
+    this.allPaiements = this.mockDataService.getPaiementsForLocataire(this.locataire.id)
+      .filter((p: any) => p.type === 'LOYER')
+      .sort((a: any, b: any) => (b.year - a.year) || (b.month - a.month));
+    this.calculateTotals();
+    this.applyFilters();
+  }
+
+  calculateTotals(): void {
+    this.totalPaye = this.allPaiements.filter(p => p.status === 'PAYE').reduce((sum, p) => sum + p.amount, 0);
+    this.totalEnAttente = this.allPaiements.filter(p => p.status === 'EN_ATTENTE').reduce((sum, p) => sum + p.amount, 0);
+    this.totalEnRetard = this.allPaiements.filter(p => p.status === 'EN_RETARD').reduce((sum, p) => sum + p.amount, 0);
+  }
+
+  applyFilters(): void {
+    this.filteredPaiements = this.allPaiements.filter(p => {
+      const yearMatch = this.filterYear === 'all' || String(p.year) === this.filterYear;
+      const statusMatch = this.filterStatus === 'all' || p.status === this.filterStatus;
+      return yearMatch && statusMatch;
+    });
+  }
+
+  getMonthName(month: number): string {
+    return this.months[month] || '';
+  }
+  formatMontant(v: number | null | undefined): string {
+    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Number(v ?? 0));
+  }
+  formatDate(d: any): string {
+    if (!d) return '-';
+    return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+  formatJour(d: any): string {
+    if (!d) return '-';
+    return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit' });
+  }
+  formatMoisCourt(d: any): string {
+    if (!d) return '-';
+    return new Date(d).toLocaleDateString('fr-FR', { month: 'short' });
+  }
+  formatAnnee(d: any): string {
+    if (!d) return '-';
+    return new Date(d).toLocaleDateString('fr-FR', { year: 'numeric' });
+  }
+}
