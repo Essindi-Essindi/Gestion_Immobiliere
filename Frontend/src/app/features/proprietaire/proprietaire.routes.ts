@@ -10,8 +10,5 @@ export const PROPRIETAIRE_ROUTES: Routes = [
   { path: 'loyers', loadComponent: () => import('./pages/loyers/loyers.component').then(m => m.LoyersComponent) },
   { path: 'quittances', loadComponent: () => import('./pages/quittances/quittances.component').then(m => m.QuittancesComponent) },
   { path: 'interventions', loadComponent: () => import('./pages/interventions/interventions.component').then(m => m.InterventionsComponent) },
-  { path: 'echeances', loadComponent: () => import('./pages/echeances/echeances.component').then(m => m.EcheancesComponent) },
-  { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent) },
-  { path: 'documents', loadComponent: () => import('./pages/documents/documents.component').then(m => m.DocumentsComponent) },
   { path: 'settings', loadComponent: () => import('../settings/settings.component').then(m => m.SettingsComponent) }
 ];

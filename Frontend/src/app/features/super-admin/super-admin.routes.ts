@@ -9,6 +9,5 @@ export const SUPER_ADMIN_ROUTES: Routes = [
   { path: 'parametres', loadComponent: () => import('./pages/parametres/parametres.component').then(m => m.ParametresComponent) },
   { path: 'logs', loadComponent: () => import('./pages/logs/logs.component').then(m => m.LogsComponent) },
   { path: 'support', loadComponent: () => import('./pages/support/support.component').then(m => m.SupportComponent) },
-  { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent) },
   { path: 'settings', loadComponent: () => import('../settings/settings.component').then(m => m.SettingsComponent) }
 ];
