@@ -2,8 +2,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { MockDataService } from '@core/services/mock-data.service';
-import { User } from '@core/models/user.model';
-import { NavItem } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +12,6 @@ import { NavItem } from '../sidebar/sidebar.component';
 })
 export class HeaderComponent {
   @Input() pageTitle: string = 'Tableau de bord';
-  @Input() navItems: NavItem[] = [];
   @Output() toggleSidebar = new EventEmitter<void>();
 
   notificationOpen: boolean = false;

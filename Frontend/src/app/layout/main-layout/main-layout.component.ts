@@ -1,10 +1,10 @@
-import { Component, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule, Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService, UserRole } from '@core/auth/auth.service';
-import { ToastService, Toast } from '@core/services/toast.service';
+import { ToastService } from '@core/services/toast.service';
 import { LoadingService } from '@core/services/loading.service';
 
 @Component({
