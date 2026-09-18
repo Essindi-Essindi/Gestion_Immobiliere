@@ -2,7 +2,7 @@
 
 Rental-management web platform: landlords (*bailleurs*) manage properties, tenants, contracts, rents and maintenance — tenants follow their home, contract, payments and receipts — and a super admin supervises accounts, subscriptions and support.
 
-**Stack:** Angular 18 (standalone components) · Spring Boot API skeleton at the repo root (`../../pom.xml`) · black / white / grey rectangular UI.
+**Stack:** Angular 18 (standalone components) · Spring Boot API skeleton at the repo root (`../pom.xml`) · black / white / grey rectangular UI.
 
 > **No backend required to run the app today.** The frontend runs in mock mode: all data lives in `localStorage` via `MockDataService` / `MockAuthService`, so every button, form, PDF insert and reminder works end-to-end without a server.
 
@@ -12,7 +12,7 @@ Prerequisites: **Node.js 18, 20 or 22** + npm (backend only: Java 17 + Maven, op
 
 ```bash
 git pull
-cd Frontend/gestion-immobiliere
+cd Frontend
 npm install
 npm start
 # → open http://localhost:4200/
@@ -76,8 +76,9 @@ Bailleur invites tenant ── password page ── tenant login
 ## Project structure (this folder)
 
 ```
-gestion-immobiliere/
+Frontend/
 ├─ README.md              ← you are here
+├─ angular.json / package.json / tsconfig*.json
 ├─ src/app/app.routes.ts  ← all routes (flat, loadComponent)
 ├─ src/app/core/          ← models, services, guards, interceptors, layout
 ├─ src/app/features/      ← super-admin / proprietaire / locataire pages
