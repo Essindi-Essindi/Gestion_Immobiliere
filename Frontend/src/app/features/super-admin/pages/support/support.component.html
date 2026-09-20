@@ -1,0 +1,91 @@
+<div class="page">
+      <div class="page-header">
+        <div>
+          <h1>Support & Réclamations</h1>
+          <p>Tickets de support et réclamations utilisateurs</p>
+        </div>
+        <div class="header-stats">
+          <span class="stat-pill">{{ openCount() }} ouverts</span>
+          <span class="stat-pill dark">{{ inProgressCount() }} en cours</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-toolbar">
+          <div class="filters">
+            <button [class.active]="statusFilter() === 'Tous'" (click)="setStatusFilter('Tous')">Tous</button>
+            <button [class.active]="statusFilter() === 'Ouvert'" (click)="setStatusFilter('Ouvert')">Ouvert</button>
+            <button [class.active]="statusFilter() === 'En cours'" (click)="setStatusFilter('En cours')">En cours</button>
+            <button [class.active]="statusFilter() === 'Résolu'" (click)="setStatusFilter('Résolu')">Résolu</button>
+            <button [class.active]="statusFilter() === 'Fermé'" (click)="setStatusFilter('Fermé')">Fermé</button>
+          </div>
+        </div>
+
+        <div class="tickets-list">
+          @for (ticket of filtered(); track ticket.id) {
+            <div class="ticket" [class.expanded]="ticket.expanded">
+              <div class="ticket-row" (click)="toggleTicket(ticket)">
+                <div class="ticket-id">{{ ticket.id }}</div>
+                <div class="ticket-info">
+                  <span class="ticket-sujet">{{ ticket.sujet }}</span>
+                  <span class="ticket-user">{{ ticket.utilisateur }} · {{ ticket.role }}</span>
+                </div>
+                <div class="ticket-meta">
+                  <span class="status-badge" [class]="'s-' + ticket.statut.toLowerCase().replace(' ', '')">{{ ticket.statut }}</span>
+                  <span class="ticket-date">{{ ticket.date }}</span>
+                </div>
+                <div class="ticket-expand">
+                  <svg [class.rotated]="ticket.expanded" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+              @if (ticket.expanded) {
+                <div class="ticket-details">
+                  <div class="ticket-message">
+                    <p class="msg-label">Message :</p>
+                    <p class="msg-content">{{ ticket.message }}</p>
+                  </div>
+                  @if (ticket.replies.length > 0) {
+                    <div class="replies">
+                      <p class="msg-label">Réponses ({{ ticket.replies.length }}) :</p>
+                      @for (reply of ticket.replies; track reply.date + reply.text) {
+                        <div class="reply">
+                          <div class="reply-head">
+                            <span class="reply-author">{{ reply.author }}</span>
+                            <span class="reply-date">{{ reply.date }}</span>
+                          </div>
+                          <p class="reply-text">{{ reply.text }}</p>
+                        </div>
+                      }
+                    </div>
+                  }
+                  <div class="reply-box">
+                    <p class="msg-label">Écrire une réponse :</p>
+                    <textarea [(ngModel)]="ticket.replyDraft" rows="3" placeholder="Tapez votre réponse ici..."></textarea>
+                    <div class="ticket-actions">
+                      <button class="btn-black" (click)="sendReply(ticket)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Envoyer la réponse
+                      </button>
+                      <button class="btn-outline" (click)="cycleStatus(ticket); $event.stopPropagation()">
+                        @if (ticket.statut === 'Ouvert') {
+                          Prendre en charge
+                        } @else if (ticket.statut === 'En cours') {
+                          Marquer résolu
+                        } @else {
+                          Réouvrir
+                        }
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @if (filtered().length === 0) {
+            <div class="empty">
+              <p>Aucun ticket trouvé</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>

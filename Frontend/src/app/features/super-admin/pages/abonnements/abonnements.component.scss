@@ -1,0 +1,50 @@
+.page { padding: 24px; background: #f5f5f5; min-height: 100vh; }
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { margin: 0 0 4px; font-size: 24px; font-weight: 700; color: #000; font-family: inherit; }
+    .page-header p { margin: 0; font-size: 14px; color: #666; font-family: inherit; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .plan-card { background: #fff; border: 1px solid #e0e0e0; display: flex; flex-direction: column; position: relative; }
+    .plan-card.highlighted { border-color: #000; border-width: 2px; }
+    .plan-card.suspended { opacity: 0.65; }
+    .plan-badge { position: absolute; top: 0; right: 0; background: #000; color: #fff; font-size: 11px; font-weight: 600; padding: 4px 12px; }
+    .suspended-badge { background: #666; }
+    .plan-header { padding: 28px 24px 20px; border-bottom: 1px solid #e0e0e0; }
+    .plan-header h2 { margin: 0 0 12px; font-size: 18px; font-weight: 700; color: #000; font-family: inherit; }
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+    .price { font-size: 36px; font-weight: 700; color: #000; line-height: 1; }
+    .period { font-size: 14px; color: #666; }
+    .plan-subscribers { font-size: 13px; color: #666; font-weight: 500; }
+    .plan-features { padding: 20px 24px; flex: 1; }
+    .features-title { margin: 0 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #666; }
+    .feature-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+    .feature-item svg { color: #000; flex-shrink: 0; }
+    .feature-item span { font-size: 13px; color: #000; }
+    .plan-actions { padding: 16px 24px; border-top: 1px solid #e0e0e0; display: flex; gap: 8px; }
+    .btn-black { flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600; border: 1px solid #000; background: #000; color: #fff; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-black:hover { background: #222; }
+    .btn-outline { flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 500; border: 1px solid #e0e0e0; background: #fff; color: #000; cursor: pointer; font-family: inherit; }
+    .btn-outline:hover { background: #f5f5f5; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: #fff; border: 1px solid #e0e0e0; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { margin: 0; font-size: 16px; font-weight: 700; color: #000; font-family: inherit; }
+    .modal-close { border: none; background: none; cursor: pointer; padding: 4px; color: #666; }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-footer .btn-black, .modal-footer .btn-outline { flex: none; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; }
+    .form-group input, .form-group textarea { padding: 10px 12px; border: 1px solid #e0e0e0; font-size: 14px; color: #000; font-family: inherit; outline: none; background: #fff; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #000; }
+    .check-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #000; cursor: pointer; }
+    .card { background: #fff; border: 1px solid #e0e0e0; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid #e0e0e0; }
+    .card-header h2 { margin: 0; font-size: 15px; font-weight: 600; color: #000; font-family: inherit; }
+    .card-body { padding: 20px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .summary-item { display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; }
+    .summary-label { font-size: 12px; color: #666; font-weight: 500; }
+    .summary-value { font-size: 24px; font-weight: 700; color: #000; }
+    @media (max-width: 900px) { .plans-grid { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr; } }
