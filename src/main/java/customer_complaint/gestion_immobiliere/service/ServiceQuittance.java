@@ -21,4 +21,10 @@ public interface ServiceQuittance {
 
     // relance l'envoi aux destinataires qui n'ont rien recu / retries the delivery
     DocumentResponse send(Long id);
+
+    // le bailleur insere son propre PDF / the landlord uploads their own PDF
+    DocumentResponse insert(Long id, String nom, byte[] contenu);
+
+    // ids des quittances dont le PDF a ete insere / ids of receipts with an uploaded PDF
+    List<Long> inserted();
 }

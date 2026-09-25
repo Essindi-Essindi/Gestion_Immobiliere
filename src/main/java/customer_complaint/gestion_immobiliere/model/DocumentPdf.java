@@ -11,6 +11,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -42,7 +43,8 @@ public class DocumentPdf extends Auditable {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(nullable = false)
+    // edge case: sans taille explicite MySQL cree un BLOB de 64 Ko, trop petit / no explicit size = 64 KB BLOB, too small
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] content;
 
     @Column(nullable = false)
@@ -55,6 +57,11 @@ public class DocumentPdf extends Auditable {
     // EN_ATTENTE, ENVOYE, PARTIEL (un seul destinataire), ECHEC, NON_ENVOYE (genere a la demande, sans e-mail)
     @Column(nullable = false, length = 12)
     private String email_status = Statuts.en_attente;
+
+    // vrai quand le bailleur a insere son propre fichier / true when the landlord uploaded their own file
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    private boolean insere;
 
     private boolean sent_bailleur;
     private boolean sent_locataire;

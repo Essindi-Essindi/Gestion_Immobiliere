@@ -44,6 +44,9 @@ export class ContratsComponent implements OnInit, OnDestroy {
   terminateTarget: ContratResponse | null = null;
   showTerminateConfirm = signal(false);
 
+  inserted = signal<Set<string>>(new Set());
+  insertTarget: ContratResponse | null = null;
+
   docView = signal<{ contrat: ContratResponse; doc: DocumentResponse | null; loading: boolean } | null>(null);
 
   // detecte les demandes de resiliation des locataires sans avoir a rafraichir la page a la main
@@ -61,6 +64,7 @@ export class ContratsComponent implements OnInit, OnDestroy {
     this.refresh();
     this.logementService.getAll().subscribe({ next: (l) => this.allLogements.set(l), error: () => {} });
     this.locataireService.getAll().subscribe({ next: (l) => this.allLocataires.set(l), error: () => {} });
+    this.contratService.inserted().subscribe({ next: (ids) => this.inserted.set(new Set(ids.map(String))), error: () => {} });
     this.pollHandle = setInterval(() => this.refresh(), 20000);
   }
 
@@ -144,10 +148,30 @@ export class ContratsComponent implements OnInit, OnDestroy {
     });
   }
 
-  resend(c: ContratResponse): void {
-    this.contratService.resend(c.id).subscribe({
-      next: () => this.toast.success('Document renvoyé', `Le contrat a été renvoyé à ${c.locataire_name}`),
-      error: () => this.toast.error('Erreur', "Impossible de renvoyer le document")
+  isinserted(c: ContratResponse): boolean {
+    return this.inserted().has(String(c.id));
+  }
+
+  pick(c: ContratResponse, picker: HTMLInputElement): void {
+    this.insertTarget = c;
+    picker.value = '';
+    picker.click();
+  }
+
+  onfile(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    const c = this.insertTarget;
+    if (!file || !c) return;
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      this.toast.warning('Attention', 'Le fichier doit être un PDF');
+      return;
+    }
+    this.contratService.insert(c.id, file).subscribe({
+      next: () => {
+        this.inserted.update(s => new Set(s).add(String(c.id)));
+        this.toast.success('Contrat inséré', `Le contrat de ${c.locataire_name} a été enregistré`);
+      },
+      error: () => this.toast.error('Erreur', "Impossible d'insérer le contrat")
     });
   }
 

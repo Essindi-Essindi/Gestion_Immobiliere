@@ -32,6 +32,8 @@ public class Signalement extends Auditable {
     @Column(nullable = false)
     private String category;
 
+    // edge case: photo en base64, bien plus longue que 255 caracteres / base64 photo, far above 255 chars
+    @Column(columnDefinition = "LONGTEXT")
     private String photo;
 
     @Column(length = 150)

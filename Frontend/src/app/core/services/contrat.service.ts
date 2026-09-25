@@ -36,6 +36,16 @@ export class ContratService {
     return this.http.get<DocumentResponse>(`${this.api}/${id}/document`);
   }
 
+  insert(id: string, file: File): Observable<DocumentResponse> {
+    const body = new FormData();
+    body.append('file', file);
+    return this.http.post<DocumentResponse>(`${this.api}/${id}/insertion`, body);
+  }
+
+  inserted(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.api}/inserted`);
+  }
+
   resend(id: string): Observable<void> {
     return this.http.post<void>(`${this.api}/${id}/sending`, {});
   }

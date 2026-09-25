@@ -1,10 +1,18 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AdminPlateformeService } from '@core/services/admin-plateforme.service';
-import { AdminDashboardResponse } from '@core/models/dashboard.model';
+import { AdminDashboardResponse, RevenuMoisAdmin } from '@core/models/dashboard.model';
 import { JournalResponse } from '@core/models/admin.model';
 import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 import { MontantPipe } from '@shared/pipes';
+
+interface BarItem {
+  label: string;
+  value: string;
+  height: number;
+}
+
+const mois_courts = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
 interface StatCard {
   label: string;
@@ -29,6 +37,7 @@ export class DashboardComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   stats = signal<StatCard[]>([]);
+  barData = signal<BarItem[]>([]);
 
   // apercu fourni directement par le dashboard, la liste complete est paginee via le journal
   // preview shipped directly by the dashboard, full list is paginated through the journal
@@ -53,6 +62,7 @@ export class DashboardComponent implements OnInit {
     this.adminPlateforme.dashboard().subscribe({
       next: (d) => {
         this.stats.set(this.toCards(d));
+        this.barData.set(this.toBars(d.revenus_7_mois));
         this.activities.set(d.activite_recente);
         this.loading.set(false);
       },
@@ -99,6 +109,16 @@ export class DashboardComponent implements OnInit {
     if (t.includes('suppr') || t.includes('delet')) return 'dot-delete';
     if (t.includes('connex') || t.includes('login')) return 'dot-login';
     return 'dot-update';
+  }
+
+  private toBars(serie: RevenuMoisAdmin[]): BarItem[] {
+    const max = Math.max(0, ...serie.map(r => r.montant));
+    return serie.map(r => ({
+      label: mois_courts[Number(r.period.split('-')[1]) - 1] || r.period,
+      value: r.montant >= 1000 ? `${Math.round(r.montant / 100) / 10}k€` : `${Math.round(r.montant)}€`,
+      // edge case: aucun revenu, on evite la division par zero / no revenue, avoid dividing by zero
+      height: max > 0 ? Math.round(r.montant / max * 100) : 0
+    }));
   }
 
   private toCards(d: AdminDashboardResponse): StatCard[] {

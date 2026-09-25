@@ -147,7 +147,7 @@
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <select [(ngModel)]="assignLocId" style="flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 13px; background: #fff;">
                   <option value="">Choisir un locataire</option>
-                  @for (loc of allLocataires(); track loc.id) {
+                  @for (loc of assignables(); track loc.id) {
                     <option [value]="loc.id">{{ loc.firstName }} {{ loc.lastName }}{{ loc.roomNumber ? ' (' + loc.roomNumber + ')' : '' }}</option>
                   }
                 </select>

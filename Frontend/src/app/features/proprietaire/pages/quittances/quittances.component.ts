@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { QuittanceService } from '@core/services/quittance.service';
 import { LoyerService } from '@core/services/loyer.service';
 import { ToastService } from '@core/services/toast.service';
@@ -50,6 +50,7 @@ export class QuittancesComponent implements OnInit {
   });
 
   docView = signal<any>(null);
+  insertTarget: row | null = null;
 
   constructor(
     private quittanceService: QuittanceService,
@@ -64,8 +65,9 @@ export class QuittancesComponent implements OnInit {
   refresh(): void {
     this.loading.set(true);
     this.error.set(null);
-    forkJoin({ quittances: this.quittanceService.getAll(), loyers: this.loyerService.getAll() }).subscribe({
-      next: ({ quittances, loyers }) => {
+    forkJoin({ quittances: this.quittanceService.getAll(), loyers: this.loyerService.getAll(), inserted: this.quittanceService.inserted() }).subscribe({
+      next: ({ quittances, loyers, inserted }) => {
+        const ins = new Set(inserted.map(String));
         this.rows.set(loyers.map(l => {
           const q = quittances.find(x => String(x.contrat_id) === String(l.contrat_id) && x.period === l.period) || null;
           const [y, m] = l.period.split('-');
@@ -73,7 +75,7 @@ export class QuittancesComponent implements OnInit {
             id: String(l.id), logementId: String(l.logement_id), logementAddress: l.logement_address,
             locataireNom: l.locataire_name, roomNumber: l.piece_numero || '', period: l.period,
             month: Number(m), year: Number(y), amount: l.amount, status: l.status,
-            quittancePdf: q ? { name: 'Quittance ' + l.period + '.pdf' } : null, quittance: q
+            quittancePdf: q && ins.has(String(q.id)) ? { name: 'Quittance ' + l.period + '.pdf' } : null, quittance: q
           };
         }).sort((a, b) => b.period.localeCompare(a.period)));
         this.loading.set(false);
@@ -105,12 +107,28 @@ export class QuittancesComponent implements OnInit {
     this.filterPeriod.set((event.target as HTMLSelectElement).value);
   }
 
-  generate(r: row): void {
-    this.loyerService.receipt(r.id).subscribe({
+  pick(r: row, picker: HTMLInputElement): void {
+    this.insertTarget = r;
+    picker.value = '';
+    picker.click();
+  }
+
+  onfile(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    const r = this.insertTarget;
+    if (!file || !r) return;
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      this.toast.warning('Attention', 'Le fichier doit être un PDF');
+      return;
+    }
+    // edge case: pas encore de quittance pour ce loyer, on la cree avant d'y inserer le fichier / no receipt yet, create it first
+    const quittance$ = r.quittance ? of(r.quittance) : this.loyerService.receipt(r.id);
+    quittance$.pipe(switchMap(q => this.quittanceService.insert(q.id, file))).subscribe({
       next: () => {
-        this.toast.success('Quittance générée', `Quittance créée pour ${r.locataireNom} - ${this.monthlabel(r.period)}`);
+        this.toast.success('Quittance insérée', `Quittance de ${r.locataireNom} - ${this.monthlabel(r.period)}`);
         this.refresh();
-      }
+      },
+      error: () => this.toast.error('Erreur', "Impossible d'insérer la quittance")
     });
   }
 
@@ -131,13 +149,6 @@ export class QuittancesComponent implements OnInit {
         a.download = r.quittancePdf?.name || 'quittance.pdf';
         a.click();
       }
-    });
-  }
-
-  resend(r: row): void {
-    if (!r.quittance) return;
-    this.quittanceService.resend(r.quittance.id).subscribe({
-      next: () => this.toast.success('Quittance renvoyée', `La quittance de ${this.monthlabel(r.period)} a été renvoyée`)
     });
   }
 

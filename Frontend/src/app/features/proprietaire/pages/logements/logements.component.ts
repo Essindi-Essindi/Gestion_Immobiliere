@@ -131,6 +131,12 @@ export class LogementsComponent implements OnInit {
     return (l.pieces || []).filter(p => p.capacite > 0 && p.occupants.length < p.capacite);
   }
 
+  // edge case: locataire deja rattache a un autre logement / tenant already attached to another home
+  assignables(): locataireview[] {
+    const sel = this.selected();
+    return this.allLocataires().filter(l => !l.logementId || l.logementId === sel?.id);
+  }
+
   pieceTypeLabel(t: string): string {
     const map: Record<string, string> = { CHAMBRE: 'Chambre', SALON: 'Salon', CUISINE: 'Cuisine', SALLE_DE_BAIN: 'Salle de bain', BUREAU: 'Bureau', AUTRE: 'Autre' };
     return map[t] || t;

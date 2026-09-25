@@ -11,6 +11,7 @@ export interface DocumentResponse {
   sent_to_bailleur: boolean;
   sent_to_locataire: boolean;
   attempts: number;
+  inserted: boolean;
   last_error?: string;
   sent_at?: string;
 }

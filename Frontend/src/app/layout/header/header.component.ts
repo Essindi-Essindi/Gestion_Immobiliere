@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { NotificationService } from '@core/services/notification.service';
@@ -11,7 +11,7 @@ import { NotificationResponse } from '@core/models/notification.model';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnDestroy {
   @Input() pageTitle: string = 'Tableau de bord';
   @Output() toggleSidebar = new EventEmitter<void>();
 
@@ -19,6 +19,7 @@ export class HeaderComponent {
   userMenuOpen: boolean = false;
   unreadCount: number = 0;
   notifications: NotificationResponse[] = [];
+  private pollHandle: ReturnType<typeof setInterval>;
 
   currentUser = this.authService.user;
 
@@ -27,6 +28,12 @@ export class HeaderComponent {
     private notificationService: NotificationService
   ) {
     this.refreshUnreadCount();
+    // nouveaux signalements sans recharger la page / new reports without a page reload
+    this.pollHandle = setInterval(() => this.refreshUnreadCount(), 30000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.pollHandle);
   }
 
   refreshUnreadCount(): void {

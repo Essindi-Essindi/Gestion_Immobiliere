@@ -20,6 +20,8 @@
         </select>
       </div>
 
+      <input #picker type="file" accept="application/pdf,.pdf" hidden (change)="onfile($event)"/>
+
       <app-state-block [loading]="loading()" [error]="error()" [empty]="groupedContrats().length === 0" emptyMessage="Aucun contrat trouvé.">
         @for (group of groupedContrats(); track group.logementId) {
           <div style="margin-bottom: 24px;">
@@ -62,12 +64,17 @@
                   </div>
 
                   <div style="border-top: 1px solid #e0e0e0; padding-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
-                    <button (click)="viewPdf(contrat)"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">PDF</button>
-                    <button (click)="openDocument(contrat)"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Statut document</button>
-                    <button (click)="resend(contrat)"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Renvoyer</button>
+                    @if (isinserted(contrat)) {
+                      <button (click)="viewPdf(contrat)"
+                        style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Voir</button>
+                      <button (click)="openDocument(contrat)"
+                        style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Statut document</button>
+                      <button (click)="pick(contrat, picker)"
+                        style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Insérer</button>
+                    } @else {
+                      <button (click)="pick(contrat, picker)"
+                        style="background: #000; color: #fff; border: none; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Ajouter</button>
+                    }
                     @if (contrat.actif && contrat.resiliation_demandee) {
                       <button (click)="askTerminate(contrat)"
                         style="background: #000; color: #fff; border: none; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Résilier</button>

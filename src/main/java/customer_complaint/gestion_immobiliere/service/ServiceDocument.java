@@ -1,6 +1,7 @@
 package customer_complaint.gestion_immobiliere.service;
 
 import customer_complaint.gestion_immobiliere.dto.DocumentResponse;
+import customer_complaint.gestion_immobiliere.exception.RequeteInvalide;
 import customer_complaint.gestion_immobiliere.exception.RessourceIntrouvable;
 import customer_complaint.gestion_immobiliere.model.Contrat;
 import customer_complaint.gestion_immobiliere.model.DocumentPdf;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Locale;
 
 // le document est ENREGISTRE dans la transaction du contrat/de la quittance ; l'envoi par e-mail est un evenement
@@ -80,6 +82,41 @@ public class ServiceDocument {
             throw introuvable(type, ref_id);
         }
         return DocumentResponse.from(existant_ou_genere(type, ref_id, source));
+    }
+
+    // le bailleur remplace le PDF genere par son propre fichier / the landlord swaps the generated PDF for their own file
+    public DocumentResponse inserer(String type, Long ref_id, String nom, byte[] contenu) {
+        Source source = source(type, ref_id);
+        if (!bailleur_du(source.contrat())) {
+            throw introuvable(type, ref_id);
+        }
+        if (contenu == null || contenu.length == 0) {
+            throw new RequeteInvalide("Le fichier est vide");
+        }
+        // edge case: seul un vrai PDF est accepte / only a real PDF is accepted
+        if (contenu.length < 5 || contenu[0] != '%' || contenu[1] != 'P' || contenu[2] != 'D' || contenu[3] != 'F') {
+            throw new RequeteInvalide("Le fichier doit être un PDF");
+        }
+        DocumentPdf document = document_repository.find_by_ref(type, ref_id)
+                .orElseGet(() -> enregistrer(type, source, Statuts.non_envoye));
+        if (nom != null && !nom.isBlank()) {
+            String propre = nom.replaceAll("[\\r\\n\"/\\\\]", "_");
+            document.setFile_name(tronquer(propre, 255));
+        }
+        document.setContent(contenu);
+        document.setSize_bytes(contenu.length);
+        document.setSha256(HexFormat.of().formatHex(sha256(contenu)));
+        document.setInsere(true);
+        return DocumentResponse.from(document_repository.save(document));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> inseres(String type) {
+        if (!utilisateur.bailleur()) {
+            return List.of();
+        }
+        return DocumentPdf.quittance.equals(type) ? document_repository.quittances_inserees(utilisateur.id())
+                : document_repository.contrats_inseres(utilisateur.id());
     }
 
     // reserve au bailleur du contrat : c'est lui qui relance un envoi / landlord only: they retry a delivery

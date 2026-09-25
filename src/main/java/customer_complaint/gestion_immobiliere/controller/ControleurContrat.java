@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import java.util.List;
 
@@ -75,5 +78,18 @@ public class ControleurContrat {
     @PostMapping("/{id}/sending")
     public DocumentResponse send(@PathVariable Long id) {
         return service_contrat.send(id);
+    }
+
+    // insertion du PDF du bailleur / landlord PDF upload
+    @PreAuthorize(Acces.bailleur)
+    @PostMapping(value = "/{id}/insertion", consumes = "multipart/form-data")
+    public DocumentResponse insert(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+        return service_contrat.insert(id, file.getOriginalFilename(), file.getBytes());
+    }
+
+    @PreAuthorize(Acces.bailleur)
+    @GetMapping("/inserted")
+    public List<Long> inserted() {
+        return service_contrat.inserted();
     }
 }

@@ -8,6 +8,12 @@
 --
 -- USE gestion_immobiliere; -- decommente/adapte si besoin
 
+-- Mise a niveau des colonnes deja creees (ddl-auto=update ne modifie jamais une colonne existante)
+-- Upgrade already-created columns (ddl-auto=update never alters an existing column)
+ALTER TABLE document_pdf MODIFY COLUMN content LONGBLOB NOT NULL;
+ALTER TABLE document_pdf MODIFY COLUMN file_name VARCHAR(255) NOT NULL;
+ALTER TABLE signalement MODIFY COLUMN photo LONGTEXT NULL;
+
 -- ===================== ADMIN =====================
 INSERT INTO admin (last_name, first_name, email, password, access_level, created_at, updated_at)
 VALUES ('Admin', 'Super', 'admin1@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', 'SUPER_ADMIN', NOW(), NOW());

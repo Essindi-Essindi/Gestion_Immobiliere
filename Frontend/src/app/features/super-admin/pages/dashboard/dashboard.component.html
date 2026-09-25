@@ -19,8 +19,25 @@
       }
     </div>
 
-    <!-- pas de tendance/graphique cote backend, seul le total du mois est disponible -->
-    <!-- no trend/chart from the backend, only this month's total is available -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>Revenus mensuels</h2>
+      </div>
+      <div class="card-body">
+        <div class="bar-chart">
+          @for (bar of barData(); track bar.label) {
+            <div class="bar-group">
+              <div class="bar-wrapper">
+                <div class="bar" [style.height.%]="bar.height"></div>
+              </div>
+              <span class="bar-label">{{ bar.label }}</span>
+              <span class="bar-value">{{ bar.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">
         <h2>Activité récente</h2>

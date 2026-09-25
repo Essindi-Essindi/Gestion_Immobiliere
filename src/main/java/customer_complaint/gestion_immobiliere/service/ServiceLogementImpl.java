@@ -157,10 +157,9 @@ public class ServiceLogementImpl implements ServiceLogement {
     public LogementResponse assigner(Long id, Long locataire_id, Long piece_id) {
         Logement logement = proprietaire(id);
         Locataire locataire = locataire_du_bailleur(locataire_id);
-        if (locataire.getLogement() != null && !locataire.getLogement().getId().equals(id)
-                && contrat_repository.find_by_locataire(locataire_id).stream()
-                .anyMatch(customer_complaint.gestion_immobiliere.dto.ContratResponse::est_actif)) {
-            throw new ConflitDonnees("Le locataire a un contrat en cours dans un autre logement");
+        // edge case: deja rattache a un autre logement / already attached to another home
+        if (locataire.getLogement() != null && !locataire.getLogement().getId().equals(id)) {
+            throw new ConflitDonnees("Ce locataire est déjà assigné à un autre logement");
         }
         affectation.affecter(locataire, logement, piece_id);
         locataire_repository.save(locataire);

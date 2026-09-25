@@ -73,6 +73,17 @@ public class ServiceQuittanceImpl implements ServiceQuittance {
     }
 
     @Override
+    public DocumentResponse insert(Long id, String nom, byte[] contenu) {
+        return service_document.inserer(DocumentPdf.quittance, id, nom, contenu);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> inserted() {
+        return service_document.inseres(DocumentPdf.quittance);
+    }
+
+    @Override
     public DocumentResponse send(Long id) {
         return envoi_document.renvoyer(DocumentPdf.quittance, id);
     }

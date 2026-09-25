@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SignalementService } from '@core/services/signalement.service';
@@ -13,7 +13,7 @@ import { SignalementResponse, StatutSignalement } from '@core/models/signalement
   imports: [RouterModule, FormsModule, DateFrPipe, StateBlockComponent],
   templateUrl: './interventions.component.html'
 })
-export class InterventionsComponent implements OnInit {
+export class InterventionsComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
 
@@ -27,12 +27,20 @@ export class InterventionsComponent implements OnInit {
 
   constructor(private signalementService: SignalementService, private toast: ToastService) {}
 
+  // nouveaux signalements des locataires sans recharger / tenants' new reports without reloading
+  private pollHandle: ReturnType<typeof setInterval> | null = null;
+
   ngOnInit(): void {
     this.refresh();
+    this.pollHandle = setInterval(() => this.refresh(true), 20000);
   }
 
-  refresh(): void {
-    this.loading.set(true);
+  ngOnDestroy(): void {
+    if (this.pollHandle) clearInterval(this.pollHandle);
+  }
+
+  refresh(silent = false): void {
+    if (!silent) this.loading.set(true);
     this.error.set(null);
     this.signalementService.getAll(this.filterStatus || undefined).subscribe({
       next: (data) => {
