@@ -1,7 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MockAuthService } from '@core/auth/mock-auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '@core/auth/auth.service';
 
 @Component({
   selector: 'app-bailleur-forgot',
@@ -18,7 +19,7 @@ export class BailleurForgotComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: MockAuthService
+    private authService: AuthService
   ) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -32,12 +33,12 @@ export class BailleurForgotComponent {
     this.successMessage.set('');
     const { email } = this.forgotForm.value;
     this.authService.forgotPassword(email)
-      .then((msg) => {
-        this.successMessage.set('Un email de réinitialisation a été envoyé');
+      .then(() => {
+        this.successMessage.set('Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.');
         this.isLoading.set(false);
       })
-      .catch((err: Error) => {
-        this.errorMessage.set(err.message);
+      .catch((err: HttpErrorResponse) => {
+        this.errorMessage.set(err.error?.message || 'Une erreur est survenue');
         this.isLoading.set(false);
       });
   }

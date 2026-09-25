@@ -76,7 +76,11 @@
             }
           </tbody>
         </table>
-        @if (filteredLocataires().length === 0) {
+        @if (loading()) {
+          <div style="padding: 32px; text-align: center;"><p style="margin: 0; color: #666; font-size: 14px;">Chargement...</p></div>
+        } @else if (error()) {
+          <div style="padding: 32px; text-align: center;"><p style="margin: 0 0 12px; color: #666; font-size: 14px;">{{ error() }}</p><button (click)="refresh()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer;">Réessayer</button></div>
+        } @else if (filteredLocataires().length === 0) {
           <div style="padding: 32px; text-align: center;">
             <p style="margin: 0; color: #666; font-size: 14px;">Aucun locataire trouvé</p>
           </div>
@@ -152,13 +156,6 @@
                   @for (room of editRooms(); track room.numero) {
                     <option [value]="room.numero">{{ room.numero }} ({{ room.occupants.length }}/{{ room.capacite }})</option>
                   }
-                </select>
-              </div>
-              <div>
-                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Statut</label>
-                <select [(ngModel)]="editForm.status" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; background: #fff;">
-                  <option value="ACTIF">Actif</option>
-                  <option value="INACTIF">Inactif</option>
                 </select>
               </div>
             </div>

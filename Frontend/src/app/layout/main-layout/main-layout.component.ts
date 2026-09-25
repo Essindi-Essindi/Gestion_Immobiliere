@@ -59,7 +59,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           { label: 'Locataires', icon: 'users', route: '/super-admin/locataires' },
           { label: 'Paramètres', icon: 'settings', route: '/super-admin/parametres' },
           { label: 'Logs', icon: 'activity', route: '/super-admin/logs' },
-          { label: 'Support', icon: 'alert-triangle', route: '/super-admin/support' }
+          { label: 'Support', icon: 'alert-triangle', route: '/super-admin/support' },
+          { label: 'Mon compte', icon: 'user', route: '/super-admin/settings' }
         ];
 
       case 'PROPRIETAIRE':
@@ -71,7 +72,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           { label: 'Loyers', icon: 'credit-card', route: '/proprietaire/loyers' },
           { label: 'Quittances', icon: 'file', route: '/proprietaire/quittances' },
           { label: 'Interventions', icon: 'alert-triangle', route: '/proprietaire/interventions' },
-          { label: 'Paramètres', icon: 'settings', route: '/proprietaire/settings' }
+          { label: 'Mon compte', icon: 'settings', route: '/proprietaire/settings' }
         ];
 
       case 'LOCATAIRE':
@@ -83,7 +84,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           { label: 'Mes Quittances', icon: 'file', route: '/locataire/quittances' },
           { label: 'Signaler Problème', icon: 'alert-circle', route: '/locataire/problemes' },
           { label: 'Notifications', icon: 'bell', route: '/locataire/notifications' },
-          { label: 'Mon Profil', icon: 'user', route: '/locataire/profil' }
+          { label: 'Mon Profil', icon: 'user', route: '/locataire/profil' },
+          { label: 'Mot de passe', icon: 'settings', route: '/locataire/settings' }
         ];
 
       default:

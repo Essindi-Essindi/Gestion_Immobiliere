@@ -1,7 +1,7 @@
 <div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
       <div style="margin-bottom: 24px;">
         <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Quittances</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Insérez les quittances PDF pour les loyers payés</p>
+        <p style="margin: 0; color: #666; font-size: 14px;">Suivez les quittances des loyers payés : générez, consultez et renvoyez-les au locataire</p>
       </div>
 
       <div style="background: #fff; border: 1px solid #e0e0e0; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
@@ -23,9 +23,9 @@
         <select (change)="onFilterMonth($event)"
           style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
           <option value="">Tous les mois</option>
-          <option value="10">Octobre 2026</option>
-          <option value="9">Septembre 2026</option>
-          <option value="8">Août 2026</option>
+          @for (p of periods(); track p) {
+            <option [value]="p">{{ monthlabel(p) }}</option>
+          }
         </select>
       </div>
 
@@ -67,20 +67,15 @@
                   @if (quittance.quittancePdf) {
                     <button (click)="openPdfView(quittance)" title="Voir le reçu"
                       style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Voir</button>
-                    <label title="Remplacer" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">
-                      Remplacer
-                      <input type="file" accept=".pdf" (change)="onReplacePdf(quittance, $event)" style="display: none;"/>
-                    </label>
-                    <button (click)="removePdf(quittance)" title="Supprimer"
-                      style="background: #fff; border: 1px solid #e0e0e0; padding: 6px 8px; cursor: pointer; display: flex;">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
+                    <button (click)="openDocument(quittance)" title="Statut d'envoi"
+                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Statut</button>
+                    <button (click)="resend(quittance)" title="Renvoyer par e-mail"
+                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Renvoyer</button>
                   } @else if (quittance.status === 'PAYE') {
-                    <label style="display: flex; align-items: center; gap: 6px; background: #000; color: #fff; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 600;">
+                    <button (click)="generate(quittance)" style="display: flex; align-items: center; gap: 6px; background: #000; color: #fff; border: none; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 600;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                      Insérer quittance
-                      <input type="file" accept=".pdf" (change)="onInsertPdf(quittance, $event)" style="display: none;"/>
-                    </label>
+                      Générer la quittance
+                    </button>
                   } @else {
                     <span style="font-size: 12px; color: #999; padding: 6px 12px; border: 1px solid #e0e0e0;">En attente de paiement</span>
                   }
@@ -91,26 +86,50 @@
         </div>
       }
 
-      @if (groupedQuittances().length === 0) {
+      @if (loading()) {
+        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
+          <p style="margin: 0; color: #666; font-size: 14px;">Chargement...</p>
+        </div>
+      } @else if (error()) {
+        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
+          <p style="margin: 0 0 12px; color: #666; font-size: 14px;">{{ error() }}</p>
+          <button (click)="refresh()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer;">Réessayer</button>
+        </div>
+      } @else if (groupedQuittances().length === 0) {
         <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
           <p style="margin: 0; color: #666; font-size: 14px;">Aucune quittance trouvée</p>
         </div>
       }
 
-      @if (pdfView()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="pdfView.set(null)">
+      @if (docView()) {
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeDocument()">
           <div style="background: #fff; width: 100%; max-width: 480px; padding: 24px;" (click)="$event.stopPropagation()">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">Quittance PDF</h3>
-              <button (click)="pdfView.set(null)" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">Statut de la quittance</h3>
+              <button (click)="closeDocument()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
             </div>
-            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; padding: 32px 16px; text-align: center; margin-bottom: 16px;">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" style="margin: 0 auto 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 9 20 9"/></svg>
-              <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">{{ pdfView().quittancePdf.name }}</p>
-              <p style="margin: 4px 0 0; font-size: 12px; color: #666;">{{ pdfView().locataireNom }} - {{ getMonthName(pdfView().month) }} {{ pdfView().year }}</p>
+            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; padding: 24px 16px; text-align: center; margin-bottom: 16px;">
+              <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">{{ docView().row.locataireNom }}</p>
+              <p style="margin: 4px 0 0; font-size: 12px; color: #666;">{{ monthlabel(docView().row.period) }}</p>
             </div>
+            @if (docView().loading) {
+              <p style="margin: 0; font-size: 13px; color: #666;">Chargement...</p>
+            } @else if (docView().doc) {
+              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #333; margin-bottom: 16px;">
+                <div><span style="color: #999;">Fichier : </span><span style="color: #000; font-weight: 600;">{{ docView().doc.file_name }}</span></div>
+                <div><span style="color: #999;">Envoi e-mail : </span><span style="color: #000; font-weight: 600;">{{ docView().doc.email_status }}</span></div>
+                @if (docView().doc.sent_at) {
+                  <div><span style="color: #999;">Envoyé le : </span><span style="color: #000;">{{ docView().doc.sent_at | dateFr }}</span></div>
+                }
+                @if (docView().doc.last_error) {
+                  <div style="color: #000;">Erreur : {{ docView().doc.last_error }}</div>
+                }
+              </div>
+            } @else {
+              <p style="margin: 0 0 16px; font-size: 13px; color: #999;">Aucun document disponible.</p>
+            }
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
-              <button (click)="pdfView.set(null)" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Fermer</button>
+              <button (click)="closeDocument()" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Fermer</button>
               <button (click)="downloadPdf()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Télécharger</button>
             </div>
           </div>

@@ -1,125 +1,110 @@
 <div class="page">
-      <div class="page-header">
-        <div>
-          <h1>Gestion des locataires</h1>
-          <p>Liste globale de tous les locataires de la plateforme</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-toolbar">
-          <div class="search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Rechercher par nom, email..." [(ngModel)]="searchTerm" (ngModelChange)="filterList()">
-          </div>
-          <div class="filters">
-            <button [class.active]="statusFilter() === 'Tous'" (click)="setStatusFilter('Tous')">Tous</button>
-            <button [class.active]="statusFilter() === 'Actif'" (click)="setStatusFilter('Actif')">Actif</button>
-            <button [class.active]="statusFilter() === 'Inactif'" (click)="setStatusFilter('Inactif')">Inactif</button>
-          </div>
-        </div>
-
-        @if (filtered().length > 0) {
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nom</th>
-                  <th>Email</th>
-                  <th>Téléphone</th>
-                  <th>Logement assigné</th>
-                  <th>Chambre</th>
-                  <th>Contrat</th>
-                  <th>Statut</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (l of filtered(); track l.id) {
-                  <tr>
-                    <td class="cell-bold">{{ l.nom }}</td>
-                    <td>{{ l.email }}</td>
-                    <td>{{ l.telephone }}</td>
-                    <td>{{ l.logement }}</td>
-                    <td>
-                      @if (l.chambre) {
-                        <span class="badge badge-dark">{{ l.chambre }}</span>
-                      } @else {
-                        <span class="muted">-</span>
-                      }
-                    </td>
-                    <td><span class="badge">{{ l.contrat }}</span></td>
-                    <td>
-                      <span class="status" [class.active]="l.statut === 'Actif'" [class.inactive]="l.statut === 'Inactif'">
-                        {{ l.statut }}
-                      </span>
-                    </td>
-                    <td>
-                      <button class="btn-action" (click)="viewDetails(l)">Voir détails</button>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="empty">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <p>Aucun locataire trouvé</p>
-            <span>Modifiez vos critères de recherche</span>
-          </div>
-        }
-      </div>
-
-      @if (selectedLocataire()) {
-        <div class="modal-overlay" (click)="closeModal()">
-          <div class="modal" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-              <h2>Détails du locataire</h2>
-              <button class="modal-close" (click)="closeModal()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="detail-grid">
-                <div class="detail-row">
-                  <span class="detail-label">Nom complet</span>
-                  <span class="detail-value">{{ selectedLocataire()?.nom }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Email</span>
-                  <span class="detail-value">{{ selectedLocataire()?.email }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Téléphone</span>
-                  <span class="detail-value">{{ selectedLocataire()?.telephone }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Logement assigné</span>
-                  <span class="detail-value">{{ selectedLocataire()?.logement }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Chambre</span>
-                  <span class="detail-value">{{ selectedLocataire()?.chambre || '-' }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Contrat</span>
-                  <span class="detail-value">{{ selectedLocataire()?.contrat }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Propriétaire</span>
-                  <span class="detail-value">{{ selectedLocataire()?.proprietaire }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Statut</span>
-                  <span class="detail-value">{{ selectedLocataire()?.statut }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button class="btn-outline" (click)="closeModal()">Fermer</button>
-            </div>
-          </div>
-        </div>
-      }
+  <div class="page-header">
+    <div>
+      <h1>Gestion des locataires</h1>
+      <p>Liste globale de tous les locataires de la plateforme</p>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-toolbar">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Rechercher par nom, email..." [(ngModel)]="searchTerm" (ngModelChange)="filterList()">
+      </div>
+      <div class="filters">
+        <button [class.active]="statusFilter() === 'Tous'" (click)="setStatusFilter('Tous')">Tous</button>
+        <button [class.active]="statusFilter() === 'Actif'" (click)="setStatusFilter('Actif')">Actif</button>
+        <button [class.active]="statusFilter() === 'Suspendu'" (click)="setStatusFilter('Suspendu')">Suspendu</button>
+      </div>
+    </div>
+
+    @if (actionMsg()) {
+      <p class="action-msg">{{ actionMsg() }}</p>
+    }
+
+    <app-state-block [loading]="loading()" [error]="error()" [empty]="locataires().length === 0" emptyMessage="Aucun locataire trouvé.">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Logement assigné</th>
+              <th>Chambre</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of locataires(); track l.id) {
+              <tr>
+                <td class="cell-bold">{{ l.first_name }} {{ l.last_name }}</td>
+                <td>{{ l.email }}</td>
+                <td>{{ l.logement_address || '-' }}</td>
+                <td>{{ l.piece_numero || '-' }}</td>
+                <td>
+                  <span class="status" [class.active]="l.status === 'ACTIF'" [class.inactive]="l.status === 'SUSPENDU'">
+                    {{ l.status === 'ACTIF' ? 'Actif' : 'Suspendu' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-action" (click)="viewDetails(l)">Voir détails</button>
+                    <button class="btn-action danger" (click)="toggleStatus(l)">
+                      {{ l.status === 'ACTIF' ? 'Suspendre' : 'Activer' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-state-block>
+  </div>
+
+  @if (selectedLocataire()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Détails du locataire</h2>
+          <button class="modal-close" (click)="closeModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-grid">
+            <div class="detail-row">
+              <span class="detail-label">Nom complet</span>
+              <span class="detail-value">{{ selectedLocataire()?.first_name }} {{ selectedLocataire()?.last_name }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">{{ selectedLocataire()?.email }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Logement assigné</span>
+              <span class="detail-value">{{ selectedLocataire()?.logement_address || '-' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Chambre</span>
+              <span class="detail-value">{{ selectedLocataire()?.piece_numero || '-' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Statut</span>
+              <span class="detail-value">{{ selectedLocataire()?.status === 'ACTIF' ? 'Actif' : 'Suspendu' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Date d'inscription</span>
+              <span class="detail-value">{{ selectedLocataire()?.registered_at }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-outline" (click)="closeModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

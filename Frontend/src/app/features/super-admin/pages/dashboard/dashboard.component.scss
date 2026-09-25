@@ -2,7 +2,7 @@
     .page-header { margin-bottom: 24px; }
     .page-header h1 { margin: 0 0 4px; font-size: 24px; font-weight: 700; color: #000; font-family: inherit; }
     .page-header p { margin: 0; font-size: 14px; color: #666; font-family: inherit; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: #fff; border: 1px solid #e0e0e0; padding: 20px; display: flex; align-items: center; gap: 16px; position: relative; }
     .stat-icon { width: 48px; height: 48px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stat-icon :deep(svg) { width: 24px; height: 24px; }
@@ -50,5 +50,6 @@
     .modal-footer { padding: 16px 20px; border-top: 1px solid #e0e0e0; }
     .pagination { display: flex; align-items: center; justify-content: center; gap: 12px; }
     .page-info { font-size: 13px; color: #000; font-weight: 600; }
+    @media (max-width: 1280px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } }
     @media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } }

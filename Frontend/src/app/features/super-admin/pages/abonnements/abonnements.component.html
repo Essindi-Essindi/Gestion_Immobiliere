@@ -1,120 +1,248 @@
 <div class="page">
-      <div class="page-header">
-        <div>
-          <h1>Gestion des abonnements</h1>
-          <p>Plans disponibles et nombre d'abonnés par plan</p>
-        </div>
-      </div>
+  <div class="page-header">
+    <div>
+      <h1>Gestion des abonnements</h1>
+      <p>Plans disponibles et nombre d'abonnés par plan</p>
+    </div>
+    <button class="btn-black btn-header" (click)="openCreate()">+ Nouveau plan</button>
+  </div>
 
-      <div class="plans-grid">
-        @for (plan of plans(); track plan.id) {
-          <div class="plan-card" [class.highlighted]="plan.highlighted" [class.suspended]="plan.suspended">
-            @if (plan.highlighted && !plan.suspended) {
-              <div class="plan-badge">Populaire</div>
-            }
-            @if (plan.suspended) {
-              <div class="plan-badge suspended-badge">Suspendu</div>
-            }
-            <div class="plan-header">
-              <h2>{{ plan.name }}</h2>
-              <div class="plan-price">
-                <span class="price">{{ plan.price }}</span>
-                <span class="period">{{ plan.period }}</span>
-              </div>
-              <span class="plan-subscribers">{{ plan.subscribers }} abonnés</span>
+  <app-state-block [loading]="plansLoading()" [error]="plansError()" [empty]="plans().length === 0" emptyMessage="Aucun plan pour le moment.">
+    <div class="plans-grid">
+      @for (plan of plans(); track plan.id) {
+        <div class="plan-card" [class.suspended]="plan.suspended">
+          @if (plan.suspended) {
+            <div class="plan-badge suspended-badge">Suspendu</div>
+          }
+          <div class="plan-header">
+            <h2>{{ plan.name }}</h2>
+            <div class="plan-price">
+              <span class="price">{{ plan.price }}</span>
+              <span class="period">€/mois</span>
             </div>
-            <div class="plan-features">
-              <p class="features-title">Fonctionnalités incluses</p>
-              @for (feature of plan.features; track feature) {
-                <div class="feature-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>{{ feature }}</span>
-                </div>
-              }
-            </div>
-            <div class="plan-actions">
-              <button class="btn-black" (click)="openEdit(plan)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-                Modifier
-              </button>
-              @if (plan.suspended) {
-                <button class="btn-outline" (click)="toggleSuspend(plan)">Reprendre</button>
-              } @else {
-                <button class="btn-outline" (click)="toggleSuspend(plan)">Suspendre</button>
-              }
+            <span class="plan-subscribers">{{ subscriberCount(plan) }} abonnés actifs</span>
+          </div>
+          <div class="plan-features">
+            <p class="features-title">Limite</p>
+            <div class="feature-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Jusqu'à {{ plan.max_logements }} logements</span>
             </div>
           </div>
-        }
-      </div>
-
-      <div class="card summary-card">
-        <div class="card-header">
-          <h2>Résumé des abonnements</h2>
-        </div>
-        <div class="card-body">
-          <div class="summary-grid">
-            <div class="summary-item">
-              <span class="summary-label">Revenu mensuel total</span>
-              <span class="summary-value">4 723,45 €</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Total abonnés</span>
-              <span class="summary-value">142</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Taux de conversion</span>
-              <span class="summary-value">68%</span>
-            </div>
-            <div class="summary-item">
-              <span class="summary-label">Churn mensuel</span>
-              <span class="summary-value">2.3%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      @if (editTarget()) {
-        <div class="modal-overlay" (click)="closeEdit()">
-          <div class="modal" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-              <h2>Modifier le plan {{ editForm.name }}</h2>
-              <button class="modal-close" (click)="closeEdit()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label>Nom du plan</label>
-                  <input type="text" [(ngModel)]="editForm.name">
-                </div>
-                <div class="form-group">
-                  <label>Prix</label>
-                  <input type="text" [(ngModel)]="editForm.price">
-                </div>
-                <div class="form-group">
-                  <label>Période</label>
-                  <input type="text" [(ngModel)]="editForm.period">
-                </div>
-                <div class="form-group">
-                  <label>Abonnés</label>
-                  <input type="number" [(ngModel)]="editForm.subscribers">
-                </div>
-              </div>
-              <div class="form-group">
-                <label>Fonctionnalités (une par ligne)</label>
-                <textarea [(ngModel)]="editFeaturesText" rows="6"></textarea>
-              </div>
-              <label class="check-row">
-                <input type="checkbox" [(ngModel)]="editForm.highlighted">
-                <span>Mettre en avant (Populaire)</span>
-              </label>
-            </div>
-            <div class="modal-footer">
-              <button class="btn-outline" (click)="closeEdit()">Annuler</button>
-              <button class="btn-black" (click)="saveEdit()">Enregistrer</button>
-            </div>
+          <div class="plan-actions">
+            <button class="btn-black" (click)="openEdit(plan)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+              Modifier
+            </button>
+            <button class="btn-outline" (click)="toggleSuspend(plan)">{{ plan.suspended ? 'Reprendre' : 'Suspendre' }}</button>
+            <button class="btn-outline danger" (click)="deletePlan(plan)">Supprimer</button>
           </div>
         </div>
       }
     </div>
+  </app-state-block>
+
+  <div class="card summary-card">
+    <div class="card-header">
+      <h2>Résumé des abonnements</h2>
+    </div>
+    <div class="card-body">
+      <!-- taux de conversion/churn non fournis par le backend, retires -->
+      <!-- conversion rate/churn are not exposed by the backend, dropped -->
+      <div class="summary-grid">
+        <div class="summary-item">
+          <span class="summary-label">Revenu mensuel (abonnements actifs)</span>
+          <span class="summary-value">{{ revenuMensuel() }} €</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Abonnements actifs</span>
+          <span class="summary-value">{{ activeAbonnements().length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Abonnements</h2>
+    </div>
+    <div class="card-toolbar">
+      <div class="filters">
+        <button [class.active]="aboStatusFilter() === 'Tous'" (click)="setAboFilter('Tous')">Tous</button>
+        <button [class.active]="aboStatusFilter() === 'ACTIF'" (click)="setAboFilter('ACTIF')">Actif</button>
+        <button [class.active]="aboStatusFilter() === 'SUSPENDU'" (click)="setAboFilter('SUSPENDU')">Suspendu</button>
+        <button [class.active]="aboStatusFilter() === 'RESILIE'" (click)="setAboFilter('RESILIE')">Résilié</button>
+      </div>
+      <div class="form-inline">
+        <select [(ngModel)]="newAbo.bailleurId">
+          <option value="">Propriétaire...</option>
+          @for (b of bailleurs(); track b.id) {
+            <option [value]="b.id">{{ b.first_name }} {{ b.last_name }}</option>
+          }
+        </select>
+        <select [(ngModel)]="newAbo.planId">
+          <option value="">Plan...</option>
+          @for (p of plans(); track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+        <button class="btn-black" (click)="assignAbonnement()">Assigner</button>
+      </div>
+    </div>
+    @if (aboMsg()) {
+      <p class="action-msg">{{ aboMsg() }}</p>
+    }
+
+    <app-state-block [loading]="aboLoading()" [error]="aboError()" [empty]="abonnements().length === 0" emptyMessage="Aucun abonnement.">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Propriétaire</th>
+              <th>Plan</th>
+              <th>Statut</th>
+              <th>Depuis</th>
+              <th>Changer de plan</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of abonnements(); track a.id) {
+              <tr>
+                <td class="cell-bold">{{ a.bailleur_name }}</td>
+                <td><span class="badge">{{ a.plan_name }}</span></td>
+                <td>
+                  <span class="status" [class.active]="a.status === 'ACTIF'" [class.suspended]="a.status === 'SUSPENDU'" [class.resilie]="a.status === 'RESILIE'">
+                    {{ a.status === 'ACTIF' ? 'Actif' : a.status === 'SUSPENDU' ? 'Suspendu' : 'Résilié' }}
+                  </span>
+                </td>
+                <td>{{ a.start_date }}</td>
+                <td>
+                  @if (a.status !== 'RESILIE') {
+                    <select (change)="changePlanFor(a, $any($event.target).value)">
+                      <option value="">-</option>
+                      @for (p of plans(); track p.id) {
+                        <option [value]="p.id" [selected]="p.id === a.plan_id">{{ p.name }}</option>
+                      }
+                    </select>
+                  }
+                </td>
+                <td>
+                  @if (a.status !== 'RESILIE') {
+                    <div class="actions">
+                      <button class="btn-action" (click)="toggleAboSuspend(a)">{{ a.status === 'ACTIF' ? 'Suspendre' : 'Reprendre' }}</button>
+                      <button class="btn-action danger" (click)="terminateAbo(a)">Résilier</button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-state-block>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Factures</h2>
+    </div>
+    <div class="card-toolbar">
+      <div class="filters">
+        <button [class.active]="factStatusFilter() === 'Tous'" (click)="setFactFilter('Tous')">Tous</button>
+        <button [class.active]="factStatusFilter() === 'PAYEE'" (click)="setFactFilter('PAYEE')">Payée</button>
+        <button [class.active]="factStatusFilter() === 'EN_ATTENTE'" (click)="setFactFilter('EN_ATTENTE')">En attente</button>
+        <button [class.active]="factStatusFilter() === 'ECHEC'" (click)="setFactFilter('ECHEC')">Impayée</button>
+      </div>
+      <div class="form-inline">
+        <input type="date" [(ngModel)]="simDate">
+        <button class="btn-black" (click)="simulateFacturation()">Simuler la facturation</button>
+      </div>
+    </div>
+    @if (factMsg()) {
+      <p class="action-msg">{{ factMsg() }}</p>
+    }
+
+    <app-state-block [loading]="factLoading()" [error]="factError()" [empty]="factures().length === 0" emptyMessage="Aucune facture.">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Propriétaire</th>
+              <th>Montant</th>
+              <th>Statut</th>
+              <th>Émise le</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of factures(); track f.id) {
+              <tr>
+                <td class="cell-bold">{{ f.bailleur_name }}</td>
+                <td>{{ f.amount }} €</td>
+                <td>
+                  <span class="status" [class.active]="f.status === 'PAYEE'" [class.suspended]="f.status === 'EN_ATTENTE'" [class.resilie]="f.status === 'ECHEC'">
+                    {{ f.status === 'PAYEE' ? 'Payée' : f.status === 'EN_ATTENTE' ? 'En attente' : 'Impayée' }}
+                  </span>
+                </td>
+                <td>{{ f.issued_on }}</td>
+                <td>
+                  <select (change)="setFactureStatus(f, $any($event.target).value)">
+                    <option value="">Changer...</option>
+                    <option value="PAYEE" [selected]="f.status === 'PAYEE'">Payée</option>
+                    <option value="EN_ATTENTE" [selected]="f.status === 'EN_ATTENTE'">En attente</option>
+                    <option value="ECHEC" [selected]="f.status === 'ECHEC'">Impayée</option>
+                  </select>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-state-block>
+  </div>
+
+  @if (editTarget()) {
+    <div class="modal-overlay" (click)="closeEdit()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ createMode() ? 'Nouveau plan' : 'Modifier le plan ' + editForm.name }}</h2>
+          <button class="modal-close" (click)="closeEdit()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom du plan</label>
+              <input type="text" [(ngModel)]="editForm.name">
+            </div>
+            <div class="form-group">
+              <label>Prix (€/mois)</label>
+              <input type="number" [(ngModel)]="editForm.price">
+            </div>
+            <div class="form-group">
+              <label>Logements max</label>
+              <input type="number" [(ngModel)]="editForm.max_logements">
+            </div>
+            <div class="form-group">
+              <label>Période (mois, 1 = mensuel, 12 = annuel)</label>
+              <input type="number" [(ngModel)]="editForm.period_months">
+            </div>
+            <div class="form-group">
+              <label>Fonctionnalités (séparées par des virgules)</label>
+              <input type="text" [(ngModel)]="editForm.features">
+            </div>
+            <div class="form-group">
+              <label><input type="checkbox" [(ngModel)]="editForm.highlighted"> Mis en avant</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-outline" (click)="closeEdit()">Annuler</button>
+          <button class="btn-black" (click)="saveEdit()">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

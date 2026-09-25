@@ -4,6 +4,7 @@
     .page-header p { margin: 0; font-size: 14px; color: #666; font-family: inherit; }
     .card { background: #fff; border: 1px solid #e0e0e0; }
     .card-toolbar { padding: 16px 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .action-msg { margin: 0; padding: 10px 20px; font-size: 13px; color: #666; border-bottom: 1px solid #f0f0f0; }
     .search { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 240px; border: 1px solid #e0e0e0; padding: 8px 12px; }
     .search input { border: none; outline: none; flex: 1; font-size: 13px; color: #000; font-family: inherit; background: transparent; }
     .filters { display: flex; gap: 0; }
@@ -23,8 +24,11 @@
     .status { font-size: 12px; font-weight: 600; padding: 2px 10px; display: inline-block; }
     .status.active { background: #000; color: #fff; }
     .status.inactive { background: #e0e0e0; color: #666; }
+    .actions { display: flex; gap: 8px; }
     .btn-action { padding: 6px 14px; font-size: 12px; border: 1px solid #e0e0e0; background: #fff; color: #000; cursor: pointer; font-family: inherit; font-weight: 500; }
     .btn-action:hover { background: #f5f5f5; }
+    .btn-action.danger { color: #666; }
+    .btn-action.danger:hover { background: #000; color: #fff; border-color: #000; }
     .empty { padding: 60px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .empty p { margin: 0; font-size: 15px; color: #000; font-weight: 600; }
     .empty span { font-size: 13px; color: #999; }

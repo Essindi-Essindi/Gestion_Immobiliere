@@ -27,7 +27,6 @@
           <option value="">Tous les statuts</option>
           <option value="LOUE">Occupé</option>
           <option value="VACANT">Disponible</option>
-          <option value="EN_TRAVAUX">En maintenance</option>
         </select>
       </div>
 
@@ -70,7 +69,11 @@
         }
       </div>
 
-      @if (filteredLogements().length === 0) {
+      @if (loading()) {
+        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;"><p style="margin: 0; color: #666; font-size: 14px;">Chargement...</p></div>
+      } @else if (error()) {
+        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;"><p style="margin: 0 0 12px; color: #666; font-size: 14px;">{{ error() }}</p><button (click)="refresh()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer;">Réessayer</button></div>
+      } @else if (filteredLogements().length === 0) {
         <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;">
           <p style="margin: 0; color: #666; font-size: 14px;">Aucun logement trouvé</p>
         </div>
@@ -87,6 +90,17 @@
               <button (click)="closeDetail()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
             </div>
             <div style="padding: 20px;">
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Statut</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ getStatusLabel(selected().status) }}</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Locataire du contrat</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().tenantName || 'Aucun' }}</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Occupation</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ occupantCount(selected()) }} occupant(s) - {{ occupancyRate(selected()) }}%</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Loyer</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().rent | montant }} FCFA</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Charges</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().charges | montant }} FCFA</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Pays</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().address.country }}</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Surface</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().surface }} m²</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Pièces</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().pieces.length }} ({{ roomCount(selected()) }} chambre(s)/bureau(x))</p></div>
+                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Type</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().type }}</p></div>
+              </div>
               <h4 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #000; text-transform: uppercase;">Pièces et occupation</h4>
               <div style="border: 1px solid #e0e0e0;">
                 <div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr 110px; gap: 0; background: #f5f5f5; font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">
@@ -193,12 +207,8 @@
                   <input [(ngModel)]="formData.charges" type="number" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
                 </div>
                 <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Statut</label>
-                  <select [(ngModel)]="formData.status" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; background: #fff;">
-                    <option value="LOUE">Occupé</option>
-                    <option value="VACANT">Disponible</option>
-                    <option value="EN_TRAVAUX">En maintenance</option>
-                  </select>
+                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Pays</label>
+                  <input [(ngModel)]="formData.country" placeholder="France" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
                 </div>
               </div>
 

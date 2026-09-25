@@ -37,7 +37,7 @@
                 @for (notif of notifications; track notif.id) {
                 <div
                      class="notification-item"
-                     [class.unread]="!notif.isRead"
+                     [class.unread]="!notif.is_read"
                      (click)="onNotificationClick(notif)">
                   <div [attr.class]="'notification-icon ' + getNotificationIconClass(notif.type)">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,7 +49,7 @@
                   <div class="notification-content">
                     <p class="notification-title">{{ notif.title }}</p>
                     <p class="notification-message">{{ notif.message }}</p>
-                    <span class="notification-time">{{ formatTime(notif.createdAt) }}</span>
+                    <span class="notification-time">{{ formatTime(notif.created_at) }}</span>
                   </div>
                 </div>
                 }

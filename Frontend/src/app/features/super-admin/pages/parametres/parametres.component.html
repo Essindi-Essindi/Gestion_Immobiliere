@@ -122,10 +122,6 @@
               <input type="email" [value]="currentEmail()" readonly style="background: #f5f5f5;">
             </div>
             <div class="form-group">
-              <label>Nouvel email</label>
-              <input type="email" [(ngModel)]="newEmail" placeholder="nouveau@email.com">
-            </div>
-            <div class="form-group">
               <label>Mot de passe actuel</label>
               <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••">
             </div>
@@ -163,10 +159,6 @@
               <input type="email" [(ngModel)]="subForm.email" placeholder="sous.admin@email.com">
             </div>
             <div class="form-group">
-              <label>Téléphone</label>
-              <input type="text" [(ngModel)]="subForm.phone" placeholder="+237 ...">
-            </div>
-            <div class="form-group">
               <label>Mot de passe *</label>
               <input type="password" [(ngModel)]="subForm.password" placeholder="••••••••">
             </div>
@@ -179,20 +171,18 @@
           </div>
 
           <div class="sub-list">
-            @if (subAdmins().length === 0) {
+            @if (subLoading()) {
+              <p class="muted">Chargement...</p>
+            } @else if (subAdmins().length === 0) {
               <p class="muted">Aucun sous-administrateur pour le moment.</p>
             } @else {
               @for (sa of subAdmins(); track sa.id) {
                 <div class="sub-row">
                   <div class="sub-info">
-                    <span class="sub-name">{{ sa.firstName }} {{ sa.lastName }}</span>
+                    <span class="sub-name">{{ sa.first_name }} {{ sa.last_name }}</span>
                     <span class="sub-email">{{ sa.email }}</span>
                   </div>
-                  <span class="status" [class.active]="sa.isActive" [class.inactive]="!sa.isActive">
-                    {{ sa.isActive ? 'Actif' : 'Désactivé' }}
-                  </span>
                   <div class="sub-actions">
-                    <button class="btn-mini" (click)="toggleSubAdmin(sa)">{{ sa.isActive ? 'Désactiver' : 'Activer' }}</button>
                     <button class="btn-mini danger" (click)="deleteSubAdmin(sa)">Supprimer</button>
                   </div>
                 </div>

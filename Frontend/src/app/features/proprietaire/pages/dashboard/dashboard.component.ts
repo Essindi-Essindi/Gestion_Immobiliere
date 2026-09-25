@@ -1,29 +1,37 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '@core/services/mock-data.service';
-import { AuthService } from '@core/auth/auth.service';
+import { DashboardService } from '@core/services/dashboard.service';
+import { NotificationService } from '@core/services/notification.service';
+import { DashboardResponse } from '@core/models/dashboard.model';
+import { NotificationResponse } from '@core/models/notification.model';
 import { MontantPipe, DateFrPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-proprietaire-dashboard',
   standalone: true,
-  imports: [RouterModule, MontantPipe, DateFrPipe],
+  imports: [RouterModule, MontantPipe, DateFrPipe, StateBlockComponent],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
-  stats = signal<any>({});
-  echeances = signal<any[]>([]);
-  notifications = signal<any[]>([]);
-  revenueData = signal<any[]>([]);
-  maxRevenue = computed(() => Math.max(...this.revenueData().map(r => r.value), 1));
+  loading = signal(true);
+  error = signal<string | null>(null);
+
+  stats = signal<DashboardResponse | null>(null);
+  notifications = signal<NotificationResponse[]>([]);
+
+  maxRevenu = computed(() => {
+    const revenus = this.stats()?.revenus_6_mois || [];
+    return Math.max(...revenus.map(r => r.attendu), 1);
+  });
 
   showEcheModal = signal(false);
   echePage = signal(1);
   pageSize = 10;
-  totalEchePages = computed(() => Math.max(1, Math.ceil(this.echeances().length / this.pageSize)));
+  totalEchePages = computed(() => Math.max(1, Math.ceil((this.stats()?.echeances.length || 0) / this.pageSize)));
   pagedEcheances = computed(() => {
     const start = (this.echePage() - 1) * this.pageSize;
-    return this.echeances().slice(start, start + this.pageSize);
+    return (this.stats()?.echeances || []).slice(start, start + this.pageSize);
   });
 
   showNotifModal = signal(false);
@@ -34,13 +42,23 @@ export class DashboardComponent implements OnInit {
     return this.notifications().slice(start, start + this.pageSize);
   });
 
-  constructor(private mockData: MockDataService, private authService: AuthService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
-    this.stats.set(this.mockData.getStats('PROPRIETAIRE'));
-    this.echeances.set(this.mockData.getAll('echeances'));
-    this.notifications.set(this.mockData.getAll('notifications'));
-    this.revenueData.set(this.stats().revenueLast6Months || []);
+    this.dashboardService.bailleur().subscribe({
+      next: (s) => {
+        this.stats.set(s);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossible de charger le tableau de bord');
+        this.loading.set(false);
+      }
+    });
+    this.notificationService.getAll(undefined, 50).subscribe({ next: (n) => this.notifications.set(n), error: () => {} });
   }
 
   openEcheModal(): void { this.echePage.set(1); this.showEcheModal.set(true); }
@@ -64,11 +82,11 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  getTimeAgo(date: Date): string {
+  getTimeAgo(date: Date | string): string {
     const now = new Date();
     const d = new Date(date);
     const diffMs = now.getTime() - d.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
     if (diffDays === 0) return "Aujourd'hui";
     if (diffDays === 1) return 'Hier';
     if (diffDays < 7) return `Il y a ${diffDays}j`;

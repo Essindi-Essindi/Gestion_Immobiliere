@@ -44,12 +44,8 @@
               <label class="field-label" for="confirmPassword">Confirmer mot de passe</label>
               <input id="confirmPassword" class="field-input" type="password" formControlName="confirmPassword" placeholder="••••••••" />
             </div>
-            <button type="submit" class="btn-primary" [disabled]="isLoading() || registerForm.invalid">
-              @if (isLoading()) {
-                <span>Inscription en cours...</span>
-              } @else {
-                <span>S'inscrire</span>
-              }
+            <button type="submit" class="btn-primary" disabled>
+              <span>S'inscrire</span>
             </button>
           </form>
 

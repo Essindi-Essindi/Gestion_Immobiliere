@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
-import { MockDataService } from '@core/services/mock-data.service';
+import { NotificationService } from '@core/services/notification.service';
+import { NotificationResponse } from '@core/models/notification.model';
 
 @Component({
   selector: 'app-header',
@@ -17,14 +18,23 @@ export class HeaderComponent {
   notificationOpen: boolean = false;
   userMenuOpen: boolean = false;
   unreadCount: number = 0;
-  notifications: any[] = [];
+  notifications: NotificationResponse[] = [];
 
   currentUser = this.authService.user;
 
   constructor(
     public authService: AuthService,
-    private mockData: MockDataService
-  ) {}
+    private notificationService: NotificationService
+  ) {
+    this.refreshUnreadCount();
+  }
+
+  refreshUnreadCount(): void {
+    this.notificationService.unreadCount().subscribe({
+      next: (res) => (this.unreadCount = res.count),
+      error: () => {}
+    });
+  }
 
   toggleNotifications(): void {
     this.notificationOpen = !this.notificationOpen;
@@ -44,9 +54,10 @@ export class HeaderComponent {
     this.userMenuOpen = false;
   }
 
-  onNotificationClick(notification: any): void {
-    if (!notification.isRead) {
-      notification.isRead = true;
+  onNotificationClick(notification: NotificationResponse): void {
+    if (!notification.is_read) {
+      this.notificationService.markRead(notification.id).subscribe();
+      notification.is_read = true;
       this.unreadCount = Math.max(0, this.unreadCount - 1);
     }
     this.notificationOpen = false;
@@ -54,9 +65,10 @@ export class HeaderComponent {
 
   markAllAsRead(event: Event): void {
     event.stopPropagation();
-    this.mockData.markAllNotificationsAsRead();
-    this.notifications.forEach(n => n.isRead = true);
-    this.unreadCount = 0;
+    this.notificationService.markAllRead().subscribe(() => {
+      this.notifications.forEach(n => (n.is_read = true));
+      this.unreadCount = 0;
+    });
   }
 
   logout(): void {
@@ -65,9 +77,13 @@ export class HeaderComponent {
   }
 
   loadNotifications(): void {
-    const all = this.mockData.getAll('notifications');
-    this.notifications = all;
-    this.unreadCount = all.filter(n => !n.isRead).length;
+    this.notificationService.getAll(undefined, 20).subscribe({
+      next: (all) => {
+        this.notifications = all;
+        this.unreadCount = all.filter(n => !n.is_read).length;
+      },
+      error: () => {}
+    });
   }
 
   getNotificationIconClass(type: string): string {

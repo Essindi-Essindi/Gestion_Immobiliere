@@ -16,13 +16,8 @@
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <select (change)="onFilterMonth($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
-          <option value="">Tous les mois</option>
-          <option value="10">Octobre 2026</option>
-          <option value="9">Septembre 2026</option>
-          <option value="8">Août 2026</option>
-        </select>
+        <input (change)="onFilterPeriod($event)" type="month"
+          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;"/>
         <select (change)="onFilterStatus($event)"
           style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
           <option value="">Tous les statuts</option>
@@ -32,89 +27,90 @@
         </select>
       </div>
 
-      @if (arrears().length > 0) {
-        <div style="background: #fff; border: 1px solid #000; margin-bottom: 24px;">
-          <div style="padding: 14px 20px; border-bottom: 1px solid #e0e0e0; background: #000;">
-            <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #fff;">Mois impayés par locataire ({{ arrears().length }})</h2>
-          </div>
-          <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 10px;">
-            @for (a of arrears(); track a.locataireId) {
-              <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e0e0e0; flex-wrap: wrap;">
-                <span style="font-size: 14px; font-weight: 700; color: #000;">{{ a.locataireNom }}</span>
-                <span style="font-size: 11px; background: #000; color: #fff; padding: 3px 8px; font-weight: 700;">{{ a.months.length }} mois impayé(s)</span>
-                <span style="font-size: 12px; color: #666;">{{ a.monthLabels }}</span>
-                <span style="margin-left: auto; font-size: 14px; font-weight: 700; color: #000;">Total dû : {{ a.total | montant }} FCFA</span>
-                <button (click)="remindAll(a)" title="Rappeler tous les impayés"
-                  style="background: #000; color: #fff; border: none; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      }
-
-      @for (group of groupedPaiements(); track group.logementId) {
-        <div style="margin-bottom: 24px;">
-          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <h2 style="margin: 0; font-size: 17px; font-weight: 700; color: #000;">{{ group.address }}</h2>
-            <span style="font-size: 11px; color: #666; background: #fff; border: 1px solid #e0e0e0; padding: 3px 8px;">{{ group.items.length }} paiement(s)</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-            @for (paiement of group.items; track paiement.id) {
-              <div style="background: #fff; border: 1px solid #e0e0e0; padding: 16px; display: flex; align-items: center; gap: 14px;">
-                <div style="width: 44px; height: 44px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0;">
-                  {{ paiement.locataireNom.charAt(0) }}
+      <app-state-block [loading]="loading()" [error]="error()">
+        @if (arrears().length > 0) {
+          <div style="background: #fff; border: 1px solid #000; margin-bottom: 24px;">
+            <div style="padding: 14px 20px; border-bottom: 1px solid #e0e0e0; background: #000;">
+              <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #fff;">Mois impayés par locataire ({{ arrears().length }})</h2>
+            </div>
+            <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 10px;">
+              @for (a of arrears(); track a.locataire_id) {
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e0e0e0; flex-wrap: wrap;">
+                  <span style="font-size: 14px; font-weight: 700; color: #000;">{{ a.locataire_name }}</span>
+                  <span style="font-size: 11px; background: #000; color: #fff; padding: 3px 8px; font-weight: 700;">{{ a.nb_mois }} mois impayé(s)</span>
+                  <span style="font-size: 12px; color: #666;">{{ a.logement_address }} : {{ monthlabels(a.periods) }}</span>
+                  <span style="margin-left: auto; font-size: 14px; font-weight: 700; color: #000;">Total dû : {{ a.total_du | montant }} FCFA</span>
+                  <button (click)="remindAll(a)" title="Rappeler tous les impayés"
+                    style="background: #000; color: #fff; border: none; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  </button>
                 </div>
-                <div style="flex: 1; min-width: 0;">
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-                    <span style="font-size: 14px; font-weight: 700; color: #000;">{{ paiement.locataireNom }}</span>
-                    @if (paiement.roomNumber) {
-                      <span style="font-size: 10px; background: #000; color: #fff; padding: 2px 6px; font-weight: 600;">{{ paiement.roomNumber }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @for (group of groupedLoyers(); track group.logementId) {
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <h2 style="margin: 0; font-size: 17px; font-weight: 700; color: #000;">{{ group.address }}</h2>
+              <span style="font-size: 11px; color: #666; background: #fff; border: 1px solid #e0e0e0; padding: 3px 8px;">{{ group.items.length }} paiement(s)</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+              @for (loyer of group.items; track loyer.id) {
+                <div style="background: #fff; border: 1px solid #e0e0e0; padding: 16px; display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 44px; height: 44px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0;">
+                    {{ loyer.locataire_name.charAt(0) }}
+                  </div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                      <span style="font-size: 14px; font-weight: 700; color: #000;">{{ loyer.locataire_name }}</span>
+                      @if (loyer.piece_numero) {
+                        <span style="font-size: 10px; background: #000; color: #fff; padding: 2px 6px; font-weight: 600;">{{ loyer.piece_numero }}</span>
+                      }
+                    </div>
+                    <p style="margin: 0; font-size: 13px; color: #666;">{{ monthlabel(loyer.period) }} - <strong style="color: #000;">{{ loyer.amount | montant }} FCFA</strong></p>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                      <span [style.background]="getStatusBg(loyer.status)" [style.color]="getStatusColor(loyer.status)"
+                        style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
+                        {{ getStatusLabel(loyer.status) }}
+                      </span>
+                      <select [value]="loyer.status" (change)="changeStatus(loyer, $event)"
+                        style="font-size: 12px; padding: 4px 8px; border: 1px solid #e0e0e0; background: #fff; outline: none;">
+                        <option value="PAYE">Payé</option>
+                        <option value="EN_ATTENTE">En attente</option>
+                        <option value="EN_RETARD">En retard</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                    @if (loyer.status !== 'PAYE') {
+                      <button (click)="sendReminder(loyer)" [disabled]="recent(loyer)" title="Envoyer un rappel"
+                        [style.background]="recent(loyer) ? '#f5f5f5' : '#000'"
+                        [style.color]="recent(loyer) ? '#999' : '#fff'"
+                        style="border: none; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                      </button>
+                      @if (recent(loyer)) {
+                        <p style="margin: 0; font-size: 10px; color: #999; text-align: center;">Rappel envoyé</p>
+                      }
+                    } @else {
+                      <button (click)="generateReceipt(loyer)" title="Générer la quittance"
+                        style="background: #fff; color: #000; border: 1px solid #000; padding: 6px 10px; font-size: 11px; cursor: pointer; font-weight: 600;">Quittance</button>
                     }
                   </div>
-                  <p style="margin: 0; font-size: 13px; color: #666;">{{ getMonthName(paiement.month) }} {{ paiement.year }} - <strong style="color: #000;">{{ paiement.amount | montant }} FCFA</strong></p>
-                  <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                    <span [style.background]="getStatusBg(paiement.status)" [style.color]="getStatusColor(paiement.status)"
-                      style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
-                      {{ getStatusLabel(paiement.status) }}
-                    </span>
-                    <select [value]="paiement.status" (change)="changeStatus(paiement, $event)"
-                      style="font-size: 12px; padding: 4px 8px; border: 1px solid #e0e0e0; background: #fff; outline: none;">
-                      <option value="PAYE">Payé</option>
-                      <option value="EN_ATTENTE">En attente</option>
-                      <option value="EN_RETARD">En retard</option>
-                    </select>
-                  </div>
                 </div>
-                <div style="flex-shrink: 0;">
-                  @if (paiement.status !== 'PAYE') {
-                    <button (click)="sendRappel(paiement)" [disabled]="paiement.rappelSent" title="Envoyer un rappel"
-                      [style.background]="paiement.rappelSent ? '#f5f5f5' : '#000'"
-                      [style.color]="paiement.rappelSent ? '#999' : '#fff'"
-                      style="border: none; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    </button>
-                    @if (paiement.rappelSent) {
-                      <p style="margin: 4px 0 0; font-size: 10px; color: #999; text-align: center;">Rappel envoyé</p>
-                    }
-                  } @else {
-                    <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #f5f5f5;">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    </span>
-                  }
-                </div>
-              </div>
-            }
+              }
+            </div>
           </div>
-        </div>
-      }
+        }
 
-      @if (groupedPaiements().length === 0) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Aucun paiement trouvé</p>
-        </div>
-      }
+        @if (groupedLoyers().length === 0) {
+          <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
+            <p style="margin: 0; color: #666; font-size: 14px;">Aucun paiement trouvé</p>
+          </div>
+        }
+      </app-state-block>
     </div>

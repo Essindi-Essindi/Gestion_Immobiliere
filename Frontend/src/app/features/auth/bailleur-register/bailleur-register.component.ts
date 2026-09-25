@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
-import { MockAuthService } from '@core/auth/mock-auth.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-bailleur-register',
@@ -13,13 +12,11 @@ import { MockAuthService } from '@core/auth/mock-auth.service';
 export class BailleurRegisterComponent {
   registerForm: FormGroup;
   isLoading = signal(false);
-  errorMessage = signal('');
+  // l'inscription en self-service n'existe pas cote backend, les bailleurs sont crees par un admin
+  // self-service registration has no backend endpoint, bailleurs are created by an admin
+  errorMessage = signal("L'inscription en ligne n'est pas disponible pour le moment. Contactez un administrateur pour créer votre compte bailleur.");
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: MockAuthService,
-    private router: Router
-  ) {
+  constructor(private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       lastName: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
@@ -32,29 +29,6 @@ export class BailleurRegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) return;
-    const formValue = this.registerForm.value;
-    if (formValue.password !== formValue.confirmPassword) {
-      this.errorMessage.set('Les mots de passe ne correspondent pas');
-      return;
-    }
-    this.isLoading.set(true);
-    this.errorMessage.set('');
-    this.authService.register({
-      email: formValue.email,
-      password: formValue.password,
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      role: 'PROPRIETAIRE',
-      phone: formValue.phone,
-      company: formValue.company
-    })
-      .then(() => {
-        this.router.navigate(['/proprietaire/dashboard']);
-      })
-      .catch((err: Error) => {
-        this.errorMessage.set(err.message);
-        this.isLoading.set(false);
-      });
+    // formulaire volontairement non branche, cf errorMessage
   }
 }

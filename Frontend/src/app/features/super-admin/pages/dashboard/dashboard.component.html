@@ -1,95 +1,77 @@
 <div class="page">
-      <div class="page-header">
-        <h1>Tableau de bord</h1>
-        <p>Vue d'ensemble de la plateforme</p>
-      </div>
+  <div class="page-header">
+    <h1>Tableau de bord</h1>
+    <p>Vue d'ensemble de la plateforme</p>
+  </div>
 
-      <div class="stats-grid">
-        @for (stat of stats(); track stat.label) {
-          <div class="stat-card">
-            <div class="stat-icon">
-              <span [innerHTML]="stat.icon"></span>
-            </div>
-            <div class="stat-info">
-              <span class="stat-value">{{ stat.value }}</span>
-              <span class="stat-label">{{ stat.label }}</span>
-            </div>
-            <div class="stat-change" [class.up]="stat.changeUp" [class.down]="!stat.changeUp">
-              {{ stat.change }}
-            </div>
+  <app-state-block [loading]="loading()" [error]="error()" [empty]="false">
+    <div class="stats-grid">
+      @for (stat of stats(); track stat.label) {
+        <div class="stat-card">
+          <div class="stat-icon">
+            <span [innerHTML]="stat.icon"></span>
           </div>
-        }
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-header">
-            <h2>Revenus mensuels</h2>
-          </div>
-          <div class="card-body">
-            <div class="bar-chart">
-              @for (bar of barData(); track bar.label) {
-                <div class="bar-group">
-                  <div class="bar-wrapper">
-                    <div class="bar" [style.height.%]="bar.height"></div>
-                  </div>
-                  <span class="bar-label">{{ bar.label }}</span>
-                  <span class="bar-value">{{ bar.value }}</span>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <h2>Activité récente</h2>
-          </div>
-          <div class="card-body">
-            <div class="activity-list">
-              @for (a of activities().slice(0, 6); track a.id) {
-                <div class="activity-item">
-                  <div class="activity-dot" [class]="'dot-' + a.type"></div>
-                  <div class="activity-content">
-                    <p class="activity-text"><strong>{{ a.user }}</strong> {{ a.action }} <span class="activity-target">{{ a.target }}</span></p>
-                    <span class="activity-time">{{ a.time }}</span>
-                  </div>
-                </div>
-              }
-            </div>
-            <button class="btn-more" (click)="openActivityModal()">Voir plus ({{ activities().length }})</button>
-          </div>
-        </div>
-      </div>
-
-      @if (showActivityModal()) {
-        <div class="modal-overlay" (click)="closeActivityModal()">
-          <div class="modal" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-              <h2>Toute l'activité ({{ activities().length }})</h2>
-              <button class="modal-close" (click)="closeActivityModal()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="activity-list">
-                @for (a of pagedActivities(); track a.id) {
-                  <div class="activity-item">
-                    <div class="activity-dot" [class]="'dot-' + a.type"></div>
-                    <div class="activity-content">
-                      <p class="activity-text"><strong>{{ a.user }}</strong> {{ a.action }} <span class="activity-target">{{ a.target }}</span></p>
-                      <span class="activity-time">{{ a.time }}</span>
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-            <div class="modal-footer pagination">
-              <button class="btn-outline" [disabled]="activityPage() === 1" (click)="activityPrev()">‹ Précédent</button>
-              <span class="page-info">Page {{ activityPage() }} / {{ totalActivityPages() }}</span>
-              <button class="btn-black" [disabled]="activityPage() === totalActivityPages()" (click)="activityNext()">Suivant ›</button>
-            </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
           </div>
         </div>
       }
     </div>
+
+    <!-- pas de tendance/graphique cote backend, seul le total du mois est disponible -->
+    <!-- no trend/chart from the backend, only this month's total is available -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Activité récente</h2>
+      </div>
+      <div class="card-body">
+        <div class="activity-list">
+          @for (a of activities(); track a.id) {
+            <div class="activity-item">
+              <div class="activity-dot" [class]="dotClass(a.type)"></div>
+              <div class="activity-content">
+                <p class="activity-text"><strong>{{ a.user }}</strong> {{ a.details }}</p>
+                <span class="activity-time">{{ a.date }}</span>
+              </div>
+            </div>
+          }
+        </div>
+        <button class="btn-more" (click)="openActivityModal()">Voir plus</button>
+      </div>
+    </div>
+  </app-state-block>
+
+  @if (showActivityModal()) {
+    <div class="modal-overlay" (click)="closeActivityModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Journal d'activité</h2>
+          <button class="modal-close" (click)="closeActivityModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-state-block [loading]="modalLoading()" [error]="null" [empty]="modalActivities().length === 0" emptyMessage="Aucune activité.">
+            <div class="activity-list">
+              @for (a of modalActivities(); track a.id) {
+                <div class="activity-item">
+                  <div class="activity-dot" [class]="dotClass(a.type)"></div>
+                  <div class="activity-content">
+                    <p class="activity-text"><strong>{{ a.user }}</strong> {{ a.details }}</p>
+                    <span class="activity-time">{{ a.date }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </app-state-block>
+        </div>
+        <div class="modal-footer pagination">
+          <button class="btn-outline" [disabled]="activityPage() === 1" (click)="activityPrev()">‹ Précédent</button>
+          <span class="page-info">Page {{ activityPage() }} / {{ totalActivityPages() }}</span>
+          <button class="btn-black" [disabled]="activityPage() === totalActivityPages()" (click)="activityNext()">Suivant ›</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

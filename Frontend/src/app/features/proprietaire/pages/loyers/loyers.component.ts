@@ -1,109 +1,128 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '@core/services/mock-data.service';
+import { FormsModule } from '@angular/forms';
+import { LoyerService } from '@core/services/loyer.service';
 import { ToastService } from '@core/services/toast.service';
 import { MontantPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
+import { ArrieresResponse, LoyerResponse, StatutLoyer } from '@core/models/loyer.model';
 
 @Component({
   selector: 'app-loyers',
   standalone: true,
-  imports: [RouterModule, MontantPipe],
+  imports: [RouterModule, FormsModule, MontantPipe, StateBlockComponent],
   templateUrl: './loyers.component.html'
 })
 export class LoyersComponent implements OnInit {
-  paiements = signal<any[]>([]);
-  filteredPaiements = signal<any[]>([]);
-  filterMonth = '';
-  filterStatus = '';
+  loading = signal(true);
+  error = signal<string | null>(null);
 
-  totalReceived = computed(() => this.filteredPaiements().filter(p => p.status === 'PAYE').reduce((sum, p) => sum + p.amount, 0));
-  pendingAmount = computed(() => this.filteredPaiements().filter(p => p.status !== 'PAYE').reduce((sum, p) => sum + p.amount, 0));
+  loyers = signal<LoyerResponse[]>([]);
+  allLoyers = signal<LoyerResponse[]>([]);
+  arrears = signal<ArrieresResponse[]>([]);
+  filterPeriod = '';
+  filterStatus: StatutLoyer | '' = '';
 
-  groupedPaiements = computed(() => {
-    const map = new Map<string, any>();
-    for (const p of this.filteredPaiements()) {
-      if (p.type !== 'LOYER') continue;
-      if (!map.has(p.logementId)) {
-        map.set(p.logementId, { logementId: p.logementId, address: p.logementAddress, items: [] });
+  totalReceived = computed(() => this.loyers().filter(l => l.status === 'PAYE').reduce((sum, l) => sum + l.amount, 0));
+  pendingAmount = computed(() => this.loyers().filter(l => l.status !== 'PAYE').reduce((sum, l) => sum + l.amount, 0));
+
+  groupedLoyers = computed(() => {
+    const map = new Map<string, { logementId: string; address: string; items: LoyerResponse[] }>();
+    for (const l of this.loyers()) {
+      if (!map.has(l.logement_id)) {
+        map.set(l.logement_id, { logementId: l.logement_id, address: l.logement_address, items: [] });
       }
-      map.get(p.logementId).items.push(p);
+      map.get(l.logement_id)!.items.push(l);
     }
     return Array.from(map.values());
   });
 
-  arrears = computed(() => {
-    const map = new Map<string, any>();
-    for (const p of this.paiements()) {
-      if (p.type !== 'LOYER') continue;
-      if (p.status === 'PAYE') continue;
-      if (!map.has(p.locataireId)) {
-        map.set(p.locataireId, { locataireId: p.locataireId, locataireNom: p.locataireNom, logementAddress: p.logementAddress, months: [], total: 0 });
-      }
-      const entry = map.get(p.locataireId);
-      entry.months.push(p);
-      entry.total += p.amount;
-    }
-    return Array.from(map.values()).map(a => ({
-      ...a,
-      months: a.months.sort((x: any, y: any) => (y.year - x.year) || (y.month - x.month)),
-      monthLabels: a.months
-        .sort((x: any, y: any) => (y.year - x.year) || (y.month - x.month))
-        .map((m: any) => this.getMonthName(m.month) + ' ' + m.year).join(', ')
-    }));
-  });
-
-  constructor(private mockData: MockDataService, private toast: ToastService) {}
+  constructor(private loyerService: LoyerService, private toast: ToastService) {}
 
   ngOnInit(): void {
     this.refresh();
   }
 
   refresh(): void {
-    this.paiements.set(this.mockData.getAll('paiements'));
-    this.applyFilters();
+    this.loading.set(true);
+    this.error.set(null);
+    this.loyerService.getAll({
+      period: this.filterPeriod || undefined,
+      status: (this.filterStatus || undefined) as StatutLoyer | undefined
+    }).subscribe({
+      next: (data) => {
+        this.loyers.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossible de charger les loyers');
+        this.loading.set(false);
+      }
+    });
+    // liste complete (sans filtre) pour pouvoir rappeler tous les mois impayes d'un locataire
+    this.loyerService.getAll().subscribe({ next: (all) => this.allLoyers.set(all), error: () => {} });
+    this.loyerService.arrears().subscribe({ next: (a) => this.arrears.set(a), error: () => {} });
   }
 
-  applyFilters(): void {
-    let result = this.paiements();
-    if (this.filterMonth) result = result.filter(p => p.month === Number(this.filterMonth));
-    if (this.filterStatus) result = result.filter(p => p.status === this.filterStatus);
-    this.filteredPaiements.set(result);
-  }
-
-  onFilterMonth(event: Event): void {
-    this.filterMonth = (event.target as HTMLSelectElement).value;
-    this.applyFilters();
+  onFilterPeriod(event: Event): void {
+    this.filterPeriod = (event.target as HTMLInputElement).value;
+    this.refresh();
   }
   onFilterStatus(event: Event): void {
-    this.filterStatus = (event.target as HTMLSelectElement).value;
-    this.applyFilters();
-  }
-
-  changeStatus(paiement: any, event: Event): void {
-    const status = (event.target as HTMLSelectElement).value;
-    this.mockData.setPaiementStatus(paiement.id, status);
+    this.filterStatus = (event.target as HTMLSelectElement).value as StatutLoyer | '';
     this.refresh();
-    this.toast.success('Statut mis à jour', `${paiement.locataireNom} : ${this.getStatusLabel(status)}`);
   }
 
-  sendRappel(paiement: any): void {
-    this.mockData.sendRappel(paiement.id);
-    this.refresh();
-    this.toast.success('Rappel envoyé', `Un rappel de paiement a été envoyé à ${paiement.locataireNom}`);
+  changeStatus(loyer: LoyerResponse, event: Event): void {
+    const status = (event.target as HTMLSelectElement).value as StatutLoyer;
+    this.loyerService.setStatus(loyer.id, status).subscribe({
+      next: () => {
+        this.toast.success('Statut mis à jour', `${loyer.locataire_name} : ${this.getStatusLabel(status)}`);
+        this.refresh();
+      },
+      error: () => this.toast.error('Erreur', 'Impossible de mettre à jour le statut')
+    });
   }
 
-  remindAll(a: any): void {
-    for (const m of a.months) {
-      this.mockData.sendRappel(m.id);
-    }
-    this.refresh();
-    this.toast.success('Rappels envoyés', `${a.months.length} rappel(s) envoyé(s) à ${a.locataireNom} (${a.monthLabels})`);
+  sendReminder(loyer: LoyerResponse): void {
+    this.loyerService.reminder(loyer.id).subscribe({
+      next: () => {
+        this.toast.success('Rappel envoyé', `Un rappel de paiement a été envoyé à ${loyer.locataire_name}`);
+        this.refresh();
+      },
+      error: () => this.toast.error('Erreur', "Impossible d'envoyer le rappel")
+    });
   }
 
-  getMonthName(month: number): string {
-    const months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-    return months[month] || '';
+  remindAll(a: ArrieresResponse): void {
+    const unpaid = this.allLoyers().filter(l => l.locataire_id === a.locataire_id && l.status !== 'PAYE' && !this.recent(l));
+    if (unpaid.length === 0) return;
+    unpaid.forEach(l => this.loyerService.reminder(l.id).subscribe());
+    this.toast.success('Rappels envoyés', `${unpaid.length} rappel(s) envoyé(s) à ${a.locataire_name}`);
   }
+
+  generateReceipt(loyer: LoyerResponse): void {
+    this.loyerService.receipt(loyer.id).subscribe({
+      next: () => this.toast.success('Quittance générée', `Quittance créée pour ${loyer.locataire_name} - voir la page Quittances`),
+      error: () => this.toast.error('Erreur', 'Impossible de générer la quittance')
+    });
+  }
+
+  // rappel deja envoye il y a moins de 24 h (meme regle que le backend) / reminder sent within 24h (same rule as backend)
+  recent(loyer: LoyerResponse): boolean {
+    return !!loyer.reminder_sent_at && Date.now() - new Date(loyer.reminder_sent_at).getTime() < 24 * 3600 * 1000;
+  }
+
+  monthlabel(period: string): string {
+    const [y, m] = period.split("-");
+    const names = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+    return (names[Number(m) - 1] || period) + " " + y;
+  }
+
+  monthlabels(periods: string[]): string {
+    return (periods || []).map(p => this.monthlabel(p)).join(", ");
+  }
+
   getStatusLabel(status: string): string {
     switch (status) {
       case 'PAYE': return 'Payé';
