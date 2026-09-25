@@ -1,24 +1,27 @@
 package customer_complaint.gestion_immobiliere.service;
 
-import customer_complaint.gestion_immobiliere.model.Contrat;
-import customer_complaint.gestion_immobiliere.model.Locataire;
-import customer_complaint.gestion_immobiliere.model.Signalement;
+import customer_complaint.gestion_immobiliere.dto.ContratResponse;
+import customer_complaint.gestion_immobiliere.dto.LocataireRequest;
+import customer_complaint.gestion_immobiliere.dto.LocataireResponse;
+import customer_complaint.gestion_immobiliere.dto.SignalementRequest;
+import customer_complaint.gestion_immobiliere.dto.SignalementResponse;
 
 import java.util.List;
 
 public interface ServiceLocataire {
 
-    Locataire create(Locataire locataire);
+    LocataireResponse create(LocataireRequest request);
 
-    List<Locataire> list();
+    // logement_id : filtre optionnel / optional filter
+    List<LocataireResponse> list(Long logement_id);
 
-    Locataire get(Long id);
+    LocataireResponse get(Long id);
 
-    Locataire update(Long id, Locataire locataire);
+    LocataireResponse update(Long id, LocataireRequest request);
 
     void delete(Long id);
 
-    Signalement report_issue(Signalement signalement);
+    SignalementResponse report_issue(Long id, SignalementRequest request);
 
-    Contrat view_contract(Long id);
+    ContratResponse view_contract(Long id);
 }
