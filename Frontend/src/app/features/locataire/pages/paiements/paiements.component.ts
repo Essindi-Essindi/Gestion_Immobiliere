@@ -1,64 +1,63 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MockDataService } from '@core/services/mock-data.service';
-import { AuthService } from '@core/auth/auth.service';
-import { ToastService } from '@core/services/toast.service';
+import { EspaceLocataireService } from '@core/services/espace-locataire.service';
+import { PaiementResponse } from '@core/models/espace-locataire.model';
+import { StatutLoyer } from '@core/models/loyer.model';
 import { MontantPipe, DateFrPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-paiements',
   standalone: true,
-  imports: [RouterModule, FormsModule, MontantPipe, DateFrPipe],
+  imports: [RouterModule, FormsModule, MontantPipe, DateFrPipe, StateBlockComponent],
   templateUrl: './paiements.component.html'
 })
 export class PaiementsComponent implements OnInit {
-  locataire: any = null;
-  allPaiements: any[] = [];
-  filteredPaiements: any[] = [];
+  paiements = signal<PaiementResponse[]>([]);
+  totalPaye = signal(0);
+  loading = signal(true);
+  error = signal<string | null>(null);
   filterYear = 'all';
   filterStatus = 'all';
-  totalPaye = 0;
-  totalEnAttente = 0;
-  totalEnRetard = 0;
+
+  years = this.recentYears();
   months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-  constructor(
-    private mockDataService: MockDataService,
-    private authService: AuthService,
-    private toastService: ToastService
-  ) {}
+  totalEnAttente = computed(() => this.paiements().filter(p => p.status === 'EN_ATTENTE').reduce((sum, p) => sum + p.amount, 0));
+  totalEnRetard = computed(() => this.paiements().filter(p => p.status === 'EN_RETARD').reduce((sum, p) => sum + p.amount, 0));
+
+  constructor(private espaceLocataireService: EspaceLocataireService) {}
 
   ngOnInit(): void {
-    const user = this.authService.user();
-    this.locataire = this.mockDataService.resolveLocataireForUser(user);
     this.refresh();
   }
 
   refresh(): void {
-    if (!this.locataire) return;
-    this.allPaiements = this.mockDataService.getPaiementsForLocataire(this.locataire.id)
-      .filter((p: any) => p.type === 'LOYER')
-      .sort((a: any, b: any) => (b.year - a.year) || (b.month - a.month));
-    this.calculateTotals();
-    this.applyFilters();
-  }
-
-  calculateTotals(): void {
-    this.totalPaye = this.allPaiements.filter(p => p.status === 'PAYE').reduce((sum, p) => sum + p.amount, 0);
-    this.totalEnAttente = this.allPaiements.filter(p => p.status === 'EN_ATTENTE').reduce((sum, p) => sum + p.amount, 0);
-    this.totalEnRetard = this.allPaiements.filter(p => p.status === 'EN_RETARD').reduce((sum, p) => sum + p.amount, 0);
-  }
-
-  applyFilters(): void {
-    this.filteredPaiements = this.allPaiements.filter(p => {
-      const yearMatch = this.filterYear === 'all' || String(p.year) === this.filterYear;
-      const statusMatch = this.filterStatus === 'all' || p.status === this.filterStatus;
-      return yearMatch && statusMatch;
+    this.loading.set(true);
+    const year = this.filterYear === 'all' ? undefined : Number(this.filterYear);
+    const status = this.filterStatus === 'all' ? undefined : (this.filterStatus as StatutLoyer);
+    this.espaceLocataireService.paiements(year, status).subscribe({
+      next: res => {
+        this.paiements.set(res.items);
+        this.totalPaye.set(res.total_paye);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossible de charger vos paiements.');
+        this.loading.set(false);
+      }
     });
   }
 
-  getMonthName(month: number): string {
-    return this.months[month] || '';
+  private recentYears(): number[] {
+    const current = new Date().getFullYear();
+    return [current, current - 1, current - 2];
+  }
+
+  periodLabel(period: string): string {
+    const [year, month] = period.split('-');
+    const idx = Number(month);
+    return idx ? `${this.months[idx]} ${year}` : period;
   }
 }

@@ -1,37 +1,52 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '@core/services/mock-data.service';
-import { AuthService } from '@core/auth/auth.service';
+import { forkJoin, of, catchError } from 'rxjs';
+import { EspaceLocataireService } from '@core/services/espace-locataire.service';
 import { MontantPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-logement',
   standalone: true,
-  imports: [RouterModule, MontantPipe],
+  imports: [RouterModule, MontantPipe, StateBlockComponent],
   templateUrl: './logement.component.html'
 })
 export class LogementComponent implements OnInit {
   logement: any = {};
   locataire: any = null;
   colocataires: any[] = [];
+  loading = signal(true);
+  error = signal<string | null>(null);
 
-  constructor(private mockDataService: MockDataService, private authService: AuthService) {}
+  constructor(private espaceLocataireService: EspaceLocataireService) {}
 
   ngOnInit(): void {
-    const user = this.authService.user();
-    this.locataire = this.mockDataService.resolveLocataireForUser(user);
-    if (this.locataire) {
-      this.logement = this.mockDataService.getById('logements', this.locataire.logementId) || {};
-      this.colocataires = this.mockDataService.getAll('locataires')
-        .filter((l: any) => l.id !== this.locataire.id && l.logementId === this.locataire.logementId);
-    }
+    forkJoin({
+      l: this.espaceLocataireService.logement(),
+      p: this.espaceLocataireService.profile(),
+      c: this.espaceLocataireService.contrat().pipe(catchError(() => of(null)))
+    }).subscribe({
+      next: ({ l, p, c }) => {
+        this.locataire = { id: String(p.id), roomNumber: p.piece_numero };
+        this.logement = {
+          status: l.status, type: l.type, surface: l.area, rent: l.rent, charges: l.charges, deposit: c?.deposit ?? 0,
+          address: { street: l.address, city: l.city, postalCode: l.postal_code },
+          pieces: (l.pieces || []).map(x => ({ numero: x.numero, type: x.type, capacite: x.capacite, occupants: x.occupants || [] }))
+        };
+        // colocataires = occupants des chambres sauf moi / roommates = room occupants except me
+        this.colocataires = (l.pieces || []).flatMap(x => (x.occupants || [])
+          .filter(o => String(o.locataire_id) !== this.locataire.id)
+          .map(o => ({ id: o.locataire_id, firstName: o.nom, roomNumber: x.numero })));
+        this.loading.set(false);
+      },
+      error: () => { this.error.set('Impossible de charger votre logement.'); this.loading.set(false); }
+    });
   }
 
   statusLabel(s: string): string {
     switch (s) {
       case 'LOUE': return 'Loué';
       case 'VACANT': return 'Vacant';
-      case 'EN_TRAVAUX': return 'En travaux';
       default: return s || '';
     }
   }

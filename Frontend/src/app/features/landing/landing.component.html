@@ -20,100 +20,212 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-      <h1 class="hero-title">Gérez vos biens immobiliers simplement</h1>
+      <span class="hero-badge">La gestion locative, enfin simple</span>
+      <h1 class="hero-title">Encaissez vos loyers à temps. Louez l'esprit tranquille.</h1>
       <p class="hero-subtitle">
-        La plateforme complète pour bailleurs, locataires et administrateurs.
-        Suivez vos loyers, contrats, interventions et bien plus.
+        Logements, chambres, locataires, contrats, loyers, quittances et interventions :
+        tout votre patrimoine immobilier dans un seul tableau de bord, clair et sécurisé.
       </p>
       <div class="hero-buttons">
-        <a routerLink="/auth/bailleur/register" class="btn-primary">Commencer gratuitement</a>
+        <a routerLink="/auth/bailleur/register" class="btn-primary">Créer mon compte bailleur</a>
         <a routerLink="/auth/bailleur/login" class="btn-outline">Se connecter</a>
+      </div>
+      <ul class="hero-trust">
+        <li>Inscription en 2 minutes</li>
+        <li>Aucune installation</li>
+        <li>Accessible sur mobile et ordinateur</li>
+      </ul>
+
+      <div class="hero-mock">
+        <div class="mock-bar"><span></span><span></span><span></span></div>
+        <div class="mock-body">
+          <div class="mock-stat"><small>Loyers</small><strong>Suivis en direct</strong><em>payés, en attente, en retard</em></div>
+          <div class="mock-stat"><small>Occupation</small><strong>Chambre par chambre</strong><em>qui loge où, en temps réel</em></div>
+          <div class="mock-stat"><small>Relances</small><strong>Par e-mail</strong><em>en un clic sur la cloche</em></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem / Solution strip -->
+    <section class="pain-section">
+      <div class="pain-inner">
+        <h2>Fini les tableurs, les relances oubliées et les quittances perdues.</h2>
+        <div class="pain-grid">
+          <div>
+            <span class="pain-before">Avant</span>
+            <p>Des fichiers éparpillés, des loyers suivis de mémoire, des appels pour chaque panne.</p>
+          </div>
+          <div class="pain-arrow">→</div>
+          <div>
+            <span class="pain-after">Avec Gestion Immobilière</span>
+            <p>Une seule plateforme : chaque loyer, chaque contrat et chaque demande est suivi et retrouvé en quelques secondes.</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Features Section -->
     <section id="features" class="features-section">
-      <h2 class="section-title">Fonctionnalités</h2>
-      <p class="section-subtitle">Une solution complète adaptée à chaque profil d'utilisateur</p>
+      <h2 class="section-title">Tout ce qu'il faut pour gérer sereinement</h2>
+      <p class="section-subtitle">Des outils concrets, pensés pour les bailleurs et simples pour les locataires</p>
 
       <div class="features-grid">
-        <!-- Bailleurs -->
         <div class="feature-card">
           <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-              stroke="#fff" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <rect x="1" y="6" width="22" height="16" rx="0" ry="0"/>
-              <line x1="1" y1="14" x2="23" y2="14"/>
-              <line x1="8" y1="6" x2="8" y2="22"/>
-              <line x1="16" y1="6" x2="16" y2="22"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
-          <h3>Pour les Bailleurs</h3>
-          <p>
-            Gérez vos propriétés, locataires et contrats de bail en un seul endroit.
-            Suivez les paiements de loyers, gérez les quittances et visualisez
-            les statistiques de vos revenus locatifs.
-          </p>
+          <h3>Logements et chambres</h3>
+          <p>Décrivez chaque bien avec ses pièces, sa capacité et ses occupants. Colocation ou logement entier : vous voyez qui occupe quelle chambre.</p>
         </div>
 
-        <!-- Locataires -->
         <div class="feature-card">
           <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-              stroke="#fff" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
-          <h3>Pour les Locataires</h3>
-          <p>
-            Consultez l'historique de vos paiements, téléchargez vos quittances
-            et signalez des problèmes techniques directement depuis votre espace.
-            Restez informé de l'état de vos interventions.
-          </p>
+          <h3>Invitation des locataires</h3>
+          <p>Invitez un locataire par e-mail : il choisit lui-même son mot de passe et accède à son espace personnel en toute sécurité.</p>
         </div>
 
-        <!-- Administrateurs -->
         <div class="feature-card">
           <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-              stroke="#fff" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
-          <h3>Pour les Administrateurs</h3>
-          <p>
-            Administrez l'ensemble de la plateforme. Gérez les abonnements,
-            supervisez les utilisateurs, configurez les permissions et
-            contrôlez le bon fonctionnement du système.
-          </p>
+          <h3>Contrats en PDF</h3>
+          <p>Stockez et partagez les contrats de bail. Le locataire retrouve son document à tout moment dans son espace.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>Loyers et relances</h3>
+          <p>Repérez les impayés d'un regard et relancez le locataire par e-mail en un clic. Fini les oublis et les appels gênants.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><rect x="1" y="4" width="22" height="16"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </div>
+          <h3>Quittances</h3>
+          <p>Une fois le loyer payé, émettez la quittance : votre locataire la télécharge quand il en a besoin.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>
+          </div>
+          <h3>Suivi des interventions</h3>
+          <p>Vos locataires signalent un problème depuis leur espace ; vous le traitez, répondez et suivez son avancement jusqu'à la résolution.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Audiences -->
+    <section class="audience-section">
+      <h2 class="section-title">Un espace pour chacun</h2>
+      <p class="section-subtitle">Chaque profil voit exactement ce dont il a besoin</p>
+      <div class="audience-grid">
+        <div class="audience-card">
+          <h3>Bailleurs</h3>
+          <ul>
+            <li>Tableau de bord des revenus et de l'occupation</li>
+            <li>Gestion des logements, chambres et locataires</li>
+            <li>Loyers, relances et quittances</li>
+          </ul>
+          <a routerLink="/auth/bailleur/register" class="audience-link">Créer un compte →</a>
+        </div>
+        <div class="audience-card">
+          <h3>Locataires</h3>
+          <ul>
+            <li>Historique des paiements et quittances</li>
+            <li>Contrat et informations du logement</li>
+            <li>Signalement des problèmes, suivi en direct</li>
+          </ul>
+          <a routerLink="/auth/locataire/login" class="audience-link">Accéder à mon espace →</a>
+        </div>
+        <div class="audience-card">
+          <h3>Administrateurs</h3>
+          <ul>
+            <li>Supervision des comptes et abonnements</li>
+            <li>Journal d'activité complet</li>
+            <li>Paramètres de la plateforme</li>
+          </ul>
+          <a routerLink="/auth/super-admin/login" class="audience-link">Espace administrateur →</a>
         </div>
       </div>
     </section>
 
     <!-- How It Works Section -->
     <section id="how-it-works" class="steps-section">
-      <h2 class="section-title">Comment ça marche</h2>
-      <p class="section-subtitle">Commencez en quelques étapes simples</p>
+      <h2 class="section-title">Opérationnel en 3 étapes</h2>
+      <p class="section-subtitle">Pas de formation, pas d'installation</p>
 
       <div class="steps-grid">
         <div class="step-card">
           <div class="step-number">1</div>
           <h3>Créez votre compte</h3>
-          <p>Inscrivez-vous en tant que bailleur, locataire ou admin. Le processus est rapide et sécurisé.</p>
+          <p>Inscrivez-vous en quelques minutes. Vos données sont protégées et vos accès sécurisés.</p>
         </div>
 
         <div class="step-card">
           <div class="step-number">2</div>
-          <h3>Configurez vos biens</h3>
-          <p>Ajoutez vos propriétés, attribuez les locataires et paramétrez les contrats de bail.</p>
+          <h3>Ajoutez vos biens</h3>
+          <p>Renseignez vos logements et leurs chambres, puis invitez vos locataires par e-mail.</p>
         </div>
 
         <div class="step-card">
           <div class="step-number">3</div>
-          <h3>Gérez en toute simplicité</h3>
-          <p>Suivez les paiements, gérez les interventions et administrez tout depuis un tableau de bord intuitif.</p>
+          <h3>Pilotez au quotidien</h3>
+          <p>Suivez les loyers, relancez en un clic, émettez les quittances et traitez les demandes.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- Security / benefits -->
+    <section class="benefits-section">
+      <div class="benefits-inner">
+        <div>
+          <h2>Pensé pour votre tranquillité</h2>
+          <p>Vos données et celles de vos locataires restent privées : chaque utilisateur n'accède qu'à ses propres informations.</p>
+        </div>
+        <ul class="benefits-list">
+          <li><strong>Accès sécurisé</strong><span>Connexion protégée, mot de passe modifiable à tout moment.</span></li>
+          <li><strong>Vos données, cloisonnées</strong><span>Un bailleur ne voit jamais les biens d'un autre.</span></li>
+          <li><strong>Historique traçable</strong><span>Chaque action importante est journalisée.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <h2 class="section-title">Questions fréquentes</h2>
+      <div class="faq-list">
+        <details>
+          <summary>Mes locataires doivent-ils créer un compte ?</summary>
+          <p>Vous les invitez par e-mail : ils reçoivent un lien, choisissent leur mot de passe et accèdent à leur espace en quelques secondes.</p>
+        </details>
+        <details>
+          <summary>Puis-je gérer une colocation ?</summary>
+          <p>Oui. Chaque logement peut avoir plusieurs chambres avec une capacité, et vous assignez chaque locataire à sa chambre.</p>
+        </details>
+        <details>
+          <summary>Comment relancer un loyer impayé ?</summary>
+          <p>Depuis la page Loyers, un clic sur la cloche envoie un e-mail de rappel au locataire concerné.</p>
+        </details>
+        <details>
+          <summary>Puis-je changer mon mot de passe ?</summary>
+          <p>Oui, chaque compte (bailleur, locataire, administrateur) peut modifier son mot de passe depuis ses paramètres.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-section">
+      <h2>Prêt à simplifier votre gestion locative ?</h2>
+      <p>Rejoignez la plateforme et reprenez le contrôle de votre patrimoine.</p>
+      <div class="hero-buttons cta-buttons">
+        <a routerLink="/auth/bailleur/register" class="btn-white">Créer mon compte bailleur</a>
+        <a routerLink="/auth/locataire/login" class="btn-ghost">Je suis locataire</a>
       </div>
     </section>
 

@@ -1,3 +1,4 @@
+<app-state-block [loading]="loading()" [error]="error()">
 <div style="padding:24px;background:#f5f5f5;min-height:100vh;">
       <div style="margin-bottom:24px;">
         <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mes Quittances</h1>
@@ -7,45 +8,35 @@
       <div style="background:#fff;border:1px solid #e0e0e0;margin-bottom:24px;">
         <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
           <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Liste des quittances</h2>
-          <select [(ngModel)]="filterYear" (change)="applyFilters()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
+          <select [(ngModel)]="filterYear" (change)="refresh()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
             <option value="all">Toutes les années</option>
-            <option value="2026">2026</option>
+            @for (y of years; track y) {
+              <option [value]="y">{{ y }}</option>
+            }
           </select>
         </div>
 
-        @if (filteredQuittances.length > 0) {
+        @if (quittances().length > 0) {
           <table style="width:100%;border-collapse:collapse;">
             <thead>
               <tr style="background:#fafafa;">
                 <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Mois / Année</th>
                 <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Montant</th>
                 <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Date d'émission</th>
-                <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Reçu</th>
                 <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Action</th>
               </tr>
             </thead>
             <tbody>
-              @for (q of filteredQuittances; track q.id) {
+              @for (q of quittances(); track q.id) {
                 <tr style="border-bottom:1px solid #f0f0f0;">
-                  <td style="padding:14px 20px;font-size:14px;color:#000;font-weight:500;">{{ getMonthName(q.month) }} {{ q.year }}</td>
+                  <td style="padding:14px 20px;font-size:14px;color:#000;font-weight:500;">{{ periodLabel(q.period) }}</td>
                   <td style="padding:14px 20px;font-size:14px;color:#000;">{{ q.amount | montant }} €</td>
-                  <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ q.paidAt ? (q.paidAt | dateFr) : '—' }}</td>
+                  <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ q.issue_date | dateFr }}</td>
                   <td style="padding:14px 20px;">
-                    @if (q.quittancePdf) {
-                      <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">Disponible</span>
-                    } @else {
-                      <span style="padding:4px 12px;background:#e0e0e0;color:#666;font-size:12px;font-weight:600;">Non disponible</span>
-                    }
-                  </td>
-                  <td style="padding:14px 20px;">
-                    @if (q.quittancePdf) {
-                      <button (click)="telecharger(q)" style="padding:6px 16px;background:#fff;color:#000;border:1px solid #e0e0e0;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Télécharger
-                      </button>
-                    } @else {
-                      <span style="font-size:12px;color:#999;">Reçu non inséré par le bailleur</span>
-                    }
+                    <button (click)="telecharger(q)" [disabled]="downloadingId() === q.id" style="padding:6px 16px;background:#fff;color:#000;border:1px solid #e0e0e0;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      {{ downloadingId() === q.id ? 'Téléchargement...' : 'Télécharger' }}
+                    </button>
                   </td>
                 </tr>
               }
@@ -60,3 +51,4 @@
         }
       </div>
     </div>
+</app-state-block>

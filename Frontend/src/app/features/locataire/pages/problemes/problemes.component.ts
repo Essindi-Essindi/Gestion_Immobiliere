@@ -1,42 +1,60 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MockDataService } from '@core/services/mock-data.service';
+import { EspaceLocataireService } from '@core/services/espace-locataire.service';
 import { ToastService } from '@core/services/toast.service';
+import { NouveauSignalementRequest, SignalementResponse, StatutSignalement } from '@core/models/signalement.model';
+import { DateFrPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-problemes',
   standalone: true,
-  imports: [FormsModule],
+  imports: [RouterModule, FormsModule, DateFrPipe, StateBlockComponent],
   templateUrl: './problemes.component.html'
 })
 export class ProblemesComponent implements OnInit {
-  problems: any[] = [];
-  newProblem = { titre: '', description: '', categorie: '', priorite: 'NORMALE' };
+  problems = signal<SignalementResponse[]>([]);
+  loading = signal(true);
+  error = signal<string | null>(null);
+  submitting = signal(false);
+  newProblem: NouveauSignalementRequest = { title: '', description: '', category: '' };
 
-  constructor(private mockDataService: MockDataService, private toastService: ToastService) {}
+  constructor(private espaceLocataireService: EspaceLocataireService, private toastService: ToastService) {}
 
   ngOnInit(): void {
-    this.problems = this.mockDataService.getAll('interventions');
+    this.refresh();
+  }
+
+  refresh(): void {
+    this.espaceLocataireService.signalements().subscribe({
+      next: list => { this.problems.set(list.slice(0, 5)); this.loading.set(false); },
+      error: () => { this.error.set('Impossible de charger vos signalements.'); this.loading.set(false); }
+    });
   }
 
   soumettre(): void {
-    if (!this.newProblem.titre || !this.newProblem.description || !this.newProblem.categorie) {
+    if (!this.newProblem.title || !this.newProblem.description || !this.newProblem.category) {
       this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
       return;
     }
-    const result = this.mockDataService.submitIntervention(this.newProblem);
-    this.problems.unshift(result);
-    this.toastService.success('Succès', 'Votre signalement a été soumis avec succès');
-    this.newProblem = { titre: '', description: '', categorie: '', priorite: 'NORMALE' };
+    this.submitting.set(true);
+    this.espaceLocataireService.newSignalement(this.newProblem).subscribe({
+      next: () => {
+        this.toastService.success('Succès', 'Votre signalement a été soumis avec succès');
+        this.newProblem = { title: '', description: '', category: '' };
+        this.submitting.set(false);
+        this.refresh();
+      },
+      error: () => {
+        this.toastService.error('Erreur', "Votre signalement n'a pas pu être envoyé.");
+        this.submitting.set(false);
+      }
+    });
   }
 
-  formatPriorite(p: string): string {
-    const map: Record<string, string> = { 'BASSE': 'Basse', 'NORMALE': 'Moyenne', 'HAUTE': 'Haute', 'URGENTE': 'Urgente' };
-    return map[p] || p;
-  }
-
-  formatStatut(s: string): string {
-    const map: Record<string, string> = { 'NOUVEAU': 'Nouveau', 'EN_COURS': 'En cours', 'RESOLU': 'Résolu', 'FERME': 'Fermé' };
+  formatStatut(s: StatutSignalement): string {
+    const map: Record<StatutSignalement, string> = { NOUVEAU: 'Nouveau', EN_COURS: 'En cours', TERMINE: 'Terminé' };
     return map[s] || s;
   }
 }

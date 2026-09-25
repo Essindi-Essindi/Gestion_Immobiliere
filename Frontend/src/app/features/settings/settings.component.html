@@ -3,6 +3,7 @@
         <div class="header-inner">
           <span class="logo-text">Gestion Immobilière</span>
           <span class="header-subtitle">Paramètres</span>
+          <button type="button" (click)="back()" style="margin-left: auto; background: transparent; color: #fff; border: 1px solid #666; padding: 6px 14px; font-size: 13px; cursor: pointer;">← Retour</button>
         </div>
       </div>
       <div class="body">
@@ -15,9 +16,17 @@
             </div>
           }
 
+          @if (forced()) {
+            <div class="toast toast-error">Pour des raisons de sécurité, vous devez changer votre mot de passe avant de continuer.</div>
+          }
+
           <div class="section">
             <h2 class="section-title">Mon profil</h2>
-            <p class="section-desc">Vos informations personnelles visibles dans l'application.</p>
+            @if (profileEditable) {
+              <p class="section-desc">Vos informations personnelles visibles dans l'application.</p>
+            } @else {
+              <p class="section-desc">La modification du profil n'est pas encore disponible pour votre rôle.</p>
+            }
             <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
               <div class="field">
                 <label class="field-label" for="firstName">Prénom</label>
@@ -31,37 +40,15 @@
                 <label class="field-label" for="phone">Téléphone</label>
                 <input id="phone" class="field-input" type="tel" formControlName="phone" placeholder="+237 ..." />
               </div>
-              <button type="submit" class="btn-primary" [disabled]="profileLoading() || profileForm.invalid">
-                @if (profileLoading()) {
-                  <span>Enregistrement...</span>
-                } @else {
-                  <span>Enregistrer le profil</span>
-                }
-              </button>
-            </form>
-          </div>
-
-          <div class="section-divider"></div>
-
-          <div class="section">
-            <h2 class="section-title">Changer l'email</h2>
-            <p class="section-desc">Modifiez l'adresse email associée à votre compte.</p>
-            <form [formGroup]="emailForm" (ngSubmit)="onUpdateEmail()">
-              <div class="field">
-                <label class="field-label">Email actuel</label>
-                <input class="field-input field-readonly" type="email" [value]="currentUser()?.email" readonly />
-              </div>
-              <div class="field">
-                <label class="field-label" for="newEmail">Nouvel email</label>
-                <input id="newEmail" class="field-input" type="email" formControlName="newEmail" placeholder="nouveau@email.com" />
-              </div>
-              <button type="submit" class="btn-primary" [disabled]="emailLoading() || emailForm.invalid">
-                @if (emailLoading()) {
-                  <span>Mise à jour...</span>
-                } @else {
-                  <span>Mettre à jour</span>
-                }
-              </button>
+              @if (profileEditable) {
+                <button type="submit" class="btn-primary" [disabled]="profileLoading() || profileForm.invalid">
+                  @if (profileLoading()) {
+                    <span>Enregistrement...</span>
+                  } @else {
+                    <span>Enregistrer le profil</span>
+                  }
+                </button>
+              }
             </form>
           </div>
 
@@ -78,6 +65,7 @@
               <div class="field">
                 <label class="field-label" for="newPassword">Nouveau mot de passe</label>
                 <input id="newPassword" class="field-input" type="password" formControlName="newPassword" placeholder="••••••••" />
+                <p style="margin: 6px 0 0; font-size: 12px; color: #757575;" [style.color]="passwordForm.get('newPassword')?.dirty && passwordForm.get('newPassword')?.invalid ? '#b00020' : '#757575'">10 caractères minimum, avec majuscule, minuscule, chiffre et caractère spécial, sans espace.</p>
               </div>
               <div class="field">
                 <label class="field-label" for="confirmPassword">Confirmer le nouveau mot de passe</label>

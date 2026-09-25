@@ -1,3 +1,4 @@
+<app-state-block [loading]="loading()" [error]="error()">
 <div style="padding:24px;background:#f5f5f5;min-height:100vh;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
         <div>
@@ -9,15 +10,15 @@
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
         <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Total payé</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#000;">{{ totalPaye | montant }} €</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#000;">{{ totalPaye() | montant }} €</p>
         </div>
         <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En attente</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#616161;">{{ totalEnAttente | montant }} €</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#616161;">{{ totalEnAttente() | montant }} €</p>
         </div>
         <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
           <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En retard</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#424242;">{{ totalEnRetard | montant }} €</p>
+          <p style="margin:0;font-size:26px;font-weight:700;color:#424242;">{{ totalEnRetard() | montant }} €</p>
         </div>
       </div>
 
@@ -25,11 +26,13 @@
         <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
           <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Historique</h2>
           <div style="display:flex;gap:8px;">
-            <select [(ngModel)]="filterYear" (change)="applyFilters()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
+            <select [(ngModel)]="filterYear" (change)="refresh()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
               <option value="all">Toutes les années</option>
-              <option value="2026">2026</option>
+              @for (y of years; track y) {
+                <option [value]="y">{{ y }}</option>
+              }
             </select>
-            <select [(ngModel)]="filterStatus" (change)="applyFilters()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
+            <select [(ngModel)]="filterStatus" (change)="refresh()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
               <option value="all">Tous les statuts</option>
               <option value="PAYE">Payé</option>
               <option value="EN_ATTENTE">En attente</option>
@@ -48,11 +51,11 @@
             </tr>
           </thead>
           <tbody>
-            @for (p of filteredPaiements; track p.id) {
+            @for (p of paiements(); track p.id) {
               <tr style="border-bottom:1px solid #f0f0f0;">
-                <td style="padding:14px 20px;font-size:14px;color:#000;">{{ getMonthName(p.month) }} {{ p.year }}</td>
+                <td style="padding:14px 20px;font-size:14px;color:#000;">{{ periodLabel(p.period) }}</td>
                 <td style="padding:14px 20px;font-size:14px;color:#000;font-weight:500;">{{ p.amount | montant }} €</td>
-                <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ p.paidAt ? (p.paidAt | dateFr) : '—' }}</td>
+                <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ p.paid_date ? (p.paid_date | dateFr) : '—' }}</td>
                 <td style="padding:14px 20px;">
                   @if (p.status === 'PAYE') {
                     <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">Payé</span>
@@ -65,7 +68,7 @@
                   }
                 </td>
                 <td style="padding:14px 20px;">
-                  @if (p.status !== 'PAYE' && p.rappelSent) {
+                  @if (p.status !== 'PAYE' && p.reminder_received) {
                     <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#666;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                       Rappel reçu
@@ -85,3 +88,4 @@
         </table>
       </div>
     </div>
+</app-state-block>

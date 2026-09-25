@@ -1,61 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MockDataService } from '@core/services/mock-data.service';
-import { ToastService } from '@core/services/toast.service';
+import { EspaceLocataireService } from '@core/services/espace-locataire.service';
+import { SignalementResponse, StatutSignalement } from '@core/models/signalement.model';
+import { DateFrPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-demandes',
   standalone: true,
-  imports: [FormsModule],
+  imports: [RouterModule, FormsModule, DateFrPipe, StateBlockComponent],
   templateUrl: './demandes.component.html'
 })
 export class DemandesComponent implements OnInit {
-  demandes: any[] = [];
-  showNewDemande = false;
-  newDemande = { titre: '', type: '', description: '' };
+  demandes = signal<SignalementResponse[]>([]);
+  loading = signal(true);
+  error = signal<string | null>(null);
+  filterStatus = 'all';
 
-  constructor(private mockDataService: MockDataService, private toastService: ToastService) {}
+  constructor(private espaceLocataireService: EspaceLocataireService) {}
 
   ngOnInit(): void {
-    this.demandes = this.mockDataService.getAll('interventions');
+    this.refresh();
   }
 
-  soumettreDemande(): void {
-    if (!this.newDemande.titre || !this.newDemande.type || !this.newDemande.description) {
-      this.toastService.warning('Attention', 'Veuillez remplir tous les champs');
-      return;
-    }
-    const result = this.mockDataService.getAll('interventions')[0] || { id: 'new', titre: this.newDemande.titre, description: this.newDemande.description, statut: 'NOUVEAU', dateCreation: new Date().toLocaleDateString('fr-FR') };
-    result.titre = this.newDemande.titre;
-    result.description = this.newDemande.description;
-    this.demandes.unshift(result);
-    this.toastService.success('Succès', 'Votre demande a été soumise');
-    this.showNewDemande = false;
-    this.newDemande = { titre: '', type: '', description: '' };
+  refresh(): void {
+    this.loading.set(true);
+    const status = this.filterStatus === 'all' ? undefined : (this.filterStatus as StatutSignalement);
+    this.espaceLocataireService.signalements(status).subscribe({
+      next: list => { this.demandes.set(list); this.loading.set(false); },
+      error: () => { this.error.set('Impossible de charger vos demandes.'); this.loading.set(false); }
+    });
   }
 
-  formatType(t: string): string {
-    const map: Record<string, string> = {
-      'demande_de_travaux': 'Demande de travaux',
-      'resiliation': 'Résiliation',
-      'attestation': 'Attestation',
-      'changement_logement': 'Changement de logement'
-    };
-    return map[t] || t;
-  }
-
-  formatStatut(s: string): string {
-    const map: Record<string, string> = { 'NOUVEAU': 'En attente', 'EN_COURS': 'En cours', 'RESOLU': 'Acceptée', 'FERME': 'Refusée' };
+  formatStatut(s: StatutSignalement): string {
+    const map: Record<StatutSignalement, string> = { NOUVEAU: 'Nouveau', EN_COURS: 'En cours', TERMINE: 'Terminé' };
     return map[s] || s;
   }
 
-  getStatutBg(s: string): string {
-    const map: Record<string, string> = { 'NOUVEAU': '#e0e0e0', 'EN_COURS': '#f5f5f5', 'RESOLU': '#000', 'FERME': '#424242' };
+  getStatutBg(s: StatutSignalement): string {
+    const map: Record<StatutSignalement, string> = { NOUVEAU: '#e0e0e0', EN_COURS: '#f5f5f5', TERMINE: '#000' };
     return map[s] || '#e0e0e0';
   }
 
-  getStatutColor(s: string): string {
-    const map: Record<string, string> = { 'NOUVEAU': '#424242', 'EN_COURS': '#000', 'RESOLU': '#fff', 'FERME': '#fff' };
+  getStatutColor(s: StatutSignalement): string {
+    const map: Record<StatutSignalement, string> = { NOUVEAU: '#424242', EN_COURS: '#000', TERMINE: '#fff' };
     return map[s] || '#424242';
   }
 }

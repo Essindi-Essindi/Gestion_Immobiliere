@@ -1,54 +1,50 @@
+<app-state-block [loading]="loading()" [error]="error()" [empty]="!contrat()" emptyMessage="Aucun contrat trouvé pour votre compte.">
 <div style="padding:24px;background:#f5f5f5;min-height:100vh;">
       <div style="margin-bottom:24px;">
         <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mon Contrat</h1>
         <p style="margin:0;color:#757575;font-size:14px;">Détails de votre bail en cours</p>
       </div>
 
-      @if (contrat) {
+      @if (contrat(); as c) {
         <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;">
           <div style="background:#fff;border:1px solid #e0e0e0;">
             <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
               <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Détails du contrat</h2>
-              <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">{{ contrat.status }}</span>
+              @if (c.actif) {
+                <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">Actif</span>
+              } @else {
+                <span style="padding:4px 12px;background:#e0e0e0;color:#424242;font-size:12px;font-weight:600;">Inactif</span>
+              }
             </div>
             <div style="padding:20px;">
-              <div style="margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-                <div>
-                  <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Référence</p>
-                  <p style="margin:0;font-size:18px;color:#000;font-weight:600;">CTR-{{ contrat.id }}</p>
-                </div>
-                @if (contrat.roomNumber) {
-                  <span style="background:#000;color:#fff;font-size:12px;padding:4px 10px;font-weight:600;">Chambre {{ contrat.roomNumber }}</span>
-                }
+              <div style="margin-bottom:20px;">
+                <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Référence</p>
+                <p style="margin:0;font-size:18px;color:#000;font-weight:600;">CTR-{{ c.id }}</p>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Locataire</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.locataireNom }}</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.locataire_name }}</p>
                 </div>
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Logement</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.logementAddress }}</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.logement_address }}</p>
                 </div>
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Date de début</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.startDate | dateFr }}</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.start_date | dateFr }}</p>
                 </div>
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Date de fin</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.endDate | dateFr }}</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.end_date ? (c.end_date | dateFr) : '-' }}</p>
                 </div>
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Loyer mensuel</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.rent | montant }} €</p>
-                </div>
-                <div>
-                  <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Charges</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.charges | montant }} €</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.monthly_rent | montant }} €</p>
                 </div>
                 <div>
                   <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Dépôt de garantie</p>
-                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ contrat.deposit | montant }} €</p>
+                  <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ c.deposit | montant }} €</p>
                 </div>
               </div>
             </div>
@@ -60,29 +56,39 @@
                 <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Document du bailleur</h2>
               </div>
               <div style="padding:20px;display:flex;flex-direction:column;gap:12px;">
-                @if (contrat.contractPdf) {
-                  <div style="display:flex;align-items:center;gap:8px;background:#f5f5f5;border:1px solid #e0e0e0;padding:10px 12px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 9 20 9"/></svg>
-                    <span style="flex:1;font-size:13px;color:#000;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ contrat.contractPdf.name }}</span>
-                  </div>
-                  <button (click)="telechargerContrat()" style="width:100%;padding:12px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Télécharger le contrat
-                  </button>
-                } @else {
-                  <p style="margin:0;font-size:13px;color:#999;background:#f5f5f5;border:1px solid #e0e0e0;padding:12px;">Document non disponible pour le moment. Votre bailleur ne l'a pas encore inséré.</p>
+                <button (click)="telechargerContrat()" [disabled]="downloading()" style="width:100%;padding:12px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  {{ downloading() ? 'Téléchargement...' : 'Télécharger le contrat' }}
+                </button>
+                @if (c.actif) {
+                  @if (c.resiliation_demandee) {
+                    <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f5f5f5;color:#424242;font-size:13px;font-weight:600;text-align:center;">
+                      Demande de résiliation envoyée, en attente du bailleur
+                    </div>
+                  } @else {
+                    <button (click)="askResiliation()" [disabled]="requesting()" style="width:100%;padding:12px;background:#fff;color:#000;border:1px solid #e0e0e0;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                      {{ requesting() ? 'Envoi...' : 'Demande de résiliation' }}
+                    </button>
+                  }
                 }
-                <a routerLink="/locataire/demandes" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#fff;color:#000;border:1px solid #e0e0e0;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                  Demande de résiliation
-                </a>
               </div>
             </div>
           </div>
         </div>
-      } @else {
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:48px;text-align:center;">
-          <p style="margin:0;color:#666;font-size:14px;">Aucun contrat trouvé pour votre compte.</p>
+      }
+
+      @if (showResiliationConfirm()) {
+        <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;" (click)="showResiliationConfirm.set(false)">
+          <div style="background:#fff;width:100%;max-width:420px;padding:24px;" (click)="$event.stopPropagation()">
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:700;color:#000;">Demander la résiliation ?</h3>
+            <p style="margin:0 0 20px;font-size:14px;color:#666;">Le bailleur sera prévenu que vous souhaitez quitter le logement. Il pourra alors résilier le contrat.</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+              <button (click)="showResiliationConfirm.set(false)" style="background:#fff;color:#000;border:1px solid #e0e0e0;padding:8px 16px;font-size:13px;cursor:pointer;">Annuler</button>
+              <button (click)="confirmResiliation()" style="background:#000;color:#fff;border:none;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;">Confirmer</button>
+            </div>
+          </div>
         </div>
       }
     </div>
+</app-state-block>

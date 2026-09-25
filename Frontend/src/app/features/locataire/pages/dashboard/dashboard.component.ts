@@ -1,65 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MockDataService } from '@core/services/mock-data.service';
+import { EspaceLocataireService } from '@core/services/espace-locataire.service';
 import { AuthService } from '@core/auth/auth.service';
-import { formatDate } from '@shared/utils/format';
-import { MontantPipe } from '@shared/pipes';
+import { DashboardLocataireResponse } from '@core/models/espace-locataire.model';
+import { MontantPipe, DateFrPipe } from '@shared/pipes';
+import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 
 @Component({
   selector: 'app-locataire-dashboard',
   standalone: true,
-  imports: [RouterModule, MontantPipe],
+  imports: [RouterModule, MontantPipe, DateFrPipe, StateBlockComponent],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
-  userName = 'Jean';
-  stats: any = {
-    monLogement: { type: '-', room: '' },
-    monLoyer: 0,
-    dernierPaiement: '-',
-    prochaineEcheance: '-',
-    contrat: { logementAddress: '-', rent: 0, startDate: '-', endDate: '-' },
-    notifications: []
-  };
+  userName = 'locataire';
+  dashboard = signal<DashboardLocataireResponse | null>(null);
+  loading = signal(true);
+  room = signal<string | null>(null);
+  error = signal<string | null>(null);
 
-  months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-
-  constructor(private mockDataService: MockDataService, private authService: AuthService) {}
+  constructor(private espaceLocataireService: EspaceLocataireService, private authService: AuthService) {}
 
   ngOnInit(): void {
     const user = this.authService.user();
     if (user) this.userName = user.firstName;
-    const loc = this.mockDataService.resolveLocataireForUser(user);
-    if (!loc) return;
 
-    const logement = this.mockDataService.getById('logements', loc.logementId);
-    const contrat = this.mockDataService.getContratForLocataire(loc.id);
-    const paiements = this.mockDataService.getPaiementsForLocataire(loc.id).filter((p: any) => p.type === 'LOYER');
-    const payes = paiements.filter((p: any) => p.status === 'PAYE' && p.paidAt)
-      .sort((a: any, b: any) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime());
-    const prochain = paiements.find((p: any) => p.status === 'EN_ATTENTE' || p.status === 'EN_RETARD');
-    const notifs = this.mockDataService.getAll('notifications').slice(0, 3).map((n: any) => ({
-      ...n,
-      icon: n.type === 'SUCCESS' ? 'check' : n.type === 'INFO' ? 'info' : n.type === 'WARNING' ? 'clock' : 'alert',
-      createdAt: this.timeAgo(n.createdAt)
-    }));
-
-    this.stats = {
-      monLogement: { type: logement ? logement.type : '-', room: loc.roomNumber || '' },
-      monLoyer: contrat ? contrat.rent : (logement ? logement.rent : 0),
-      dernierPaiement: payes.length ? formatDate(payes[0].paidAt) : 'Aucun',
-      prochaineEcheance: prochain ? this.months[prochain.month] + ' ' + prochain.year : '-',
-      contrat: contrat ? {
-        logementAddress: contrat.logementAddress,
-        rent: contrat.rent,
-        startDate: formatDate(contrat.startDate),
-        endDate: formatDate(contrat.endDate)
-      } : { logementAddress: '-', rent: 0, startDate: '-', endDate: '-' },
-      notifications: notifs
-    };
+    this.espaceLocataireService.profile().subscribe({ next: (p) => this.room.set(p.piece_numero || null), error: () => {} });
+    this.espaceLocataireService.dashboard().subscribe({
+      next: (dashboard) => {
+        this.dashboard.set(dashboard);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossible de charger votre tableau de bord.');
+        this.loading.set(false);
+      }
+    });
   }
 
-  timeAgo(date: any): string {
+  timeAgo(date: string): string {
     const diffDays = Math.floor((Date.now() - new Date(date).getTime()) / 86400000);
     if (diffDays <= 0) return "Aujourd'hui";
     if (diffDays === 1) return 'Hier';
