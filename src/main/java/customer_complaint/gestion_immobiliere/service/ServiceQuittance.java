@@ -1,16 +1,24 @@
 package customer_complaint.gestion_immobiliere.service;
 
-import customer_complaint.gestion_immobiliere.model.Quittance;
+import customer_complaint.gestion_immobiliere.dto.DocumentResponse;
+import customer_complaint.gestion_immobiliere.dto.QuittanceRequest;
+import customer_complaint.gestion_immobiliere.dto.QuittanceResponse;
 
 import java.util.List;
 
 public interface ServiceQuittance {
 
-    List<Quittance> list();
+    QuittanceResponse create(QuittanceRequest request);
 
-    Quittance get(Long id);
+    List<QuittanceResponse> list();
 
-    byte[] generate_pdf(Long id);
+    QuittanceResponse get(Long id);
 
-    void send(Long id);
+    // bailleur ou locataire du contrat uniquement / the contract's landlord or tenant only
+    FichierPdf generate_pdf(Long id);
+
+    DocumentResponse document(Long id);
+
+    // relance l'envoi aux destinataires qui n'ont rien recu / retries the delivery
+    DocumentResponse send(Long id);
 }
