@@ -1,21 +1,22 @@
 package customer_complaint.gestion_immobiliere.service;
 
-import customer_complaint.gestion_immobiliere.model.Bailleur;
-import customer_complaint.gestion_immobiliere.model.Quittance;
+import customer_complaint.gestion_immobiliere.dto.BailleurRequest;
+import customer_complaint.gestion_immobiliere.dto.BailleurResponse;
+import customer_complaint.gestion_immobiliere.dto.QuittanceResponse;
 
 import java.util.List;
 
 public interface ServiceBailleur {
 
-    Bailleur create(Bailleur bailleur);
+    BailleurResponse create(BailleurRequest request);
 
-    List<Bailleur> list();
+    List<BailleurResponse> list();
 
-    Bailleur get(Long id);
+    BailleurResponse get(Long id);
 
     void delete(Long id);
 
     void manage_properties();
 
-    Quittance generate_receipt(Long contrat_id);
+    QuittanceResponse generate_receipt(Long contrat_id);
 }

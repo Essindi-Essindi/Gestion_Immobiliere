@@ -1,16 +1,17 @@
 package customer_complaint.gestion_immobiliere.service;
 
-import customer_complaint.gestion_immobiliere.model.Admin;
+import customer_complaint.gestion_immobiliere.dto.AdminRequest;
+import customer_complaint.gestion_immobiliere.dto.AdminResponse;
 
 import java.util.List;
 
 public interface ServiceAdmin {
 
-    Admin create(Admin admin);
+    AdminResponse create(AdminRequest request);
 
-    List<Admin> list();
+    List<AdminResponse> list();
 
-    Admin get(Long id);
+    AdminResponse get(Long id);
 
     void delete(Long id);
 
