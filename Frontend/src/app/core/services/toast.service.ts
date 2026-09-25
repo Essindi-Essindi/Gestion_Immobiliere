@@ -25,7 +25,14 @@ export class ToastService {
     return Math.random().toString(36).substr(2, 9);
   }
 
+  private lasterror = 0;
+
   private addToast(type: ToastType, title: string, message?: string, duration = 5000): string {
+    // one error popup per failed request: the http interceptor already showed the precise one / un seul popup d'erreur par requete
+    if (type === 'error') {
+      if (Date.now() - this.lasterror < 1500) return '';
+      this.lasterror = Date.now();
+    }
     const id = this.generateId();
     const toast: Toast = { id, type, title, message, duration };
     this._toasts.update(toasts => [...toasts, toast]);

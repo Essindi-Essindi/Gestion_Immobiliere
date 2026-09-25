@@ -18,20 +18,35 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         errorMessage = `Erreur: ${error.error.message}`;
       } else {
         switch (error.status) {
-          case 400:
-            errorMessage = error.error?.message || 'Requête invalide';
+          case 400: {
+            // first field detail if any (ex: weak password) / premier detail de champ si present
+            const detail = error.error?.details?.[0]?.message;
+            errorMessage = detail || error.error?.message || 'Requête invalide';
+            break;
+          }
+          case 409:
+            errorMessage = error.error?.message || 'Action impossible pour le moment';
             break;
           case 401:
-            if (!req.url.includes('/auth/refresh')) {
+            if (!req.url.includes('/authentification/refresh')) {
               authService.logout();
-              router.navigate(['/auth/bailleur/login']);
             }
             return throwError(() => error);
           case 403:
+            if (error.headers.get('X-Auth-Action') === 'password-change-required') {
+              const settingsRoutes: Record<string, string> = {
+                SUPER_ADMIN: '/super-admin/settings',
+                PROPRIETAIRE: '/proprietaire/settings',
+                LOCATAIRE: '/locataire/settings'
+              };
+              const role = authService.user()?.role;
+              router.navigate([role ? settingsRoutes[role] : '/auth/bailleur/login'], { queryParams: { forced: true } });
+              return throwError(() => error);
+            }
             errorMessage = 'Accès non autorisé';
             break;
           case 404:
-            errorMessage = 'Ressource non trouvée';
+            errorMessage = error.error?.message || 'Ressource non trouvée';
             break;
           case 422:
             errorMessage = error.error?.message || 'Données invalides';

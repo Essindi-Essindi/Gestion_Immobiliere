@@ -7,7 +7,7 @@ let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 function isAuthRequest(url: string): boolean {
-  return url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/refresh');
+  return url.includes('/authentification/login') || url.includes('/authentification/refresh');
 }
 
 function withToken(req: HttpRequest<unknown>, token: string | null): HttpRequest<unknown> {

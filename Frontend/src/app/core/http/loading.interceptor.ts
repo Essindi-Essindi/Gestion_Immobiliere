@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { finalize } from 'rxjs';
 import { LoadingService } from '../services/loading.service';
 
-const excludedUrls = ['/auth/refresh', '/notifications/unread-count'];
+const excludedUrls = ['/authentification/refresh', '/notifications/unread-count'];
 
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);

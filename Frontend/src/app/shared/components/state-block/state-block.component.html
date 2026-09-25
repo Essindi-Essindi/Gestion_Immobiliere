@@ -1,0 +1,14 @@
+<div class="state-block state-block--loading" *ngIf="loading">
+  <span class="state-block__spinner animate-spin"></span>
+  <p>Chargement...</p>
+</div>
+
+<div class="state-block state-block--error" *ngIf="!loading && error">
+  <p>{{ error }}</p>
+</div>
+
+<div class="state-block state-block--empty" *ngIf="!loading && !error && empty">
+  <p>{{ emptyMessage }}</p>
+</div>
+
+<ng-content *ngIf="!loading && !error && !empty"></ng-content>

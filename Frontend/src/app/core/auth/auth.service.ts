@@ -1,110 +1,86 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { 
-  User, 
-  UserRole, 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthTokens, 
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { User, UserRole, LoginRequest, ChangePasswordRequest, AuthTokens } from '../models/user.model';
+
+export type {
+  User,
+  UserRole,
+  LoginRequest,
+  RegisterRequest,
+  AuthTokens,
   ChangePasswordRequest,
   UserPreferences
 } from '../models/user.model';
 
-export type { 
-  User, 
-  UserRole, 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthTokens, 
-  ChangePasswordRequest,
-  UserPreferences
-} from '../models/user.model';
+// wire format cote backend (ControleurAuthentification) / backend wire format
+interface LoginApiResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+  id: string;
+  role: 'ADMIN' | 'BAILLEUR' | 'LOCATAIRE';
+  email: string;
+  first_name: string;
+  last_name: string;
+  must_change_password: boolean;
+}
 
-interface MockUser extends User {
-  password: string;
+const roleFromApi: Record<LoginApiResponse['role'], UserRole> = {
+  ADMIN: 'SUPER_ADMIN',
+  BAILLEUR: 'PROPRIETAIRE',
+  LOCATAIRE: 'LOCATAIRE'
+};
+
+// statut 0 = requete jamais arrivee au serveur (CORS, serveur eteint...), a distinguer d'un vrai 401
+// status 0 = request never reached the server (CORS, server down...), distinct from a real 401
+export function authErrorMessage(err: HttpErrorResponse, fallback = 'Email ou mot de passe incorrect'): string {
+  if (err.status === 0) {
+    return 'Impossible de contacter le serveur. Vérifiez que le backend est démarré.';
+  }
+  return err.error?.message || fallback;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly api = `${environment.apiUrl}/authentification`;
+
   private _user = signal<User | null>(null);
   private _tokens = signal<AuthTokens | null>(null);
   private _isAuthenticated = signal(false);
+  private _mustChangePassword = signal(false);
 
   user = computed(() => this._user());
   tokens = computed(() => this._tokens());
   isAuthenticated = computed(() => this._isAuthenticated());
+  mustChangePassword = computed(() => this._mustChangePassword());
   isSuperAdmin = computed(() => this._user()?.role === 'SUPER_ADMIN');
   isProprietaire = computed(() => this._user()?.role === 'PROPRIETAIRE');
   isLocataire = computed(() => this._user()?.role === 'LOCATAIRE');
 
-  private readonly USERS_KEY = 'mock_users';
-  private readonly TOKEN_KEY = 'mock_access_token';
-  private readonly USER_KEY = 'mock_user';
-  private readonly REFRESH_KEY = 'mock_refresh_token';
+  private readonly TOKEN_KEY = 'access_token';
+  private readonly REFRESH_KEY = 'refresh_token';
+  private readonly USER_KEY = 'user';
 
-  private readonly DEMO_USERS: MockUser[] = [
-    {
-      id: '1',
-      email: 'superadmin@immo.com',
-      firstName: 'Super',
-      lastName: 'Admin',
-      role: 'SUPER_ADMIN',
-      phone: '+237 600 000 001',
-      isActive: true,
-      createdAt: new Date('2024-01-01'),
-      password: 'password123'
-    },
-    {
-      id: '2',
-      email: 'bailleur@immo.com',
-      firstName: 'Jean',
-      lastName: 'Dupont',
-      role: 'PROPRIETAIRE',
-      phone: '+237 600 000 002',
-      isActive: true,
-      createdAt: new Date('2024-01-15'),
-      password: 'password123'
-    },
-    {
-      id: '3',
-      email: 'locataire@immo.com',
-      firstName: 'Marie',
-      lastName: 'Ngo',
-      role: 'LOCATAIRE',
-      phone: '+237 600 000 003',
-      isActive: true,
-      createdAt: new Date('2024-02-01'),
-      password: 'password123'
-    }
-  ];
-
-  constructor(private router: Router) {
+  constructor(private http: HttpClient, private router: Router) {
     this.loadFromStorage();
-    this.initDemoUsers();
-  }
-
-  private initDemoUsers(): void {
-    const existing = localStorage.getItem(this.USERS_KEY);
-    if (!existing) {
-      localStorage.setItem(this.USERS_KEY, JSON.stringify(this.DEMO_USERS));
-    }
   }
 
   private loadFromStorage(): void {
     const token = localStorage.getItem(this.TOKEN_KEY);
+    const refresh = localStorage.getItem(this.REFRESH_KEY);
     const userStr = localStorage.getItem(this.USER_KEY);
-
-    if (token && userStr) {
+    if (token && refresh && userStr) {
       try {
         const user = JSON.parse(userStr) as User;
         this._user.set(user);
+        this._tokens.set({ accessToken: token, refreshToken: refresh, expiresIn: 0 });
         this._isAuthenticated.set(true);
-        const tokensStr = localStorage.getItem(this.REFRESH_KEY);
-        if (tokensStr) {
-          this._tokens.set({ accessToken: token, refreshToken: tokensStr, expiresIn: 3600 });
-        }
       } catch {
         this.clearStorage();
       }
@@ -113,88 +89,56 @@ export class AuthService {
 
   private clearStorage(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
+    localStorage.removeItem(this.USER_KEY);
   }
 
-  private generateToken(): string {
-    return 'mock_jwt_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-  }
-
-  private getUsers(): MockUser[] {
-    const raw = localStorage.getItem(this.USERS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }
-
-  private saveUsers(users: MockUser[]): void {
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-  }
-
-  private setSession(user: User): void {
-    const accessToken = this.generateToken();
-    const refreshToken = this.generateToken();
-    const tokens: AuthTokens = { accessToken, refreshToken, expiresIn: 3600 };
-    localStorage.setItem(this.TOKEN_KEY, accessToken);
-    localStorage.setItem(this.REFRESH_KEY, refreshToken);
+  private setSession(res: LoginApiResponse): User {
+    const user: User = {
+      id: res.id,
+      email: res.email,
+      firstName: res.first_name,
+      lastName: res.last_name,
+      role: roleFromApi[res.role],
+      isActive: true,
+      createdAt: new Date()
+    };
+    const tokens: AuthTokens = {
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token,
+      expiresIn: res.expires_in
+    };
+    localStorage.setItem(this.TOKEN_KEY, res.access_token);
+    localStorage.setItem(this.REFRESH_KEY, res.refresh_token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     this._user.set(user);
     this._tokens.set(tokens);
     this._isAuthenticated.set(true);
+    this._mustChangePassword.set(res.must_change_password);
+    return user;
   }
 
   login(credentials: LoginRequest): Promise<User> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const users = this.getUsers();
-        const found = users.find(
-          u => u.email.toLowerCase() === credentials.email.toLowerCase() && u.password === credentials.password
-        );
-        if (!found) {
-          reject(new Error('Email ou mot de passe incorrect'));
-          return;
-        }
-        const { password: _, ...user } = found;
-        this.setSession(user);
-        resolve(user);
-      }, 300);
-    });
-  }
-
-  register(data: RegisterRequest): Promise<User> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const users = this.getUsers();
-        const exists = users.find(u => u.email.toLowerCase() === data.email.toLowerCase());
-        if (exists) {
-          reject(new Error('Un compte avec cet email existe déjà'));
-          return;
-        }
-        const newUser: MockUser = {
-          id: (users.length + 1).toString(),
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          role: data.role,
-          phone: data.phone,
-          isActive: true,
-          createdAt: new Date(),
-          password: data.password
-        };
-        users.push(newUser);
-        this.saveUsers(users);
-        const { password: _, ...user } = newUser;
-        this.setSession(user);
-        resolve(user);
-      }, 300);
-    });
+    return firstValueFrom(
+      this.http.post<LoginApiResponse>(`${this.api}/login`, {
+        email: credentials.email,
+        password: credentials.password
+      })
+    ).then(res => this.setSession(res));
   }
 
   logout(): void {
+    const refreshToken = this.getRefreshToken();
     const role = this._user()?.role;
     this.clearStorage();
     this._user.set(null);
     this._tokens.set(null);
     this._isAuthenticated.set(false);
+    this._mustChangePassword.set(false);
+    if (refreshToken) {
+      // best effort, revoque la session cote serveur / server-side session revocation
+      this.http.post(`${this.api}/logout`, { refresh_token: refreshToken }).subscribe({ error: () => {} });
+    }
     if (role === 'SUPER_ADMIN') {
       this.router.navigate(['/auth/super-admin/login']);
     } else if (role === 'LOCATAIRE') {
@@ -205,59 +149,30 @@ export class AuthService {
   }
 
   changePassword(data: ChangePasswordRequest): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const currentUser = this._user();
-        if (!currentUser) {
-          reject(new Error('Non authentifié'));
-          return;
-        }
-        const users = this.getUsers();
-        const index = users.findIndex(u => u.id === currentUser.id);
-        if (index === -1) {
-          reject(new Error('Utilisateur non trouvé'));
-          return;
-        }
-        if (users[index].password !== data.currentPassword) {
-          reject(new Error('Mot de passe actuel incorrect'));
-          return;
-        }
-        users[index].password = data.newPassword;
-        this.saveUsers(users);
-        resolve();
-      }, 300);
+    return firstValueFrom(
+      this.http.post<LoginApiResponse>(`${this.api}/change-password`, {
+        current_password: data.currentPassword,
+        new_password: data.newPassword
+      })
+    ).then(res => {
+      this.setSession(res);
     });
+  }
+
+  forgotPassword(email: string): Promise<void> {
+    return firstValueFrom(this.http.post<void>(`${this.api}/forgot-password`, { email }));
   }
 
   refreshToken(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const refreshToken = localStorage.getItem(this.REFRESH_KEY);
-      if (!refreshToken) {
-        this.logout();
-        reject(new Error('No refresh token'));
-        return;
-      }
-      const newAccessToken = this.generateToken();
-      localStorage.setItem(this.TOKEN_KEY, newAccessToken);
-      const tokens: AuthTokens = { accessToken: newAccessToken, refreshToken, expiresIn: 3600 };
-      this._tokens.set(tokens);
-      resolve();
-    });
-  }
-
-  updateProfile(user: Partial<User>): Promise<User> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const currentUser = this._user();
-        if (!currentUser) {
-          reject(new Error('Non authentifié'));
-          return;
-        }
-        const updatedUser: User = { ...currentUser, ...user };
-        localStorage.setItem(this.USER_KEY, JSON.stringify(updatedUser));
-        this._user.set(updatedUser);
-        resolve(updatedUser);
-      }, 300);
+    const refresh = this.getRefreshToken();
+    if (!refresh) {
+      this.logout();
+      return Promise.reject(new Error('Session expiree'));
+    }
+    return firstValueFrom(
+      this.http.post<LoginApiResponse>(`${this.api}/refresh`, { refresh_token: refresh })
+    ).then(res => {
+      this.setSession(res);
     });
   }
 
@@ -272,5 +187,23 @@ export class AuthService {
   hasRole(...roles: UserRole[]): boolean {
     const user = this._user();
     return user ? roles.includes(user.role) : false;
+  }
+
+  getRoleLabel(role: UserRole): string {
+    switch (role) {
+      case 'SUPER_ADMIN': return 'Super Admin';
+      case 'PROPRIETAIRE': return 'Bailleur';
+      case 'LOCATAIRE': return 'Locataire';
+      default: return 'Inconnu';
+    }
+  }
+
+  getDashboardRoute(role: UserRole): string {
+    switch (role) {
+      case 'SUPER_ADMIN': return '/super-admin/dashboard';
+      case 'PROPRIETAIRE': return '/proprietaire/dashboard';
+      case 'LOCATAIRE': return '/locataire/dashboard';
+      default: return '/auth/bailleur/login';
+    }
   }
 }
