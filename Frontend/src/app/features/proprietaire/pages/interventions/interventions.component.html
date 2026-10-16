@@ -1,111 +1,228 @@
-<div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-      <div style="margin-bottom: 24px;">
-        <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Interventions & Problèmes</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Lisez les problèmes signalés et faites-les avancer</p>
-      </div>
+<div style="padding:32px;background: var(--bg);min-height:100vh;border-radius:32px;position:relative;">
 
-      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <select (change)="onFilterStatus($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
-          <option value="">Tous les statuts</option>
-          <option value="NOUVEAU">Nouveau</option>
-          <option value="EN_COURS">En cours</option>
-          <option value="TERMINE">Terminé</option>
-        </select>
-        <select (change)="onFilterCategory($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
-          <option value="">Toutes les catégories</option>
-          @for (c of categories(); track c) {
-            <option [value]="c">{{ c }}</option>
-          }
-        </select>
+  <!-- ============ PAGE HEADER ============ -->
+  <div style="margin-bottom:28px;padding-bottom:20px;position:relative;">
+    <div style="display:flex;align-items:flex-start;gap:16px;">
+      <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
+      <div>
+        <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Interventions &amp; Problèmes</h1>
+        <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Lisez les problèmes signalés et faites-les avancer</p>
       </div>
+    </div>
+    <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
+  </div>
 
-      <app-state-block [loading]="loading()" [error]="error()" [empty]="shown().length === 0" emptyMessage="Aucune intervention trouvée.">
-        <div style="background: #fff; border: 1px solid #e0e0e0; overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr style="background: #f5f5f5; border-bottom: 1px solid #e0e0e0;">
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Logement</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Locataire</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Titre</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Catégorie</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Statut</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Date</th>
-                <th style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (intervention of shown(); track intervention.id) {
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                  <td style="padding: 12px 16px; font-size: 13px; color: #333; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ intervention.logement_address }}</td>
-                  <td style="padding: 12px 16px; font-size: 14px; font-weight: 600; color: #000;">{{ intervention.locataire_name }}</td>
-                  <td style="padding: 12px 16px; font-size: 14px; color: #000; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ intervention.title }}</td>
-                  <td style="padding: 12px 16px; font-size: 13px; color: #333;">{{ intervention.category }}</td>
-                  <td style="padding: 12px 16px;">
-                    <span [style.background]="getStatusBg(intervention.status)"
-                      [style.color]="getStatusColor(intervention.status)"
-                      style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
-                      {{ getStatusLabel(intervention.status) }}
-                    </span>
-                  </td>
-                  <td style="padding: 12px 16px; font-size: 13px; color: #333;">{{ intervention.created_at | dateFr }}</td>
-                  <td style="padding: 12px 16px;">
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                      <button (click)="openView(intervention)" title="Voir le problème"
-                        style="background: #fff; border: 1px solid #e0e0e0; padding: 6px; cursor: pointer; display: flex;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+  <!-- ============ FILTERS ============ -->
+  <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+
+    <select
+      (change)="onFilterStatus($event)"
+      style="appearance:none;-webkit-appearance:none;padding:12px 42px 12px 20px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 18px center;"
+    >
+      <option value="">Tous les statuts</option>
+      <option value="NOUVEAU">Nouveau</option>
+      <option value="EN_COURS">En cours</option>
+      <option value="TERMINE">Terminé</option>
+    </select>
+
+    <select
+      (change)="onFilterCategory($event)"
+      style="appearance:none;-webkit-appearance:none;padding:12px 42px 12px 20px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 18px center;"
+    >
+      <option value="">Toutes les catégories</option>
+      @for (c of categories(); track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- ============ TABLE ============ -->
+  <app-state-block [loading]="loading()" [error]="error()" [empty]="shown().length === 0" emptyMessage="Aucune intervention trouvée.">
+    <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-lg), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+
+      <span style="position:absolute;top:-90px;right:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.08;filter:blur(2px);pointer-events:none;"></span>
+
+      <div style="position:relative;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:900px;">
+          <thead>
+            <tr style="background:transparent;">
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Logement<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Locataire<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Titre<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Catégorie<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Statut<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Date<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 24px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Actions<span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (intervention of shown(); track intervention.id) {
+              <tr style="position:relative;transition:background 0.2s ease;">
+
+                <td style="padding:18px 24px;font-size:13px;color: var(--text-main);font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;">
+                  {{ intervention.logement_address }}
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;font-size:14px;font-weight:800;color: var(--text-main);letter-spacing:-0.005em;position:relative;">
+                  {{ intervention.locataire_name }}
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;font-size:14px;color: var(--text-main);font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;">
+                  {{ intervention.title }}
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;font-size:13px;color: var(--text-main);font-weight:600;position:relative;">
+                  {{ intervention.category }}
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;position:relative;">
+                  <span
+                    style="display:inline-block;padding:6px 16px;font-size:11.5px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.25);"
+                    [style.background]="getStatusBg(intervention.status)"
+                    [style.color]="getStatusColor(intervention.status)"
+                  >
+                    {{ getStatusLabel(intervention.status) }}
+                  </span>
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;font-size:13px;font-weight:600;color: var(--text-sub);position:relative;">
+                  {{ intervention.created_at | dateFr }}
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 24px;position:relative;">
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+
+                    <button
+                      (click)="openView(intervention)"
+                      title="Voir le problème"
+                      style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border:none;border-radius:50%;cursor:pointer;color: var(--text-main);background: var(--bg);box-shadow: var(--out-sm), inset 0 0 0 1px rgba(111,143,107,0.15);transition:transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+
+                    @if (intervention.status === 'NOUVEAU') {
+                      <button
+                        (click)="markInProgress(intervention)"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:none;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:0.03em;font-family:inherit;cursor:pointer;color:#4f6a4c;background:rgba(111,143,107,0.12);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);transition:background 0.2s ease, box-shadow 0.2s ease;"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        En cours
                       </button>
-                      @if (intervention.status === 'NOUVEAU') {
-                        <button (click)="markInProgress(intervention)"
-                          style="background: #fff; color: #000; border: 1px solid #000; padding: 4px 10px; font-size: 11px; cursor: pointer; font-weight: 600;">En cours</button>
-                      }
-                      @if (intervention.status !== 'TERMINE') {
-                        <button (click)="markComplete(intervention)"
-                          style="background: #000; color: #fff; border: none; padding: 4px 10px; font-size: 11px; cursor: pointer; font-weight: 600;">Fermer</button>
-                      }
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </app-state-block>
+                    }
 
-      @if (viewTarget()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeView()">
-          <div style="background: #fff; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto;" (click)="$event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e0e0e0;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">{{ viewTarget()!.title }}</h3>
-              <button (click)="closeView()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
+                    @if (intervention.status !== 'TERMINE') {
+                      <button
+                        (click)="markComplete(intervention)"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:none;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:0.03em;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow:0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease;"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
+                        Fermer
+                      </button>
+                    }
+                  </div>
+                  <span style="position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </app-state-block>
+
+  <!-- ============ VIEW MODAL ============ -->
+  @if (viewTarget()) {
+    <div style="position:fixed;inset:0;background:rgba(59,47,36,0.45);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;" (click)="closeView()">
+      <div style="position:relative;background: var(--convex);border-radius:32px;box-shadow: var(--out-xl), 0 0 0 1px rgba(111,143,107,0.12), 0 24px 60px rgba(111,143,107,0.14);width:100%;max-width:600px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;" (click)="$event.stopPropagation()">
+
+        <!-- sage top accent -->
+        <span style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:56px;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#6f8f6b,#c9d6c2,#6f8f6b);box-shadow:0 0 14px rgba(111,143,107,0.35);z-index:2;"></span>
+
+        <!-- soft blob -->
+        <span style="position:absolute;top:-80px;right:-80px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.12;pointer-events:none;z-index:0;"></span>
+
+        <!-- header -->
+        <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 28px 20px;">
+          <h3 style="margin:0;font-size:18px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">{{ viewTarget()!.title }}</h3>
+          <button (click)="closeView()" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--bg);border:none;border-radius:50%;cursor:pointer;color: var(--text-main);box-shadow:var(--out-sm);transition:transform 0.2s ease, box-shadow 0.2s ease;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+        </div>
+
+        <!-- body -->
+        <div style="position:relative;z-index:1;padding:26px 28px;overflow-y:auto;">
+
+          <!-- status pill -->
+          <div style="margin-bottom:20px;">
+            <span
+              style="display:inline-block;padding:6px 16px;font-size:11.5px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.25);"
+              [style.background]="getStatusBg(viewTarget()!.status)"
+              [style.color]="getStatusColor(viewTarget()!.status)"
+            >
+              {{ getStatusLabel(viewTarget()!.status) }}
+            </span>
+          </div>
+
+          <!-- info grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;">
+            <div>
+              <p style="margin:0 0 4px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Logement</p>
+              <p style="margin:0;font-size:14px;color: var(--text-main);font-weight:700;">{{ viewTarget()!.logement_address }}</p>
             </div>
-            <div style="padding: 20px;">
-              <div style="margin-bottom: 16px;">
-                <span [style.background]="getStatusBg(viewTarget()!.status)" [style.color]="getStatusColor(viewTarget()!.status)"
-                  style="font-size: 11px; padding: 3px 8px; font-weight: 600;">{{ getStatusLabel(viewTarget()!.status) }}</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Logement</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ viewTarget()!.logement_address }}</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Signalé par</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ viewTarget()!.locataire_name }}</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Date</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ viewTarget()!.created_at | dateFr }}</p></div>
-              </div>
-              <p style="margin: 0 0 4px; font-size: 11px; color: #999; text-transform: uppercase;">Description du problème</p>
-              <p style="margin: 0 0 16px; font-size: 14px; color: #000; background: #f5f5f5; border: 1px solid #e0e0e0; padding: 12px;">{{ viewTarget()!.description || 'Aucune description fournie.' }}</p>
-              <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Réponse au locataire</label>
-              <textarea [(ngModel)]="responseText" rows="3" placeholder="Message optionnel..."
-                style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
+            <div>
+              <p style="margin:0 0 4px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Signalé par</p>
+              <p style="margin:0;font-size:14px;color: var(--text-main);font-weight:700;">{{ viewTarget()!.locataire_name }}</p>
             </div>
-            <div style="display: flex; gap: 8px; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid #e0e0e0;">
-              <button (click)="closeView()" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Fermer</button>
-              @if (viewTarget()!.status === 'NOUVEAU') {
-                <button (click)="markInProgress(viewTarget()!)" style="background: #fff; color: #000; border: 1px solid #000; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Passer en cours</button>
-              }
-              @if (viewTarget()!.status !== 'TERMINE') {
-                <button (click)="markComplete(viewTarget()!)" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Fermer le signalement</button>
-              }
+            <div>
+              <p style="margin:0 0 4px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Date</p>
+              <p style="margin:0;font-size:14px;color: var(--text-main);font-weight:700;">{{ viewTarget()!.created_at | dateFr }}</p>
             </div>
           </div>
+
+          <!-- description -->
+          <p style="margin:0 0 8px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Description du problème</p>
+          <p style="margin:0 0 22px;font-size:14px;line-height:1.6;color: var(--text-main);background:var(--concave);padding:16px 20px;border-radius:20px;box-shadow:var(--in-xs), inset 0 0 0 1px rgba(111,143,107,0.15);">{{ viewTarget()!.description || 'Aucune description fournie.' }}</p>
+
+          <!-- response textarea -->
+          <label style="display:block;margin-bottom:8px;padding-left:6px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color: var(--text-sub);">Réponse au locataire</label>
+          <textarea
+            [(ngModel)]="responseText"
+            rows="3"
+            placeholder="Message optionnel..."
+            style="width:100%;padding:16px 20px;border:none;outline:none;border-radius:24px;font-size:14px;font-family:inherit;background:var(--bg);color: var(--text-main);resize:vertical;box-sizing:border-box;box-shadow:var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);line-height:1.55;"
+          ></textarea>
         </div>
-      }
+
+        <!-- footer -->
+        <div style="position:relative;z-index:1;display:flex;gap:12px;justify-content:flex-end;padding:20px 28px 26px;flex-wrap:wrap;">
+          <span style="position:absolute;left:28px;right:28px;top:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+
+          <button (click)="closeView()" style="padding:11px 24px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:none;border-radius:999px;color: var(--text-main);background: var(--bg);box-shadow: var(--out-sm), inset 0 0 0 1px rgba(111,143,107,0.15);">
+            Fermer
+          </button>
+
+          @if (viewTarget()!.status === 'NOUVEAU') {
+            <button (click)="markInProgress(viewTarget()!)" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;font-size:13px;font-weight:800;font-family:inherit;letter-spacing:0.02em;cursor:pointer;border:none;border-radius:999px;color:#4f6a4c;background:rgba(111,143,107,0.12);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.35);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Passer en cours
+            </button>
+          }
+
+          @if (viewTarget()!.status !== 'TERMINE') {
+            <button (click)="markComplete(viewTarget()!)" style="display:inline-flex;align-items:center;gap:8px;padding:11px 28px;font-size:13px;font-weight:800;font-family:inherit;letter-spacing:0.02em;cursor:pointer;border:none;border-radius:999px;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow:0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
+              Fermer le signalement
+            </button>
+          }
+        </div>
+      </div>
     </div>
+  }
+</div>

@@ -45,7 +45,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    this.sidebarCollapsed.update(v => !v);
+    if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
+      this.mobileSidebarOpen.update(v => !v);
+    } else {
+      this.sidebarCollapsed.update(v => !v);
+    }
   }
 
   private getNavItemsForRole(role?: UserRole): NavItem[] {

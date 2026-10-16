@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthAsideComponent } from '@shared/components/auth-aside/auth-aside.component';
 
 @Component({
   selector: 'app-bailleur-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, AuthAsideComponent],
   templateUrl: './bailleur-register.component.html',
   styleUrl: './bailleur-register.component.scss'
 })

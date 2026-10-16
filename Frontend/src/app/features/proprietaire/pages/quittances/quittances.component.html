@@ -1,27 +1,27 @@
-<div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+﻿<div style="padding: 24px; background: var(--bg); min-height: 100vh; font-family: inherit; border-radius: var(--radius-md)">
       <div style="margin-bottom: 24px;">
-        <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Quittances</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Suivez les quittances des loyers payés : insérez et consultez les quittances du locataire</p>
+        <h1 style="margin: 0 0 4px; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-main);">Quittances</h1>
+        <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Suivez les quittances des loyers payés : insérez et consultez les quittances du locataire</p>
       </div>
 
-      <div style="background: #fff; border: 1px solid #e0e0e0; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #000;">
-          <span style="width: 12px; height: 12px; background: #000; display: inline-block;"></span>
+      <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-main);">
+          <span style="width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 2px 2px 4px var(--clay-dark); display: inline-block;"></span>
           Payé + reçu ({{ countWithReceipt() }})
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #000;">
-          <span style="width: 12px; height: 12px; background: #e0e0e0; border: 1px solid #999; display: inline-block;"></span>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-main);">
+          <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--board-2); box-shadow: inset 1px 1px 3px var(--clay-in-dark); display: inline-block;"></span>
           Payé sans reçu ({{ countPaidNoReceipt() }})
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666;">
-          <span style="width: 12px; height: 12px; background: #fff; border: 1px solid #e0e0e0; display: inline-block;"></span>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-sub);">
+          <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--concave); box-shadow: inset 1px 1px 3px var(--clay-in-dark); display: inline-block;"></span>
           Non payé ({{ countUnpaid() }})
         </div>
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
         <select (change)="onFilterMonth($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
+          style="padding: 11px 18px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
           <option value="">Tous les mois</option>
           @for (p of periods(); track p) {
             <option [value]="p">{{ monthlabel(p) }}</option>
@@ -34,52 +34,54 @@
       @for (group of groupedQuittances(); track group.logementId) {
         <div style="margin-bottom: 24px;">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <h2 style="margin: 0; font-size: 17px; font-weight: 700; color: #000;">{{ group.address }}</h2>
-            <span style="font-size: 11px; color: #666; background: #fff; border: 1px solid #e0e0e0; padding: 3px 8px;">{{ group.items.length }} quittance(s)</span>
+            <span style="display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; color: var(--sage-deep); background: linear-gradient(145deg, #fff, #ead9c2); box-shadow: 3px 3px 8px var(--clay-dark), -3px -3px 8px var(--clay-light);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <h2 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main);">{{ group.address }}</h2>
+            <span style="font-size: 11px; color: var(--text-sub); background: var(--concave); border-radius: 999px; box-shadow: inset 2px 2px 4px var(--clay-in-dark), inset -2px -2px 4px var(--clay-in-light); padding: 4px 12px; font-weight: 700;">{{ group.items.length }} quittance(s)</span>
           </div>
-          <p style="margin: 0 0 12px; font-size: 12px; color: #666;">Mois couverts : <strong style="color: #000;">{{ coveredMonths(group) }}</strong></p>
+          <p style="margin: 0 0 12px; font-size: 12px; color: var(--text-sub);">Mois couverts : <strong style="color: var(--text-main);">{{ coveredMonths(group) }}</strong></p>
 
           <div style="display: flex; flex-direction: column; gap: 10px;">
             @for (quittance of group.items; track quittance.id) {
-              <div style="background: #fff; border: 1px solid #e0e0e0; padding: 14px 16px; display: flex; align-items: center; gap: 14px;"
-                [style.border-left]="quittance.status === 'PAYE' ? (quittance.quittancePdf ? '4px solid #000' : '4px solid #999') : '4px solid #e0e0e0'">
-                <div style="width: 40px; height: 40px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 9 20 9"/></svg>
+              <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 14px 16px; display: flex; align-items: center; gap: 14px;"
+                [style.border-left]="quittance.status === 'PAYE' ? (quittance.quittancePdf ? '4px solid var(--sage-deep)' : '4px solid var(--board-2)') : '4px solid var(--board-2)'">
+                <div style="width: 42px; height: 42px; background: var(--concave); box-shadow: inset 2px 2px 5px var(--clay-in-dark), inset -2px -2px 5px var(--clay-in-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 14px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 9 20 9"/></svg>
                 </div>
                 <div style="flex: 1; min-width: 0;">
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-                    <span style="font-size: 14px; font-weight: 700; color: #000;">{{ quittance.locataireNom }}</span>
+                    <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">{{ quittance.locataireNom }}</span>
                     @if (quittance.roomNumber) {
-                      <span style="font-size: 10px; background: #000; color: #fff; padding: 2px 6px; font-weight: 600;">{{ quittance.roomNumber }}</span>
+                      <span style="font-size: 10px; background: var(--board-2); color: var(--text-main); border-radius: 999px; padding: 3px 9px; font-weight: 800;">{{ quittance.roomNumber }}</span>
                     }
-                    <span style="font-size: 11px; color: #666;">{{ getMonthName(quittance.month) }} {{ quittance.year }}</span>
+                    <span style="font-size: 11px; color: var(--text-sub);">{{ getMonthName(quittance.month) }} {{ quittance.year }}</span>
                   </div>
-                  <p style="margin: 0; font-size: 13px; color: #666;">{{ quittance.amount | montant }} FCFA -
+                  <p style="margin: 0; font-size: 13px; color: var(--text-sub);">{{ quittance.amount | montant }} FCFA -
                     @if (quittance.status !== 'PAYE') {
-                      <span style="color: #999;">Non payé</span>
+                      <span style="color: var(--text-sub);">Non payé</span>
                     } @else if (quittance.quittancePdf) {
-                      <span style="color: #000; font-weight: 600;">Reçu disponible : {{ quittance.quittancePdf.name }}</span>
+                      <span style="color: var(--text-main); font-weight: 700;">Reçu disponible : {{ quittance.quittancePdf.name }}</span>
                     } @else {
-                      <span style="color: #333; font-weight: 600;">Payé - quittance à insérer</span>
+                      <span style="color: var(--text-main); font-weight: 700;">Payé - quittance à insérer</span>
                     }
                   </p>
                 </div>
                 <div style="flex-shrink: 0; display: flex; gap: 6px; align-items: center;">
                   @if (quittance.quittancePdf) {
                     <button (click)="openPdfView(quittance)" title="Voir le reçu"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Voir</button>
+                      style="background: linear-gradient(145deg, #fffdf9, #efd7b9); color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: var(--out-sm); border-radius: 999px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 800; font-family: inherit;">Voir</button>
                     <button (click)="openDocument(quittance)" title="Statut d'envoi"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Statut</button>
+                      style="background: linear-gradient(145deg, #fffdf9, #efd7b9); color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: var(--out-sm); border-radius: 999px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 800; font-family: inherit;">Statut</button>
                     <button (click)="pick(quittance, picker)" title="Remplacer le fichier"
-                      style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Insérer</button>
+                      style="background: linear-gradient(145deg, #fffdf9, #efd7b9); color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: var(--out-sm); border-radius: 999px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 800; font-family: inherit;">Insérer</button>
                   } @else if (quittance.status === 'PAYE') {
-                    <button (click)="pick(quittance, picker)" style="display: flex; align-items: center; gap: 6px; background: #000; color: #fff; border: none; padding: 7px 14px; font-size: 12px; cursor: pointer; font-weight: 600;">
+                    <button (click)="pick(quittance, picker)" style="display: flex; align-items: center; gap: 6px; background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; border: none; box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4); border-radius: 999px; padding: 8px 16px; font-size: 12px; cursor: pointer; font-weight: 800; font-family: inherit;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
                       Insérer la quittance
                     </button>
                   } @else {
-                    <span style="font-size: 12px; color: #999; padding: 6px 12px; border: 1px solid #e0e0e0;">En attente de paiement</span>
+                    <span style="font-size: 12px; color: var(--text-sub); padding: 8px 14px; border-radius: 999px; background: var(--concave); box-shadow: inset 2px 2px 5px var(--clay-in-dark), inset -2px -2px 5px var(--clay-in-light); font-weight: 600;">En attente de paiement</span>
                   }
                 </div>
               </div>
@@ -89,50 +91,50 @@
       }
 
       @if (loading()) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Chargement...</p>
+        <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 48px; text-align: center;">
+          <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Chargement...</p>
         </div>
       } @else if (error()) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-          <p style="margin: 0 0 12px; color: #666; font-size: 14px;">{{ error() }}</p>
-          <button (click)="refresh()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer;">Réessayer</button>
+        <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 48px; text-align: center;">
+          <p style="margin: 0 0 12px; color: var(--text-sub); font-size: 14px;">{{ error() }}</p>
+          <button (click)="refresh()" style="background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; border: none; box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4); border-radius: 999px; padding: 10px 22px; font-size: 13px; cursor: pointer; font-weight: 800; font-family: inherit;">Réessayer</button>
         </div>
       } @else if (groupedQuittances().length === 0) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Aucune quittance trouvée</p>
+        <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 48px; text-align: center;">
+          <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Aucune quittance trouvée</p>
         </div>
       }
 
       @if (docView()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeDocument()">
-          <div style="background: #fff; width: 100%; max-width: 480px; padding: 24px;" (click)="$event.stopPropagation()">
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(74, 63, 56, 0.42); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeDocument()">
+          <div style="background: var(--cream); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--radius-xl); box-shadow: var(--out-xl); width: 100%; max-width: 480px; padding: 24px;" (click)="$event.stopPropagation()">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">Statut de la quittance</h3>
-              <button (click)="closeDocument()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main);">Statut de la quittance</h3>
+              <button (click)="closeDocument()" style="display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; font-size: 15px; cursor: pointer; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-xs);">✕</button>
             </div>
-            <div style="background: #f5f5f5; border: 1px solid #e0e0e0; padding: 24px 16px; text-align: center; margin-bottom: 16px;">
-              <p style="margin: 0; font-size: 14px; font-weight: 600; color: #000;">{{ docView().row.locataireNom }}</p>
-              <p style="margin: 4px 0 0; font-size: 12px; color: #666;">{{ monthlabel(docView().row.period) }}</p>
+            <div style="background: var(--concave); box-shadow: inset 2px 2px 5px var(--clay-in-dark), inset -2px -2px 5px var(--clay-in-light); padding: 24px 16px; text-align: center; margin-bottom: 16px; border-radius: var(--radius-md)">
+              <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text-main);">{{ docView().row.locataireNom }}</p>
+              <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-sub);">{{ monthlabel(docView().row.period) }}</p>
             </div>
             @if (docView().loading) {
-              <p style="margin: 0; font-size: 13px; color: #666;">Chargement...</p>
+              <p style="margin: 0; font-size: 13px; color: var(--text-sub);">Chargement...</p>
             } @else if (docView().doc) {
-              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #333; margin-bottom: 16px;">
-                <div><span style="color: #999;">Fichier : </span><span style="color: #000; font-weight: 600;">{{ docView().doc.file_name }}</span></div>
-                <div><span style="color: #999;">Envoi e-mail : </span><span style="color: #000; font-weight: 600;">{{ docView().doc.email_status }}</span></div>
+              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-main); margin-bottom: 16px;">
+                <div><span style="color: var(--text-sub);">Fichier : </span><span style="color: var(--text-main); font-weight: 700;">{{ docView().doc.file_name }}</span></div>
+                <div><span style="color: var(--text-sub);">Envoi e-mail : </span><span style="color: var(--text-main); font-weight: 700;">{{ docView().doc.email_status }}</span></div>
                 @if (docView().doc.sent_at) {
-                  <div><span style="color: #999;">Envoyé le : </span><span style="color: #000;">{{ docView().doc.sent_at | dateFr }}</span></div>
+                  <div><span style="color: var(--text-sub);">Envoyé le : </span><span style="color: var(--text-main);">{{ docView().doc.sent_at | dateFr }}</span></div>
                 }
                 @if (docView().doc.last_error) {
-                  <div style="color: #000;">Erreur : {{ docView().doc.last_error }}</div>
+                  <div style="color: var(--error-dark);">Erreur : {{ docView().doc.last_error }}</div>
                 }
               </div>
             } @else {
-              <p style="margin: 0 0 16px; font-size: 13px; color: #999;">Aucun document disponible.</p>
+              <p style="margin: 0 0 16px; font-size: 13px; color: var(--text-sub);">Aucun document disponible.</p>
             }
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
-              <button (click)="closeDocument()" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Fermer</button>
-              <button (click)="downloadPdf()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Télécharger</button>
+              <button (click)="closeDocument()" style="background: linear-gradient(145deg, #fffdf9, #efd7b9); color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: var(--out-sm); border-radius: 999px; padding: 9px 18px; font-size: 13px; cursor: pointer; font-weight: 800; font-family: inherit;">Fermer</button>
+              <button (click)="downloadPdf()" style="background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; border: none; box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4); border-radius: 999px; padding: 9px 18px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit;">Télécharger</button>
             </div>
           </div>
         </div>

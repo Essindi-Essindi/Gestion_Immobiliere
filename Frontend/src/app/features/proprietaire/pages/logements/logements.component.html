@@ -1,256 +1,274 @@
-<div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-        <div>
-          <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Mes Logements</h1>
-          <p style="margin: 0; color: #666; font-size: 14px;">Cliquez sur une carte pour voir les pièces et les occupants</p>
-        </div>
-        <button (click)="openAdd()"
-          style="background: #000; color: #fff; border: none; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Ajouter un logement
-        </button>
-      </div>
+﻿<div style="padding: 4px 2px; min-height: auto;">
 
-      <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <input (input)="onSearch($event)" placeholder="Rechercher un logement..."
-          style="flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;"/>
-        <select (change)="onFilterType($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
-          <option value="">Tous les types</option>
-          <option value="APPARTEMENT">Appartement</option>
-          <option value="MAISON">Maison</option>
-          <option value="STUDIO">Studio</option>
-          <option value="COMMERCIAL">Commercial</option>
-        </select>
-        <select (change)="onFilterStatus($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
-          <option value="">Tous les statuts</option>
-          <option value="LOUE">Occupé</option>
-          <option value="VACANT">Disponible</option>
-        </select>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-        @for (logement of filteredLogements(); track logement.id) {
-          <div (click)="openDetail(logement)" style="background: #fff; border: 1px solid #e0e0e0; overflow: hidden; cursor: pointer;">
-            <div style="height: 150px; background: #e0e0e0; display: flex; align-items: center; justify-content: center;">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </div>
-            <div style="padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                <span [style.background]="getStatusBg(logement.status)" [style.color]="getStatusColor(logement.status)"
-                  style="font-size: 11px; padding: 3px 8px; font-weight: 600; text-transform: uppercase;">
-                  {{ getStatusLabel(logement.status) }}
-                </span>
-                <span style="font-size: 11px; color: #999;">{{ logement.type }} - {{ occupancyRate(logement) }}% occ.</span>
-              </div>
-              <h3 style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #000;">{{ logement.address.street }}</h3>
-              <p style="margin: 0 0 12px; font-size: 13px; color: #666;">{{ logement.address.postalCode }} {{ logement.address.city }}</p>
-              <div style="display: flex; gap: 16px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                <span>{{ logement.surface }} m²</span>
-                <span>{{ roomCount(logement) }} pièces</span>
-                <span>{{ occupantCount(logement) }} occupant(s)</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #e0e0e0;">
-                <span style="font-size: 18px; font-weight: 700; color: #000;">{{ logement.rent | montant }} FCFA</span>
-                <span style="display: flex; gap: 6px;">
-                  <button (click)="openEdit(logement, $event)" title="Modifier"
-                    style="background: #fff; border: 1px solid #e0e0e0; padding: 6px; cursor: pointer; display: flex;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-                  </button>
-                  <button (click)="askDelete(logement, $event)" title="Supprimer"
-                    style="background: #fff; border: 1px solid #e0e0e0; padding: 6px; cursor: pointer; display: flex;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  </button>
-                </span>
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-
-      @if (loading()) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;"><p style="margin: 0; color: #666; font-size: 14px;">Chargement...</p></div>
-      } @else if (error()) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;"><p style="margin: 0 0 12px; color: #666; font-size: 14px;">{{ error() }}</p><button (click)="refresh()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; cursor: pointer;">Réessayer</button></div>
-      } @else if (filteredLogements().length === 0) {
-        <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center; margin-top: 16px;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Aucun logement trouvé</p>
-        </div>
-      }
-
-      @if (selected()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeDetail()">
-          <div style="background: #fff; width: 100%; max-width: 720px; max-height: 88vh; overflow: auto;" (click)="$event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; background: #fff;">
-              <div>
-                <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #000;">{{ selected().address.street }}</h3>
-                <p style="margin: 2px 0 0; font-size: 13px; color: #666;">{{ selected().address.postalCode }} {{ selected().address.city }} - {{ selected().type }} - {{ selected().surface }} m² - {{ selected().rent | montant }} FCFA/mois</p>
-              </div>
-              <button (click)="closeDetail()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
-            </div>
-            <div style="padding: 20px;">
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Statut</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ getStatusLabel(selected().status) }}</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Locataire du contrat</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().tenantName || 'Aucun' }}</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Occupation</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ occupantCount(selected()) }} occupant(s) - {{ occupancyRate(selected()) }}%</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Loyer</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().rent | montant }} FCFA</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Charges</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().charges | montant }} FCFA</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Pays</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().address.country }}</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Surface</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().surface }} m²</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Pièces</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().pieces.length }} ({{ roomCount(selected()) }} chambre(s)/bureau(x))</p></div>
-                <div><p style="margin: 0 0 2px; font-size: 11px; color: #999; text-transform: uppercase;">Type</p><p style="margin: 0; font-size: 14px; color: #000; font-weight: 500;">{{ selected().type }}</p></div>
-              </div>
-              <h4 style="margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #000; text-transform: uppercase;">Pièces et occupation</h4>
-              <div style="border: 1px solid #e0e0e0;">
-                <div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr 110px; gap: 0; background: #f5f5f5; font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">
-                  <div style="padding: 10px 12px;">N°</div>
-                  <div style="padding: 10px 12px;">Type</div>
-                  <div style="padding: 10px 12px;">Capacité</div>
-                  <div style="padding: 10px 12px;">Occupant(s)</div>
-                  <div style="padding: 10px 12px;">Statut</div>
-                </div>
-                @for (piece of selected().pieces || []; track piece.numero) {
-                  <div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr 110px; gap: 0; border-top: 1px solid #e0e0e0; font-size: 13px;">
-                    <div style="padding: 10px 12px; font-weight: 700; color: #000;">{{ piece.numero }}</div>
-                    <div style="padding: 10px 12px; color: #333;">{{ pieceTypeLabel(piece.type) }}</div>
-                    <div style="padding: 10px 12px; color: #333;">{{ piece.capacite === 0 ? '-' : piece.occupants.length + '/' + piece.capacite }}</div>
-                    <div style="padding: 10px 12px; color: #333;">
-                      @if (piece.occupants.length === 0) {
-                        <span style="color: #999;">-</span>
-                      } @else {
-                        @for (occ of piece.occupants; track occ.locataireId) {
-                          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                            <span>{{ occ.nom }}</span>
-                            <button (click)="releaseOccupant(piece, occ)" title="Libérer"
-                              style="background: #fff; border: 1px solid #e0e0e0; font-size: 10px; padding: 2px 6px; cursor: pointer;">Libérer</button>
-                          </div>
-                        }
-                      }
-                    </div>
-                    <div style="padding: 10px 12px;">
-                      @if (piece.capacite === 0) {
-                        <span style="font-size: 11px; padding: 3px 8px; font-weight: 600; background: #f5f5f5; color: #666;">Commun</span>
-                      } @else if (piece.occupants.length >= piece.capacite) {
-                        <span style="font-size: 11px; padding: 3px 8px; font-weight: 600; background: #000; color: #fff;">Occupé</span>
-                      } @else if (piece.occupants.length > 0) {
-                        <span style="font-size: 11px; padding: 3px 8px; font-weight: 600; background: #e0e0e0; color: #333;">Partiel</span>
-                      } @else {
-                        <span style="font-size: 11px; padding: 3px 8px; font-weight: 600; background: #fff; color: #000; border: 1px solid #000;">Libre</span>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-
-              <h4 style="margin: 20px 0 12px; font-size: 14px; font-weight: 700; color: #000; text-transform: uppercase;">Assigner un locataire à une chambre</h4>
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <select [(ngModel)]="assignLocId" style="flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 13px; background: #fff;">
-                  <option value="">Choisir un locataire</option>
-                  @for (loc of assignables(); track loc.id) {
-                    <option [value]="loc.id">{{ loc.firstName }} {{ loc.lastName }}{{ loc.roomNumber ? ' (' + loc.roomNumber + ')' : '' }}</option>
-                  }
-                </select>
-                <select [(ngModel)]="assignRoomNum" style="flex: 1; min-width: 140px; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 13px; background: #fff;">
-                  <option value="">Choisir une chambre</option>
-                  @for (room of freeRooms(selected()); track room.numero) {
-                    <option [value]="room.numero">{{ room.numero }} ({{ room.occupants.length }}/{{ room.capacite }})</option>
-                  }
-                </select>
-                <button (click)="doAssign()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Assigner</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-
-      @if (showAdd() || showEdit()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeForm()">
-          <div style="background: #fff; width: 100%; max-width: 680px; max-height: 88vh; overflow: auto;" (click)="$event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; background: #fff;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">{{ showAdd() ? 'Ajouter un logement' : 'Modifier le logement' }}</h3>
-              <button (click)="closeForm()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
-            </div>
-            <div style="padding: 20px;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Adresse</label>
-                  <input [(ngModel)]="formData.street" placeholder="12 Rue de la Paix" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Ville</label>
-                  <input [(ngModel)]="formData.city" placeholder="Paris" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Code postal</label>
-                  <input [(ngModel)]="formData.postalCode" placeholder="75002" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Type</label>
-                  <select [(ngModel)]="formData.type" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; background: #fff;">
-                    <option value="APPARTEMENT">Appartement</option>
-                    <option value="MAISON">Maison</option>
-                    <option value="STUDIO">Studio</option>
-                    <option value="COMMERCIAL">Commercial</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Surface (m²)</label>
-                  <input [(ngModel)]="formData.surface" type="number" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Loyer (FCFA)</label>
-                  <input [(ngModel)]="formData.rent" type="number" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Charges</label>
-                  <input [(ngModel)]="formData.charges" type="number" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #333;">Pays</label>
-                  <input [(ngModel)]="formData.country" placeholder="France" style="width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; box-sizing: border-box;"/>
-                </div>
-              </div>
-
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #000;">Pièces (chambres, salon, cuisine...)</h4>
-                <button (click)="addPieceRow()" style="background: #fff; color: #000; border: 1px solid #000; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">+ Pièce</button>
-              </div>
-              @for (piece of formPieces; track $index) {
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                  <input [(ngModel)]="piece.numero" placeholder="CH-1" style="width: 90px; padding: 8px 10px; border: 1px solid #e0e0e0; font-size: 13px; box-sizing: border-box;"/>
-                  <select [(ngModel)]="piece.type" style="flex: 1; padding: 8px 10px; border: 1px solid #e0e0e0; font-size: 13px; background: #fff;">
-                    <option value="CHAMBRE">Chambre</option>
-                    <option value="SALON">Salon</option>
-                    <option value="CUISINE">Cuisine</option>
-                    <option value="SALLE_DE_BAIN">Salle de bain</option>
-                    <option value="BUREAU">Bureau</option>
-                    <option value="AUTRE">Autre</option>
-                  </select>
-                  <input [(ngModel)]="piece.capacite" type="number" min="0" title="Capacité (0 = pièce commune)" style="width: 80px; padding: 8px 10px; border: 1px solid #e0e0e0; font-size: 13px; box-sizing: border-box;"/>
-                  <button (click)="removePieceRow($index)" style="background: #fff; border: 1px solid #e0e0e0; padding: 6px 10px; font-size: 12px; cursor: pointer;">✕</button>
-                </div>
-              }
-
-              <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px;">
-                <button (click)="closeForm()" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Annuler</button>
-                <button (click)="saveForm()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Enregistrer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-
-      @if (showDeleteConfirm()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="showDeleteConfirm.set(false)">
-          <div style="background: #fff; width: 100%; max-width: 420px; padding: 24px;" (click)="$event.stopPropagation()">
-            <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #000;">Supprimer ce logement ?</h3>
-            <p style="margin: 0 0 20px; font-size: 14px; color: #666;">Cette action est irréversible.</p>
-            <div style="display: flex; gap: 8px; justify-content: flex-end;">
-              <button (click)="showDeleteConfirm.set(false)" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 8px 16px; font-size: 13px; cursor: pointer;">Annuler</button>
-              <button (click)="confirmDelete()" style="background: #000; color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">Supprimer</button>
-            </div>
-          </div>
-        </div>
-      }
+  <!-- ============ HEADER ============ -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 style="margin: 0 0 6px; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-main);">Mes Logements</h1>
+      <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Cliquez sur une carte pour voir les pièces et les occupants</p>
     </div>
+    <button (click)="openAdd()"
+      style="display: inline-flex; align-items: center; gap: 9px; padding: 13px 24px; border: none; border-radius: 999px; font-size: 14px; font-weight: 800; font-family: inherit; letter-spacing: 0.02em; cursor: pointer; color: #fff; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 6px 6px 16px rgba(90, 110, 85, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.4);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Ajouter un logement
+    </button>
+  </div>
+
+  <!-- ============ TOOLBAR ============ -->
+  <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap;">
+    <label style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 240px; padding: 11px 18px; border-radius: 999px; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input (input)="onSearch($event)" placeholder="Rechercher un logement..."
+        style="border: none; outline: none; flex: 1; background: transparent; font-size: 14px; font-family: inherit; color: var(--text-main);"/>
+    </label>
+    <select (change)="onFilterType($event)" style="padding: 11px 18px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+      <option value="">Tous les types</option>
+      <option value="APPARTEMENT">Appartement</option>
+      <option value="MAISON">Maison</option>
+      <option value="STUDIO">Studio</option>
+      <option value="COMMERCIAL">Commercial</option>
+    </select>
+    <select (change)="onFilterStatus($event)" style="padding: 11px 18px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+      <option value="">Tous les statuts</option>
+      <option value="LOUE">Occupé</option>
+      <option value="VACANT">Disponible</option>
+    </select>
+  </div>
+
+  <!-- ============ CARDS ============ -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+    @for (logement of filteredLogements(); track logement.id) {
+      <div (click)="openDetail(logement)" style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-xl); box-shadow: var(--out-md); overflow: hidden; cursor: pointer; transition: transform 0.25s var(--ease), box-shadow 0.25s ease;">
+        <div style="height: 150px; background: linear-gradient(145deg, #f1dec6, #fbeedf); display: grid; place-items: center;">
+          <span style="display: grid; place-items: center; width: 72px; height: 72px; border-radius: 24px; color: var(--sage-deep); background: linear-gradient(145deg, #fff, #ead9c2); box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.6), 4px 4px 12px var(--clay-dark);">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+        </div>
+        <div style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span [style.background]="getStatusBg(logement.status)" [style.color]="getStatusColor(logement.status)"
+              style="display: inline-block; font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; box-shadow: 2px 2px 6px var(--clay-dark);">
+              {{ getStatusLabel(logement.status) }}
+            </span>
+            <span style="font-size: 11px; color: var(--text-sub); font-weight: 700;">{{ logement.type }} - {{ occupancyRate(logement) }}% occ.</span>
+          </div>
+          <h3 style="margin: 0 0 4px; font-size: 15px; font-weight: 800; color: var(--text-main);">{{ logement.address.street }}</h3>
+          <p style="margin: 0 0 14px; font-size: 13px; color: var(--text-sub);">{{ logement.address.postalCode }} {{ logement.address.city }}</p>
+          <div style="display: flex; gap: 16px; margin-bottom: 14px; font-size: 12px; color: var(--text-sub); font-weight: 600;">
+            <span>{{ logement.surface }} m²</span>
+            <span>{{ roomCount(logement) }} pièces</span>
+            <span>{{ occupantCount(logement) }} occupant(s)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px dashed var(--border-color);">
+            <span style="font-size: 18px; font-weight: 800; color: var(--text-main);">{{ logement.rent | montant }} FCFA</span>
+            <span style="display: flex; gap: 8px;">
+              <button (click)="openEdit(logement, $event)" title="Modifier"
+                style="display: grid; place-items: center; width: 34px; height: 34px; padding: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; color: var(--sage-deep); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: 3px 3px 8px var(--clay-dark), -3px -3px 8px var(--clay-light);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+              </button>
+              <button (click)="askDelete(logement, $event)" title="Supprimer"
+                style="display: grid; place-items: center; width: 34px; height: 34px; padding: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; color: var(--error-dark); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: 3px 3px 8px var(--clay-dark), -3px -3px 8px var(--clay-light);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div style="background: var(--convex); border-radius: var(--radius-xl); box-shadow: var(--out-md); padding: 56px; text-align: center; margin-top: 20px;"><p style="margin: 0; color: var(--text-sub); font-size: 14px; font-weight: 600;">Chargement...</p></div>
+  } @else if (error()) {
+    <div style="background: var(--convex); border-radius: var(--radius-xl); box-shadow: var(--out-md); padding: 56px; text-align: center; margin-top: 20px;">
+      <p style="margin: 0 0 14px; color: var(--text-sub); font-size: 14px;">{{ error() }}</p>
+      <button (click)="refresh()" style="padding: 10px 22px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: #fff; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4);">Réessayer</button>
+    </div>
+  } @else if (filteredLogements().length === 0) {
+    <div style="background: var(--convex); border-radius: var(--radius-xl); box-shadow: var(--out-md); padding: 64px 20px; text-align: center; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+      <span style="display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; color: var(--text-sub); background: var(--concave); box-shadow: inset 3px 3px 8px var(--clay-in-dark), inset -3px -3px 8px var(--clay-in-light);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </span>
+      <p style="margin: 0; color: var(--text-main); font-size: 15px; font-weight: 800;">Aucun logement trouvé</p>
+      <span style="color: var(--text-sub); font-size: 13px;">Ajoutez un logement pour commencer.</span>
+    </div>
+  }
+
+  <!-- ============ DETAIL MODAL ============ -->
+  @if (selected()) {
+    <div style="position: fixed; inset: 0; background: rgba(74, 63, 56, 0.42); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeDetail()">
+      <div style="background: var(--cream); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--radius-xl); box-shadow: var(--out-xl); width: 100%; max-width: 720px; max-height: 88vh; overflow: auto;" (click)="$event.stopPropagation()">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px dashed var(--border-color); position: sticky; top: 0; background: var(--cream); z-index: 1;">
+          <div>
+            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main);">{{ selected().address.street }}</h3>
+            <p style="margin: 3px 0 0; font-size: 13px; color: var(--text-sub);">{{ selected().address.postalCode }} {{ selected().address.city }} - {{ selected().type }} - {{ selected().surface }} m² - {{ selected().rent | montant }} FCFA/mois</p>
+          </div>
+          <button (click)="closeDetail()" style="display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-xs);">✕</button>
+        </div>
+        <div style="padding: 24px;">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Statut</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ getStatusLabel(selected().status) }}</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Locataire du contrat</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().tenantName || 'Aucun' }}</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Occupation</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ occupantCount(selected()) }} occupant(s) - {{ occupancyRate(selected()) }}%</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Loyer</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().rent | montant }} FCFA</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Charges</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().charges | montant }} FCFA</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Pays</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().address.country }}</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Surface</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().surface }} m²</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Pièces</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().pieces.length }} ({{ roomCount(selected()) }} chambre(s)/bureau(x))</p></div>
+            <div><p style="margin: 0 0 3px; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Type</p><p style="margin: 0; font-size: 14px; color: var(--text-main); font-weight: 700;">{{ selected().type }}</p></div>
+          </div>
+
+          <h4 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.08em;">Pièces et occupation</h4>
+          <div style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--out-sm);">
+            <div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr 110px; background: var(--concave); font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">
+              <div style="padding: 12px;">N°</div>
+              <div style="padding: 12px;">Type</div>
+              <div style="padding: 12px;">Capacité</div>
+              <div style="padding: 12px;">Occupant(s)</div>
+              <div style="padding: 12px;">Statut</div>
+            </div>
+            @for (piece of selected().pieces || []; track piece.numero) {
+              <div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr 110px; border-top: 1px dashed var(--border-color); font-size: 13px;">
+                <div style="padding: 12px; font-weight: 800; color: var(--text-main);">{{ piece.numero }}</div>
+                <div style="padding: 12px; color: var(--text-main);">{{ pieceTypeLabel(piece.type) }}</div>
+                <div style="padding: 12px; color: var(--text-main);">{{ piece.capacite === 0 ? '-' : piece.occupants.length + '/' + piece.capacite }}</div>
+                <div style="padding: 12px; color: var(--text-main);">
+                  @if (piece.occupants.length === 0) {
+                    <span style="color: var(--text-sub);">-</span>
+                  } @else {
+                    @for (occ of piece.occupants; track occ.locataireId) {
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <span style="font-weight: 600;">{{ occ.nom }}</span>
+                        <button (click)="releaseOccupant(piece, occ)" title="Libérer"
+                          style="padding: 3px 10px; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 999px; font-size: 10px; font-weight: 800; font-family: inherit; color: var(--error-dark); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-xs);">Libérer</button>
+                      </div>
+                    }
+                  }
+                </div>
+                <div style="padding: 12px;">
+                  @if (piece.capacite === 0) {
+                    <span style="display: inline-block; font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; background: var(--concave); color: var(--text-sub);">Commun</span>
+                  } @else if (piece.occupants.length >= piece.capacite) {
+                    <span style="display: inline-block; font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; color: #fff; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 3px 3px 8px rgba(90, 110, 85, 0.4);">Occupé</span>
+                  } @else if (piece.occupants.length > 0) {
+                    <span style="display: inline-block; font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; background: var(--board-2); color: var(--text-main);">Partiel</span>
+                  } @else {
+                    <span style="display: inline-block; font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; background: var(--concave); color: var(--text-main);">Libre</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <h4 style="margin: 24px 0 12px; font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.08em;">Assigner un locataire à une chambre</h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <select [(ngModel)]="assignLocId" style="flex: 1; min-width: 160px; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 13px; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+              <option value="">Choisir un locataire</option>
+              @for (loc of assignables(); track loc.id) {
+                <option [value]="loc.id">{{ loc.firstName }} {{ loc.lastName }}{{ loc.roomNumber ? ' (' + loc.roomNumber + ')' : '' }}</option>
+              }
+            </select>
+            <select [(ngModel)]="assignRoomNum" style="flex: 1; min-width: 140px; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 13px; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+              <option value="">Choisir une chambre</option>
+              @for (room of freeRooms(selected()); track room.numero) {
+                <option [value]="room.numero">{{ room.numero }} ({{ room.occupants.length }}/{{ room.capacite }})</option>
+              }
+            </select>
+            <button (click)="doAssign()" style="padding: 12px 24px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: #fff; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4);">Assigner</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============ ADD / EDIT MODAL ============ -->
+  @if (showAdd() || showEdit()) {
+    <div style="position: fixed; inset: 0; background: rgba(74, 63, 56, 0.42); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeForm()">
+      <div style="background: var(--cream); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--radius-xl); box-shadow: var(--out-xl); width: 100%; max-width: 680px; max-height: 88vh; overflow: auto;" (click)="$event.stopPropagation()">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px dashed var(--border-color); position: sticky; top: 0; background: var(--cream); z-index: 1;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main);">{{ showAdd() ? 'Ajouter un logement' : 'Modifier le logement' }}</h3>
+          <button (click)="closeForm()" style="display: grid; place-items: center; width: 36px; height: 36px; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-xs);">✕</button>
+        </div>
+        <div style="padding: 24px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Adresse</label>
+              <input [(ngModel)]="formData.street" placeholder="12 Rue de la Paix" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Ville</label>
+              <input [(ngModel)]="formData.city" placeholder="Paris" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Code postal</label>
+              <input [(ngModel)]="formData.postalCode" placeholder="75002" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Type</label>
+              <select [(ngModel)]="formData.type" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+                <option value="APPARTEMENT">Appartement</option>
+                <option value="MAISON">Maison</option>
+                <option value="STUDIO">Studio</option>
+                <option value="COMMERCIAL">Commercial</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Surface (m²)</label>
+              <input [(ngModel)]="formData.surface" type="number" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Loyer (FCFA)</label>
+              <input [(ngModel)]="formData.rent" type="number" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Charges</label>
+              <input [(ngModel)]="formData.charges" type="number" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 800; margin-bottom: 6px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.06em;">Pays</label>
+              <input [(ngModel)]="formData.country" placeholder="France" style="width: 100%; padding: 12px 16px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: var(--text-main);">Pièces (chambres, salon, cuisine...)</h4>
+            <button (click)="addPieceRow()" style="padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 999px; font-size: 12px; font-weight: 800; font-family: inherit; cursor: pointer; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-sm);">+ Pièce</button>
+          </div>
+          @for (piece of formPieces; track $index) {
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+              <input [(ngModel)]="piece.numero" placeholder="CH-1" style="width: 90px; padding: 10px 14px; border: none; outline: none; border-radius: 999px; font-size: 13px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+              <select [(ngModel)]="piece.type" style="flex: 1; padding: 10px 14px; border: none; outline: none; border-radius: 999px; font-size: 13px; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
+                <option value="CHAMBRE">Chambre</option>
+                <option value="SALON">Salon</option>
+                <option value="CUISINE">Cuisine</option>
+                <option value="SALLE_DE_BAIN">Salle de bain</option>
+                <option value="BUREAU">Bureau</option>
+                <option value="AUTRE">Autre</option>
+              </select>
+              <input [(ngModel)]="piece.capacite" type="number" min="0" title="Capacité (0 = pièce commune)" style="width: 80px; padding: 10px 14px; border: none; outline: none; border-radius: 999px; font-size: 13px; font-family: inherit; color: var(--text-main); box-sizing: border-box; background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
+              <button (click)="removePieceRow($index)" style="display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 50%; font-size: 13px; color: var(--error-dark); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-xs);">✕</button>
+            </div>
+          }
+
+          <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+            <button (click)="closeForm()" style="padding: 11px 24px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-sm);">Annuler</button>
+            <button (click)="saveForm()" style="padding: 11px 24px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: #fff; background: linear-gradient(145deg, #8fae8b, #6f8f6b); box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4);">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============ DELETE CONFIRM ============ -->
+  @if (showDeleteConfirm()) {
+    <div style="position: fixed; inset: 0; background: rgba(74, 63, 56, 0.42); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="showDeleteConfirm.set(false)">
+      <div style="background: var(--cream); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--radius-xl); box-shadow: var(--out-xl); width: 100%; max-width: 440px; padding: 28px;" (click)="$event.stopPropagation()">
+        <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 800; color: var(--text-main);">Supprimer ce logement ?</h3>
+        <p style="margin: 0 0 22px; font-size: 14px; color: var(--text-sub);">Cette action est irréversible.</p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button (click)="showDeleteConfirm.set(false)" style="padding: 11px 24px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: var(--text-main); background: linear-gradient(145deg, #fffdf9, #efd7b9); box-shadow: var(--out-sm);">Annuler</button>
+          <button (click)="confirmDelete()" style="padding: 11px 24px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; color: #fff; background: linear-gradient(145deg, #e99a7d, #d9815f); box-shadow: 4px 4px 10px rgba(180, 110, 85, 0.4);">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

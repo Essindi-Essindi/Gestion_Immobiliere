@@ -3,11 +3,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterModule, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService, authErrorMessage } from '@core/auth/auth.service';
+import { AuthAsideComponent } from '@shared/components/auth-aside/auth-aside.component';
 
 @Component({
   selector: 'app-super-admin-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, AuthAsideComponent],
   templateUrl: './super-admin-login.component.html',
   styleUrl: './super-admin-login.component.scss'
 })

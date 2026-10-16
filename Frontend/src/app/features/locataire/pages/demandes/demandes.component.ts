@@ -39,12 +39,12 @@ export class DemandesComponent implements OnInit {
   }
 
   getStatutBg(s: StatutSignalement): string {
-    const map: Record<StatutSignalement, string> = { NOUVEAU: '#e0e0e0', EN_COURS: '#f5f5f5', TERMINE: '#000' };
-    return map[s] || '#e0e0e0';
+    const map: Record<StatutSignalement, string> = { NOUVEAU: 'var(--board-2)', EN_COURS: 'var(--concave)', TERMINE: 'linear-gradient(145deg, #8fae8b, #6f8f6b)' };
+    return map[s] || 'var(--board-2)';
   }
 
   getStatutColor(s: StatutSignalement): string {
-    const map: Record<StatutSignalement, string> = { NOUVEAU: '#424242', EN_COURS: '#000', TERMINE: '#fff' };
-    return map[s] || '#424242';
+    const map: Record<StatutSignalement, string> = { NOUVEAU: 'var(--text-main)', EN_COURS: 'var(--text-main)', TERMINE: '#ffffff' };
+    return map[s] || 'var(--text-main)';
   }
 }

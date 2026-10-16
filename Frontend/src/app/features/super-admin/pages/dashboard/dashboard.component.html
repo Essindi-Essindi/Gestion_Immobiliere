@@ -1,39 +1,63 @@
 <div class="page">
-  <div class="page-header">
-    <h1>Tableau de bord</h1>
-    <p>Vue d'ensemble de la plateforme</p>
-  </div>
+  <app-page-header 
+    title="Tableau de bord" 
+    subtitle="Vue d'ensemble de la plateforme"
+    description="Suivez les indicateurs clés de votre plateforme immobilière en temps réel."
+  ></app-page-header>
 
   <app-state-block [loading]="loading()" [error]="error()" [empty]="false">
     <div class="stats-grid">
       @for (stat of stats(); track stat.label) {
-        <div class="stat-card">
-          <div class="stat-icon">
-            <span [innerHTML]="stat.icon"></span>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stat.value }}</span>
-            <span class="stat-label">{{ stat.label }}</span>
-          </div>
-        </div>
+        <app-stat-card
+          [value]="stat.value"
+          [label]="stat.label"
+          [icon]="stat.icon"
+          [tone]="stat.tone"
+          [change]="stat.change"
+          [changeValue]="stat.changeValue"
+          [trend]="stat.trend"
+        ></app-stat-card>
       }
     </div>
 
-    <div class="card" style="margin-bottom: 24px;">
-      <div class="card-header">
-        <h2>Revenus mensuels</h2>
-      </div>
-      <div class="card-body">
-        <div class="bar-chart">
-          @for (bar of barData(); track bar.label) {
-            <div class="bar-group">
-              <div class="bar-wrapper">
-                <div class="bar" [style.height.%]="bar.height"></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h2>Revenus mensuels</h2>
+        </div>
+        <div class="card-body">
+          <div class="bar-chart">
+            @for (bar of barData(); track bar.label) {
+              <div class="bar-group">
+                <div class="bar-wrapper">
+                  <div class="bar" [style.height.%]="bar.height"></div>
+                </div>
+                <span class="bar-label">{{ bar.label }}</span>
+                <span class="bar-value">{{ bar.value }}</span>
               </div>
-              <span class="bar-label">{{ bar.label }}</span>
-              <span class="bar-value">{{ bar.value }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Taux d'occupation global</h2>
+        </div>
+        <div class="card-body">
+          <div class="occupancy-ring" style="width: 160px; height: 160px; margin: 0 auto;">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle cx="80" cy="80" r="70" fill="none" stroke="var(--dark)" stroke-width="14"/>
+              <circle cx="80" cy="80" r="70" fill="none" stroke="var(--accent)" stroke-width="14"
+                stroke-dasharray="440" stroke-dashoffset="110" transform="rotate(-90 80 80)"
+                stroke-linecap="round"
+                filter="drop-shadow(0 0 8px var(--accent-glow))"/>
+            </svg>
+            <div class="occupancy-center">
+              <span class="occupancy-value">75%</span>
+              <span class="occupancy-label">Occupation</span>
             </div>
-          }
+          </div>
         </div>
       </div>
     </div>
