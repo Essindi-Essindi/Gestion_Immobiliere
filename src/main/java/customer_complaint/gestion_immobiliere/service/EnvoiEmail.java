@@ -3,10 +3,12 @@ package customer_complaint.gestion_immobiliere.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 // asynchrone : un e-mail lent ou absent ne doit pas reveler si le compte existe (temps de reponse)
 // async: a slow/absent email must not reveal whether the account exists (response time)
@@ -75,6 +77,16 @@ public class EnvoiEmail {
                         + "fermées.\nSi ce n'est pas vous, utilisez « Mot de passe oublié » immédiatement.", null);
     }
 
+    private String en_html(String texte, String lien) {
+        String html = HtmlUtils.htmlEscape(texte).replace("\n", "<br>");
+        if (lien != null) {
+            String lien_echappe = HtmlUtils.htmlEscape(lien);
+            html = html.replace(lien_echappe, "<a href=\"" + lien_echappe + "\">Ouvrir le lien</a>");
+        }
+        return "<html><body style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">" + html
+                + "</body></html>";
+    }
+
     private void envoyer(String destinataire, String sujet, String texte, String lien) {
         // dev uniquement : jamais en production, le lien est un secret / dev only: the link is a secret
         if (log_link && lien != null) {
@@ -86,11 +98,14 @@ public class EnvoiEmail {
             return;
         }
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(from);
-            message.setTo(destinataire);
-            message.setSubject(sujet);
-            message.setText(texte);
+            MimeMessage message = sender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            // nom d'affichage + reply-to + version html : moins de spam / display name + reply-to + html part: less spam
+            helper.setFrom(from, "Gestion Immobilière");
+            helper.setReplyTo(from);
+            helper.setTo(destinataire);
+            helper.setSubject(sujet);
+            helper.setText(texte, en_html(texte, lien));
             sender.send(message);
         } catch (Exception e) {
             log.error("Échec d'envoi de l'e-mail « {} »", sujet, e);
