@@ -73,18 +73,18 @@ export class InterventionsComponent implements OnInit, OnDestroy {
   }
   getStatusBg(status: string): string {
     switch (status) {
-      case 'NOUVEAU': return '#e0e0e0';
-      case 'EN_COURS': return '#000';
-      case 'TERMINE': return '#f5f5f5';
-      default: return '#fff';
+      case 'NOUVEAU': return 'var(--board-2)';
+      case 'EN_COURS': return 'linear-gradient(145deg, #8fae8b, #6f8f6b)';
+      case 'TERMINE': return 'var(--concave)';
+      default: return 'var(--concave)';
     }
   }
   getStatusColor(status: string): string {
     switch (status) {
-      case 'NOUVEAU': return '#333';
-      case 'EN_COURS': return '#fff';
-      case 'TERMINE': return '#666';
-      default: return '#000';
+      case 'NOUVEAU': return 'var(--text-main)';
+      case 'EN_COURS': return '#ffffff';
+      case 'TERMINE': return 'var(--text-sub)';
+      default: return 'var(--text-sub)';
     }
   }
 

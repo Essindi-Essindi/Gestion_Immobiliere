@@ -270,6 +270,8 @@ export class LogementsComponent implements OnInit {
       default: return status;
     }
   }
-  getStatusBg(status: string): string { return status === 'LOUE' ? '#000' : '#fff'; }
-  getStatusColor(status: string): string { return status === 'LOUE' ? '#fff' : '#000'; }
+  getStatusBg(status: string): string {
+    return status === 'LOUE' ? 'linear-gradient(145deg, #8fae8b, #6f8f6b)' : 'var(--concave)';
+  }
+  getStatusColor(status: string): string { return status === 'LOUE' ? '#ffffff' : 'var(--text-sub)'; }
 }

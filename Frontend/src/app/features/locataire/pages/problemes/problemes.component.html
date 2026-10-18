@@ -1,59 +1,135 @@
-<div style="padding:24px;background:#f5f5f5;min-height:100vh;">
-      <div style="margin-bottom:24px;">
-        <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Signaler un problème</h1>
-        <p style="margin:0;color:#757575;font-size:14px;">Décrivez le problème rencontré dans votre logement</p>
-      </div>
+<div style="padding:32px;background: var(--bg);min-height:100vh;border-radius:32px;position:relative;">
 
-      <div style="background:#fff;border:1px solid #e0e0e0;margin-bottom:24px;">
-        <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-          <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Nouveau signalement</h2>
-        </div>
-        <div style="padding:20px;">
-          <div style="margin-bottom:16px;">
-            <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Titre</label>
-            <input type="text" [(ngModel)]="newProblem.title" placeholder="Ex: Fuite d'eau" style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;box-sizing:border-box;" />
-          </div>
-          <div style="margin-bottom:16px;">
-            <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Description</label>
-            <textarea [(ngModel)]="newProblem.description" rows="4" placeholder="Décrivez le problème en détail..." style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;resize:vertical;box-sizing:border-box;"></textarea>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;">
-            <div>
-              <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Catégorie</label>
-              <input type="text" [(ngModel)]="newProblem.category" placeholder="Ex: Plomberie" style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;box-sizing:border-box;" />
-            </div>
-          </div>
-          <div style="display:flex;justify-content:flex-end;">
-            <button (click)="soumettre()" [disabled]="submitting()" style="padding:10px 24px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;">{{ submitting() ? 'Envoi...' : 'Soumettre' }}</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="background:#fff;border:1px solid #e0e0e0;">
-        <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
-          <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Mes signalements récents</h2>
-          <a routerLink="/locataire/demandes" style="font-size:13px;color:#000;font-weight:500;text-decoration:none;">Voir tout →</a>
-        </div>
-        <app-state-block [loading]="loading()" [error]="error()" [empty]="problems().length === 0" emptyMessage="Aucun signalement pour le moment.">
-          <div style="padding:12px 20px;">
-            @for (p of problems(); track p.id) {
-              <div style="padding:16px 0;border-bottom:1px solid #f0f0f0;">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
-                  <p style="margin:0;font-size:15px;color:#000;font-weight:600;">{{ p.title }}</p>
-                  <span style="padding:4px 12px;font-size:12px;font-weight:600;" [style.background]="p.status === 'TERMINE' ? '#000' : '#e0e0e0'" [style.color]="p.status === 'TERMINE' ? '#fff' : '#424242'">
-                    {{ formatStatut(p.status) }}
-                  </span>
-                </div>
-                <p style="margin:0 0 8px;font-size:13px;color:#616161;">{{ p.description }}</p>
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-                  <span style="font-size:12px;color:#9e9e9e;">{{ p.created_at | dateFr }}</span>
-                  @if (p.response) {
-                    <span style="font-size:12px;color:#000;font-weight:500;">Réponse: {{ p.response }}</span>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        </app-state-block>
+  <!-- ============ PAGE HEADER ============ -->
+  <div style="margin-bottom:32px;padding-bottom:20px;position:relative;">
+    <div style="display:flex;align-items:flex-start;gap:16px;">
+      <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
+      <div>
+        <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Signaler un problème</h1>
+        <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Décrivez le problème rencontré dans votre logement</p>
       </div>
     </div>
+    <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
+  </div>
+
+  <!-- ============ NEW PROBLEM FORM PANEL ============ -->
+  <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-lg), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);margin-bottom:28px;overflow:hidden;">
+
+    <span style="position:absolute;top:-90px;right:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+
+    <div style="position:relative;padding:22px 28px;">
+      <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Nouveau signalement</h2>
+      <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+    </div>
+
+    <div style="position:relative;padding:28px;">
+
+      <!-- Title -->
+      <div style="margin-bottom:22px;">
+        <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Titre</label>
+        <input
+          type="text"
+          [(ngModel)]="newProblem.title"
+          placeholder="Ex: Fuite d'eau"
+          style="width:100%;padding:16px 22px;border:none;outline:none;border-radius:999px;font-size:15px;font-family:inherit;background: var(--bg);color: var(--text-main);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;"
+        />
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom:22px;">
+        <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Description</label>
+        <textarea
+          [(ngModel)]="newProblem.description"
+          rows="4"
+          placeholder="Décrivez le problème en détail..."
+          style="width:100%;padding:18px 22px;border:none;outline:none;border-radius:24px;font-size:15px;font-family:inherit;background: var(--bg);color: var(--text-main);resize:vertical;box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;line-height:1.55;"></textarea>
+      </div>
+
+      <!-- Category -->
+      <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:26px;">
+        <div>
+          <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Catégorie</label>
+          <input
+            type="text"
+            [(ngModel)]="newProblem.category"
+            placeholder="Ex: Plomberie"
+            style="width:100%;padding:16px 22px;border:none;outline:none;border-radius:999px;font-size:15px;font-family:inherit;background: var(--bg);color: var(--text-main);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;"
+          />
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div style="display:flex;justify-content:flex-end;">
+        <button
+          (click)="soumettre()"
+          [disabled]="submitting()"
+          style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 36px;border:none;border-radius:999px;font-size:14px;font-weight:800;letter-spacing:0.02em;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow: var(--out-sm), 0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, opacity 0.2s ease;"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          {{ submitting() ? 'Envoi...' : 'Soumettre' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RECENT REPORTS PANEL ============ -->
+  <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-lg), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+
+    <span style="position:absolute;top:-90px;right:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.08;filter:blur(2px);pointer-events:none;"></span>
+
+    <div style="position:relative;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Mes signalements récents</h2>
+
+      <a routerLink="/locataire/demandes" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:12.5px;font-weight:800;letter-spacing:0.02em;color:#4f6a4c;text-decoration:none;background:rgba(111,143,107,0.12);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);">
+        Voir tout
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+    </div>
+
+    <app-state-block [loading]="loading()" [error]="error()" [empty]="problems().length === 0" emptyMessage="Aucun signalement pour le moment.">
+      <div style="position:relative;padding:12px 28px 20px;">
+        @for (p of problems(); track p.id) {
+          <div style="position:relative;padding:20px 0;">
+
+            <!-- title + status -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;">
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:800;letter-spacing:-0.005em;line-height:1.35;">{{ p.title }}</p>
+
+              <span
+                style="display:inline-block;flex-shrink:0;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;box-shadow:0 4px 14px rgba(111,143,107,0.20), inset 0 0 0 1px rgba(255,255,255,0.25);"
+                [style.background]="p.status === 'TERMINE' ? 'linear-gradient(135deg, #8fae8b 0%, #6f8f6b 100%)' : 'var(--concave)'"
+                [style.color]="p.status === 'TERMINE' ? '#fff' : 'var(--text-sub)'"
+                [style.box-shadow]="p.status === 'TERMINE' ? '0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6)' : 'var(--in-xs)'"
+              >
+                {{ formatStatut(p.status) }}
+              </span>
+            </div>
+
+            <!-- description -->
+            <p style="margin:0 0 10px;font-size:13.5px;color: var(--text-sub);line-height:1.55;">{{ p.description }}</p>
+
+            <!-- footer -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <span style="display:inline-flex;align-items:center;gap:8px;font-size:12px;color: var(--text-sub);letter-spacing:0.02em;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {{ p.created_at | dateFr }}
+              </span>
+
+              @if (p.response) {
+                <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#4f6a4c;background:rgba(111,143,107,0.12);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.25);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  {{ p.response }}
+                </span>
+              }
+            </div>
+
+            <!-- soft sage separator -->
+            <span style="position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.20),transparent);"></span>
+          </div>
+        }
+      </div>
+    </app-state-block>
+  </div>
+</div>

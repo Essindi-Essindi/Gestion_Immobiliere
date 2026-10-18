@@ -1,212 +1,197 @@
-<div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
-      <div style="margin-bottom: 24px;">
-        <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Tableau de bord</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Vue d'ensemble de votre patrimoine immobilier</p>
+﻿<div class="page">
+  <app-page-header
+    title="Tableau de bord"
+    subtitle="Vue d'ensemble de votre patrimoine immobilier"
+    description="Suivez l'occupation, les encaissements et les échéances de vos biens."
+  ></app-page-header>
+
+  <app-state-block [loading]="loading()" [error]="error()">
+    @if (stats(); as s) {
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        @for (stat of statsCards(); track stat.label) {
+          <app-stat-card
+            [value]="stat.value"
+            [label]="stat.label"
+            [icon]="stat.icon"
+            [tone]="stat.tone"
+            [trend]="stat.trend"
+          ></app-stat-card>
+        }
       </div>
 
-      <app-state-block [loading]="loading()" [error]="error()">
-        @if (stats(); as s) {
-          <!-- Stats Cards -->
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: #000; display: flex; align-items: center; justify-content: center;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <!-- Revenue Trend + Occupancy -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h2>Revenus attendus / encaissés (6 mois)</h2>
+          </div>
+          <div class="card-body">
+            <div class="revenue-chart">
+              @for (item of s.revenus_6_mois; track item.period) {
+                <div class="revenue-bar-group">
+                  <span class="revenue-bar-value">{{ item.encaisse | montant }}</span>
+                  <div class="revenue-bar-wrapper">
+                    <div class="revenue-bar" [style.height]="(item.encaisse / maxRevenu() * 160) + 'px'"></div>
+                  </div>
+                  <span class="revenue-bar-label">{{ item.period }}</span>
                 </div>
-                <div>
-                  <p style="margin: 0; font-size: 24px; font-weight: 700; color: #000;">{{ s.logements.total }}</p>
-                  <p style="margin: 0; font-size: 13px; color: #666;">Total Logements</p>
-                </div>
-              </div>
-            </div>
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: #000; display: flex; align-items: center; justify-content: center;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <div>
-                  <p style="margin: 0; font-size: 24px; font-weight: 700; color: #000;">{{ s.locataires.actifs }}</p>
-                  <p style="margin: 0; font-size: 13px; color: #666;">Locataires actifs</p>
-                </div>
-              </div>
-            </div>
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: #000; display: flex; align-items: center; justify-content: center;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </div>
-                <div>
-                  <p style="margin: 0; font-size: 24px; font-weight: 700; color: #000;">{{ s.loyers_mois.encaisse | montant }} FCFA</p>
-                  <p style="margin: 0; font-size: 13px; color: #666;">Encaissé ce mois ({{ s.loyers_mois.taux_recouvrement }}%)</p>
-                </div>
-              </div>
-            </div>
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 44px; height: 44px; background: #000; display: flex; align-items: center; justify-content: center;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                </div>
-                <div>
-                  <p style="margin: 0; font-size: 24px; font-weight: 700; color: #000;">{{ s.arrieres.nb_loyers }}</p>
-                  <p style="margin: 0; font-size: 13px; color: #666;">Loyers en retard ({{ s.arrieres.total_du | montant }} FCFA)</p>
-                </div>
-              </div>
+              }
             </div>
           </div>
+        </div>
 
-          <!-- Revenue Trend + Occupancy -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px;">
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <h2 style="margin: 0 0 20px; font-size: 16px; font-weight: 600;">Revenus attendus / encaissés (6 mois)</h2>
-              <div style="display: flex; align-items: flex-end; gap: 12px; height: 200px; padding: 0 8px;">
-                @for (item of s.revenus_6_mois; track item.period) {
-                  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: 600; color: #000;">{{ item.encaisse | montant }}</span>
-                    <div style="width: 100%; background: #e0e0e0; position: relative; height: 160px; display: flex; align-items: flex-end;">
-                      <div [style.height]="(item.encaisse / maxRevenu() * 160) + 'px'" style="width: 100%; background: #000; transition: height 0.3s;"></div>
-                    </div>
-                    <span style="font-size: 11px; color: #666;">{{ item.period }}</span>
-                  </div>
-                }
+        <div class="card">
+          <div class="card-header">
+            <h2>Taux d'occupation</h2>
+          </div>
+          <div class="card-body">
+            <div class="occupancy-ring">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--dark)" stroke-width="12"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--accent)" stroke-width="12"
+                  [attr.stroke-dasharray]="(s.logements.taux_occupation / 100 * 377) + ' 377'"
+                  stroke-dashoffset="0" transform="rotate(-90 70 70)"
+                  stroke-linecap="round"
+                  filter="drop-shadow(0 0 8px var(--accent-glow))"/>
+              </svg>
+              <div class="occupancy-center">
+                <span class="occupancy-value">{{ s.logements.taux_occupation }}%</span>
+                <span class="occupancy-label">Occupation</span>
               </div>
             </div>
-
-            <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-              <h2 style="margin: 0 0 20px; font-size: 16px; font-weight: 600;">Taux d'occupation</h2>
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px;">
-                <div style="position: relative; width: 140px; height: 140px;">
-                  <svg width="140" height="140" viewBox="0 0 140 140">
-                    <circle cx="70" cy="70" r="60" fill="none" stroke="#e0e0e0" stroke-width="12"/>
-                    <circle cx="70" cy="70" r="60" fill="none" stroke="#000" stroke-width="12"
-                      [attr.stroke-dasharray]="(s.logements.taux_occupation / 100 * 377) + ' 377'"
-                      stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
-                  </svg>
-                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                    <span style="font-size: 28px; font-weight: 700; color: #000;">{{ s.logements.taux_occupation }}%</span>
-                  </div>
-                </div>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: #666;">
-                <span>{{ s.logements.loues }} occupés</span>
-                <span>{{ s.logements.vacants }} vacants</span>
-              </div>
+            <div class="occupancy-legend">
+              <span>{{ s.logements.loues }} occupés</span>
+              <span>{{ s.logements.vacants }} vacants</span>
             </div>
           </div>
-        }
+        </div>
+      </div>
 
-        <!-- Echeances + Notifications -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-            <h2 style="margin: 0 0 16px; font-size: 16px; font-weight: 600;">Échéances à venir</h2>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              @for (e of (stats()?.echeances || []).slice(0, 5); track e.contrat_id) {
-                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid #e0e0e0;">
-                  <div [style.background]="e.jours_restants <= 30 ? '#000' : '#e0e0e0'" style="width: 4px; height: 40px; flex-shrink: 0;"></div>
-                  <div style="flex: 1; min-width: 0;">
-                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ e.locataire_name }}</p>
-                    <p style="margin: 2px 0 0; font-size: 12px; color: #666;">{{ e.logement_address }} - fin le {{ e.end_date | dateFr }}</p>
+      <!-- Echeances + Notifications -->
+      <div class="grid-2-reverse">
+        <div class="card">
+          <div class="card-header">
+            <h2>Échéances à venir</h2>
+          </div>
+          <div class="card-body">
+            <div class="echeance-list">
+              @for (e of (s.echeances || []).slice(0, 5); track e.contrat_id) {
+                <div class="echeance-item">
+                  <div class="echeance-indicator" [style.background]="e.jours_restants <= 30 ? 'var(--accent)' : 'var(--dark)'"></div>
+                  <div class="echeance-content">
+                    <p class="echeance-name">{{ e.locataire_name }}</p>
+                    <p class="echeance-detail">{{ e.logement_address }} - fin le {{ e.end_date | dateFr }}</p>
                   </div>
-                  <span [style.background]="e.jours_restants <= 30 ? '#000' : '#f5f5f5'"
-                    [style.color]="e.jours_restants <= 30 ? '#fff' : '#666'"
-                    style="font-size: 11px; padding: 4px 8px; white-space: nowrap; border: 1px solid #e0e0e0;">
+                  <span class="echeance-days"
+                    [style.background]="e.jours_restants <= 30 ? 'var(--accent)' : 'var(--bg)'"
+                    [style.color]="e.jours_restants <= 30 ? 'var(--light)' : 'var(--text-sub)'">
                     {{ e.jours_restants }}j
                   </span>
                 </div>
               } @empty {
-                <p style="margin: 0; font-size: 13px; color: #999;">Aucune échéance à venir.</p>
+                <p class="empty-state">Aucune échéance à venir.</p>
               }
             </div>
-            @if ((stats()?.echeances?.length || 0) > 0) {
-              <button (click)="openEcheModal()"
-                style="margin-top: 12px; width: 100%; background: #fff; color: #000; border: 1px solid #000; padding: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                Voir plus ({{ stats()?.echeances?.length }})
+            @if ((s.echeances?.length || 0) > 0) {
+              <button class="btn-see-more" (click)="openEcheModal()">
+                Voir plus ({{ s.echeances?.length }})
               </button>
             }
           </div>
+        </div>
 
-          <div style="background: #fff; border: 1px solid #e0e0e0; padding: 20px;">
-            <h2 style="margin: 0 0 16px; font-size: 16px; font-weight: 600;">Notifications récentes</h2>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="card">
+          <div class="card-header">
+            <h2>Notifications récentes</h2>
+          </div>
+          <div class="card-body">
+            <div class="notification-list">
               @for (notif of notifications().slice(0, 5); track notif.id) {
-                <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid #e0e0e0;"
-                  [style.background]="notif.is_read ? '#fff' : '#f9f9f9'">
-                  <div [style.background]="getNotifColor(notif.type)"
-                    style="width: 8px; height: 8px; margin-top: 6px; flex-shrink: 0;"></div>
-                  <div style="flex: 1; min-width: 0;">
-                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #000;">{{ notif.title }}</p>
-                    <p style="margin: 2px 0 0; font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ notif.message }}</p>
+                <div class="notification-item" [style.background]="notif.is_read ? 'var(--convex)' : 'var(--bg-hover)'">
+                  <div class="notification-indicator" [style.background]="getNotifColor(notif.type)"></div>
+                  <div class="notification-content">
+                    <p class="notification-title">{{ notif.title }}</p>
+                    <p class="notification-message">{{ notif.message }}</p>
+                    <span class="notification-time">{{ getTimeAgo(notif.created_at) }}</span>
                   </div>
-                  <span style="font-size: 11px; color: #999; white-space: nowrap;">{{ getTimeAgo(notif.created_at) }}</span>
                 </div>
               } @empty {
-                <p style="margin: 0; font-size: 13px; color: #999;">Aucune notification.</p>
+                <p class="empty-state">Aucune notification.</p>
               }
             </div>
             @if (notifications().length > 0) {
-              <button (click)="openNotifModal()"
-                style="margin-top: 12px; width: 100%; background: #fff; color: #000; border: 1px solid #000; padding: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+              <button class="btn-see-more" (click)="openNotifModal()">
                 Voir plus ({{ notifications().length }})
               </button>
             }
           </div>
         </div>
-      </app-state-block>
+      </div>
+    }
+  </app-state-block>
 
-      @if (showEcheModal()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeEcheModal()">
-          <div style="background: #fff; width: 100%; max-width: 640px; max-height: 85vh; overflow: auto;" (click)="$event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; background: #fff;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">Toutes les échéances à venir ({{ stats()?.echeances?.length }})</h3>
-              <button (click)="closeEcheModal()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
-            </div>
-            <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
-              @for (e of pagedEcheances(); track e.contrat_id) {
-                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid #e0e0e0;">
-                  <div [style.background]="e.jours_restants <= 30 ? '#000' : '#e0e0e0'" style="width: 4px; height: 40px; flex-shrink: 0;"></div>
-                  <div style="flex: 1; min-width: 0;">
-                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #000;">{{ e.locataire_name }}</p>
-                    <p style="margin: 2px 0 0; font-size: 12px; color: #666;">{{ e.logement_address }} - fin le {{ e.end_date | dateFr }}</p>
-                  </div>
-                  <span [style.background]="e.jours_restants <= 30 ? '#000' : '#f5f5f5'" [style.color]="e.jours_restants <= 30 ? '#fff' : '#666'" style="font-size: 11px; padding: 4px 8px; white-space: nowrap; border: 1px solid #e0e0e0;">
-                    {{ e.jours_restants }}j
-                  </span>
+  @if (showEcheModal()) {
+    <div class="modal-overlay" (click)="closeEcheModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Toutes les échéances à venir ({{ stats()?.echeances?.length }})</h3>
+          <button class="modal-close" (click)="closeEcheModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="echeance-list">
+            @for (e of pagedEcheances(); track e.contrat_id) {
+              <div class="echeance-item">
+                <div class="echeance-indicator" [style.background]="e.jours_restants <= 30 ? 'var(--accent)' : 'var(--dark)'"></div>
+                <div class="echeance-content">
+                  <p class="echeance-name">{{ e.locataire_name }}</p>
+                  <p class="echeance-detail">{{ e.logement_address }} - fin le {{ e.end_date | dateFr }}</p>
                 </div>
-              }
-            </div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px 20px; border-top: 1px solid #e0e0e0;">
-              <button (click)="echePrev()" [disabled]="echePage() === 1" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">‹ Précédent</button>
-              <span style="font-size: 13px; color: #000; font-weight: 600;">Page {{ echePage() }} / {{ totalEchePages() }}</span>
-              <button (click)="echeNext()" [disabled]="echePage() === totalEchePages()" style="background: #000; color: #fff; border: none; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">Suivant ›</button>
-            </div>
+                <span class="echeance-days"
+                  [style.background]="e.jours_restants <= 30 ? 'var(--accent)' : 'var(--bg)'"
+                  [style.color]="e.jours_restants <= 30 ? 'var(--light)' : 'var(--text-sub)'">
+                  {{ e.jours_restants }}j
+                </span>
+              </div>
+            }
           </div>
         </div>
-      }
-
-      @if (showNotifModal()) {
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" (click)="closeNotifModal()">
-          <div style="background: #fff; width: 100%; max-width: 640px; max-height: 85vh; overflow: auto;" (click)="$event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; background: #fff;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #000;">Toutes les notifications ({{ notifications().length }})</h3>
-              <button (click)="closeNotifModal()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #000; padding: 4px 8px;">✕</button>
-            </div>
-            <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
-              @for (notif of pagedNotifs(); track notif.id) {
-                <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid #e0e0e0;" [style.background]="notif.is_read ? '#fff' : '#f9f9f9'">
-                  <div [style.background]="getNotifColor(notif.type)" style="width: 8px; height: 8px; margin-top: 6px; flex-shrink: 0;"></div>
-                  <div style="flex: 1; min-width: 0;">
-                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #000;">{{ notif.title }}</p>
-                    <p style="margin: 2px 0 0; font-size: 12px; color: #666;">{{ notif.message }}</p>
-                  </div>
-                  <span style="font-size: 11px; color: #999; white-space: nowrap;">{{ getTimeAgo(notif.created_at) }}</span>
-                </div>
-              }
-            </div>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px 20px; border-top: 1px solid #e0e0e0;">
-              <button (click)="notifPrev()" [disabled]="notifPage() === 1" style="background: #fff; color: #000; border: 1px solid #e0e0e0; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">‹ Précédent</button>
-              <span style="font-size: 13px; color: #000; font-weight: 600;">Page {{ notifPage() }} / {{ totalNotifPages() }}</span>
-              <button (click)="notifNext()" [disabled]="notifPage() === totalNotifPages()" style="background: #000; color: #fff; border: none; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">Suivant ›</button>
-            </div>
-          </div>
+        <div class="modal-footer">
+          <button class="btn-pagination" (click)="echePrev()" [disabled]="echePage() === 1">‹ Précédent</button>
+          <span class="page-info">Page {{ echePage() }} / {{ totalEchePages() }}</span>
+          <button class="btn-pagination btn-pagination--primary" (click)="echeNext()" [disabled]="echePage() === totalEchePages()">Suivant ›</button>
         </div>
-      }
+      </div>
     </div>
+  }
+
+  @if (showNotifModal()) {
+    <div class="modal-overlay" (click)="closeNotifModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Toutes les notifications ({{ notifications().length }})</h3>
+          <button class="modal-close" (click)="closeNotifModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="notification-list">
+            @for (notif of pagedNotifs(); track notif.id) {
+              <div class="notification-item" [style.background]="notif.is_read ? 'var(--convex)' : 'var(--bg-hover)'">
+                <div class="notification-indicator" [style.background]="getNotifColor(notif.type)"></div>
+                <div class="notification-content">
+                  <p class="notification-title">{{ notif.title }}</p>
+                  <p class="notification-message">{{ notif.message }}</p>
+                  <span class="notification-time">{{ getTimeAgo(notif.created_at) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-pagination" (click)="notifPrev()" [disabled]="notifPage() === 1">‹ Précédent</button>
+          <span class="page-info">Page {{ notifPage() }} / {{ totalNotifPages() }}</span>
+          <button class="btn-pagination btn-pagination--primary" (click)="notifNext()" [disabled]="notifPage() === totalNotifPages()">Suivant ›</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

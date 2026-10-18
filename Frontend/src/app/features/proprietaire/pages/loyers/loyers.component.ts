@@ -133,18 +133,18 @@ export class LoyersComponent implements OnInit {
   }
   getStatusBg(status: string): string {
     switch (status) {
-      case 'PAYE': return '#000';
-      case 'EN_ATTENTE': return '#e0e0e0';
-      case 'EN_RETARD': return '#fff';
-      default: return '#fff';
+      case 'PAYE': return 'linear-gradient(145deg, #8fae8b, #6f8f6b)';
+      case 'EN_ATTENTE': return 'var(--board-2)';
+      case 'EN_RETARD': return 'linear-gradient(145deg, #e99a7d, #d9815f)';
+      default: return 'var(--concave)';
     }
   }
   getStatusColor(status: string): string {
     switch (status) {
-      case 'PAYE': return '#fff';
-      case 'EN_ATTENTE': return '#333';
-      case 'EN_RETARD': return '#000';
-      default: return '#000';
+      case 'PAYE': return '#ffffff';
+      case 'EN_ATTENTE': return 'var(--text-main)';
+      case 'EN_RETARD': return '#ffffff';
+      default: return 'var(--text-sub)';
     }
   }
 }

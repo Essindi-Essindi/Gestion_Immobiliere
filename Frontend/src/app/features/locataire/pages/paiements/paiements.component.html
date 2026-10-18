@@ -1,91 +1,158 @@
 <app-state-block [loading]="loading()" [error]="error()">
-<div style="padding:24px;background:#f5f5f5;min-height:100vh;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+  <div style="padding:32px;background: var(--bg);min-height:100vh;border-radius:32px;position:relative;">
+
+    <!-- ============ PAGE HEADER ============ -->
+    <div style="margin-bottom:32px;padding-bottom:20px;position:relative;">
+      <div style="display:flex;align-items:flex-start;gap:16px;">
+        <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
         <div>
-          <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mes Paiements</h1>
-          <p style="margin:0;color:#757575;font-size:14px;">Historique de vos loyers</p>
+          <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mes Paiements</h1>
+          <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Historique de vos loyers</p>
         </div>
       </div>
+      <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
+    </div>
 
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
-          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Total payé</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#000;">{{ totalPaye() | montant }} €</p>
-        </div>
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
-          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En attente</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#616161;">{{ totalEnAttente() | montant }} €</p>
-        </div>
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;text-align:center;">
-          <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">En retard</p>
-          <p style="margin:0;font-size:26px;font-weight:700;color:#424242;">{{ totalEnRetard() | montant }} €</p>
-        </div>
+    <!-- ============ KPI TILES ============ -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:28px;">
+
+      <!-- Total payé — sage primary -->
+      <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.20), 0 12px 32px rgba(111,143,107,0.10);padding:26px 24px;text-align:center;overflow:hidden;">
+        <span style="position:absolute;top:-70px;right:-70px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.16;filter:blur(2px);pointer-events:none;"></span>
+        <span style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:48px;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#6f8f6b,#c9d6c2,#6f8f6b);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
+        <p style="position:relative;margin:0 0 8px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.14em;">Total payé</p>
+        <p style="position:relative;margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;color:#4f6a4c;text-shadow:0 0 20px rgba(111,143,107,0.20);">{{ totalPaye() | montant }} €</p>
       </div>
 
-      <div style="background:#fff;border:1px solid #e0e0e0;margin-bottom:24px;">
-        <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
-          <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Historique</h2>
-          <div style="display:flex;gap:8px;">
-            <select [(ngModel)]="filterYear" (change)="refresh()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
-              <option value="all">Toutes les années</option>
-              @for (y of years; track y) {
-                <option [value]="y">{{ y }}</option>
-              }
-            </select>
-            <select [(ngModel)]="filterStatus" (change)="refresh()" style="padding:8px 12px;border:1px solid #e0e0e0;font-size:13px;background:#fff;color:#000;">
-              <option value="all">Tous les statuts</option>
-              <option value="PAYE">Payé</option>
-              <option value="EN_ATTENTE">En attente</option>
-              <option value="EN_RETARD">En retard</option>
-            </select>
-          </div>
+      <!-- En attente -->
+      <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);padding:26px 24px;text-align:center;overflow:hidden;">
+        <span style="position:absolute;top:-70px;right:-70px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.08;filter:blur(2px);pointer-events:none;"></span>
+        <span style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:48px;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#d9a13b,#f0d38a,#d9a13b);box-shadow:0 0 14px rgba(217,161,59,0.35);"></span>
+        <p style="position:relative;margin:0 0 8px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.14em;">En attente</p>
+        <p style="position:relative;margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;color:#b88a2e;text-shadow:0 0 20px rgba(217,161,59,0.18);">{{ totalEnAttente() | montant }} €</p>
+      </div>
+
+      <!-- En retard -->
+      <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(192,86,64,0.18), 0 12px 32px rgba(192,86,64,0.06);padding:26px 24px;text-align:center;overflow:hidden;">
+        <span style="position:absolute;top:-70px;right:-70px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#f0b0a0,#c05640 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+        <span style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:48px;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#c05640,#f0b0a0,#c05640);box-shadow:0 0 14px rgba(192,86,64,0.35);"></span>
+        <p style="position:relative;margin:0 0 8px;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.14em;">En retard</p>
+        <p style="position:relative;margin:0;font-size:32px;font-weight:800;letter-spacing:-0.02em;color:#c05640;text-shadow:0 0 20px rgba(192,86,64,0.18);">{{ totalEnRetard() | montant }} €</p>
+      </div>
+    </div>
+
+    <!-- ============ HISTORY PANEL ============ -->
+    <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-lg), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);margin-bottom:28px;overflow:hidden;">
+
+      <span style="position:absolute;top:-90px;right:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.08;filter:blur(2px);pointer-events:none;"></span>
+
+      <!-- panel header -->
+      <div style="position:relative;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Historique</h2>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+          <!-- year filter -->
+          <select
+            [(ngModel)]="filterYear"
+            (change)="refresh()"
+            style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;">
+            <option value="all">Toutes les années</option>
+            @for (y of years; track y) {
+              <option [value]="y">{{ y }}</option>
+            }
+          </select>
+
+          <!-- status filter -->
+          <select
+            [(ngModel)]="filterStatus"
+            (change)="refresh()"
+            style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;">
+            <option value="all">Tous les statuts</option>
+            <option value="PAYE">Payé</option>
+            <option value="EN_ATTENTE">En attente</option>
+            <option value="EN_RETARD">En retard</option>
+          </select>
         </div>
-        <table style="width:100%;border-collapse:collapse;">
+
+        <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+      </div>
+
+      <!-- table -->
+      <div style="position:relative;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:640px;">
           <thead>
-            <tr style="background:#fafafa;">
-              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Mois</th>
-              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Montant</th>
-              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Date de paiement</th>
-              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Statut</th>
-              <th style="padding:12px 20px;text-align:left;font-size:12px;color:#757575;text-transform:uppercase;border-bottom:1px solid #e0e0e0;">Rappel</th>
+            <tr style="background:transparent;">
+              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Mois<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Montant<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Date de paiement<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Statut<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Rappel<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
             </tr>
           </thead>
           <tbody>
             @for (p of paiements(); track p.id) {
-              <tr style="border-bottom:1px solid #f0f0f0;">
-                <td style="padding:14px 20px;font-size:14px;color:#000;">{{ periodLabel(p.period) }}</td>
-                <td style="padding:14px 20px;font-size:14px;color:#000;font-weight:500;">{{ p.amount | montant }} €</td>
-                <td style="padding:14px 20px;font-size:14px;color:#424242;">{{ p.paid_date ? (p.paid_date | dateFr) : '—' }}</td>
-                <td style="padding:14px 20px;">
+              <tr style="position:relative;transition:background 0.2s ease;">
+
+                <td style="padding:18px 28px;font-size:14px;font-weight:700;color: var(--text-main);position:relative;">
+                  {{ periodLabel(p.period) }}
+                  <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 28px;font-size:14px;font-weight:800;color:#4f6a4c;position:relative;text-shadow:0 0 12px rgba(111,143,107,0.10);">
+                  {{ p.amount | montant }} €
+                  <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 28px;font-size:13.5px;color: var(--text-sub);font-weight:600;position:relative;">
+                  {{ p.paid_date ? (p.paid_date | dateFr) : '—' }}
+                  <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </td>
+
+                <td style="padding:18px 28px;position:relative;">
                   @if (p.status === 'PAYE') {
-                    <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">Payé</span>
+                    <span style="display:inline-block;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow:0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);">Payé</span>
                   }
                   @else if (p.status === 'EN_ATTENTE') {
-                    <span style="padding:4px 12px;background:#e0e0e0;color:#424242;font-size:12px;font-weight:600;">En attente</span>
+                    <span style="display:inline-block;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;color:#4f6a4c;background:rgba(111,143,107,0.12);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.35);">En attente</span>
                   }
                   @else {
-                    <span style="padding:4px 12px;background:#424242;color:#fff;font-size:12px;font-weight:600;">En retard</span>
+                    <span style="display:inline-block;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;color:#fff;background:linear-gradient(135deg,#c05640 0%,#9a3f2e 100%);box-shadow:0 4px 14px rgba(192,86,64,0.35), inset 0 1px 0 rgba(255,255,255,0.25);">En retard</span>
                   }
+                  <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
-                <td style="padding:14px 20px;">
+
+                <td style="padding:18px 28px;position:relative;">
                   @if (p.status !== 'PAYE' && p.reminder_received) {
-                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#666;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:5px 12px;font-size:11.5px;font-weight:700;letter-spacing:0.02em;color:#4f6a4c;background:rgba(111,143,107,0.12);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                       Rappel reçu
                     </span>
                   } @else {
-                    <span style="font-size:12px;color:#bbb;">—</span>
+                    <span style="font-size:13px;color: var(--text-sub);opacity:0.7;">—</span>
                   }
+                  <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
               </tr>
             }
             @empty {
               <tr>
-                <td colspan="5" style="padding:40px 20px;text-align:center;color:#9e9e9e;font-size:14px;">Aucun paiement trouvé</td>
+                <td colspan="5" style="padding:64px 28px;text-align:center;">
+                  <div style="display:inline-flex;flex-direction:column;align-items:center;gap:14px;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:rgba(111,143,107,0.10);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30), 0 0 32px rgba(111,143,107,0.15);">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f6a4c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                      </svg>
+                    </span>
+                    <p style="margin:0;font-size:14.5px;font-weight:700;color: var(--text-sub);letter-spacing:0.01em;">Aucun paiement trouvé</p>
+                  </div>
+                </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
     </div>
+  </div>
 </app-state-block>

@@ -1,25 +1,25 @@
-<div style="padding: 24px; background: #f5f5f5; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+﻿<div style="padding: 24px; background: var(--bg); min-height: 100vh; font-family: inherit; border-radius: var(--radius-md)">
       <div style="margin-bottom: 24px;">
-        <h1 style="margin: 0 0 4px; font-size: 28px; font-weight: 700; color: #000;">Loyers & Paiements</h1>
-        <p style="margin: 0; color: #666; font-size: 14px;">Paiements classés par logement - changez le statut et envoyez des rappels</p>
+        <h1 style="margin: 0 0 4px; font-size: 30px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-main);">Loyers &amp; Paiements</h1>
+        <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Paiements classés par logement - changez le statut et envoyez des rappels</p>
       </div>
 
-      <div style="background: #000; color: #fff; padding: 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; box-shadow: 6px 6px 18px rgba(90, 110, 85, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.35); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-          <p style="margin: 0 0 4px; font-size: 14px; opacity: 0.7;">Total reçu (filtre actuel)</p>
-          <p style="margin: 0; font-size: 32px; font-weight: 700;">{{ totalReceived() | montant }} FCFA</p>
+          <p style="margin: 0 0 4px; font-size: 14px; opacity: 0.8;">Total reçu (filtre actuel)</p>
+          <p style="margin: 0; font-size: 32px; font-weight: 800;">{{ totalReceived() | montant }} FCFA</p>
         </div>
         <div style="text-align: right;">
-          <p style="margin: 0 0 4px; font-size: 14px; opacity: 0.7;">En attente / retard</p>
-          <p style="margin: 0; font-size: 24px; font-weight: 600;">{{ pendingAmount() | montant }} FCFA</p>
+          <p style="margin: 0 0 4px; font-size: 14px; opacity: 0.8;">En attente / retard</p>
+          <p style="margin: 0; font-size: 24px; font-weight: 700;">{{ pendingAmount() | montant }} FCFA</p>
         </div>
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
         <input (change)="onFilterPeriod($event)" type="month"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;"/>
+          style="padding: 11px 18px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light);"/>
         <select (change)="onFilterStatus($event)"
-          style="padding: 8px 12px; border: 1px solid #e0e0e0; font-size: 14px; outline: none; background: #fff;">
+          style="padding: 11px 18px; border: none; outline: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 4px 4px 9px var(--clay-in-dark), inset -4px -4px 9px var(--clay-in-light); cursor: pointer;">
           <option value="">Tous les statuts</option>
           <option value="PAYE">Payé</option>
           <option value="EN_ATTENTE">En attente</option>
@@ -29,19 +29,19 @@
 
       <app-state-block [loading]="loading()" [error]="error()">
         @if (arrears().length > 0) {
-          <div style="background: #fff; border: 1px solid #000; margin-bottom: 24px;">
-            <div style="padding: 14px 20px; border-bottom: 1px solid #e0e0e0; background: #000;">
-              <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #fff;">Mois impayés par locataire ({{ arrears().length }})</h2>
+          <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: var(--out-md); margin-bottom: 24px; border-radius: var(--radius-lg); overflow: hidden;">
+            <div style="padding: 14px 20px; border-bottom: 1px dashed var(--border-color); background: linear-gradient(145deg, #e99a7d, #d9815f);">
+              <h2 style="margin: 0; font-size: 15px; font-weight: 800; color: #fff;">Mois impayés par locataire ({{ arrears().length }})</h2>
             </div>
             <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 10px;">
               @for (a of arrears(); track a.locataire_id) {
-                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #e0e0e0; flex-wrap: wrap;">
-                  <span style="font-size: 14px; font-weight: 700; color: #000;">{{ a.locataire_name }}</span>
-                  <span style="font-size: 11px; background: #000; color: #fff; padding: 3px 8px; font-weight: 700;">{{ a.nb_mois }} mois impayé(s)</span>
-                  <span style="font-size: 12px; color: #666;">{{ a.logement_address }} : {{ monthlabels(a.periods) }}</span>
-                  <span style="margin-left: auto; font-size: 14px; font-weight: 700; color: #000;">Total dû : {{ a.total_du | montant }} FCFA</span>
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius-md); background: var(--concave); box-shadow: inset 2px 2px 5px var(--clay-in-dark), inset -2px -2px 5px var(--clay-in-light); flex-wrap: wrap;">
+                  <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">{{ a.locataire_name }}</span>
+                  <span style="font-size: 11px; background: linear-gradient(145deg, #e99a7d, #d9815f); color: #fff; border-radius: 999px; padding: 4px 12px; font-weight: 800; box-shadow: 2px 2px 6px rgba(180, 110, 85, 0.35);">{{ a.nb_mois }} mois impayé(s)</span>
+                  <span style="font-size: 12px; color: var(--text-sub);">{{ a.logement_address }} : {{ monthlabels(a.periods) }}</span>
+                  <span style="margin-left: auto; font-size: 14px; font-weight: 800; color: var(--text-main);">Total dû : {{ a.total_du | montant }} FCFA</span>
                   <button (click)="remindAll(a)" title="Rappeler tous les impayés"
-                    style="background: #000; color: #fff; border: none; width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    style="background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; border: none; border-radius: 50%; box-shadow: 3px 3px 8px rgba(90, 110, 85, 0.4); width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                   </button>
                 </div>
@@ -53,32 +53,34 @@
         @for (group of groupedLoyers(); track group.logementId) {
           <div style="margin-bottom: 24px;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              <h2 style="margin: 0; font-size: 17px; font-weight: 700; color: #000;">{{ group.address }}</h2>
-              <span style="font-size: 11px; color: #666; background: #fff; border: 1px solid #e0e0e0; padding: 3px 8px;">{{ group.items.length }} paiement(s)</span>
+              <span style="display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; color: var(--sage-deep); background: linear-gradient(145deg, #fff, #ead9c2); box-shadow: 3px 3px 8px var(--clay-dark), -3px -3px 8px var(--clay-light);">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </span>
+              <h2 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main);">{{ group.address }}</h2>
+              <span style="font-size: 11px; color: var(--text-sub); background: var(--concave); border-radius: 999px; box-shadow: inset 2px 2px 4px var(--clay-in-dark), inset -2px -2px 4px var(--clay-in-light); padding: 4px 12px; font-weight: 700;">{{ group.items.length }} paiement(s)</span>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
               @for (loyer of group.items; track loyer.id) {
-                <div style="background: #fff; border: 1px solid #e0e0e0; padding: 16px; display: flex; align-items: center; gap: 14px;">
-                  <div style="width: 44px; height: 44px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0;">
+                <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 16px; display: flex; align-items: center; gap: 14px;">
+                  <div style="width: 46px; height: 46px; background: linear-gradient(145deg, #8fae8b, #6f8f6b); color: #fff; box-shadow: 4px 4px 10px rgba(90, 110, 85, 0.4); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; flex-shrink: 0;">
                     {{ loyer.locataire_name.charAt(0) }}
                   </div>
                   <div style="flex: 1; min-width: 0;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-                      <span style="font-size: 14px; font-weight: 700; color: #000;">{{ loyer.locataire_name }}</span>
+                      <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">{{ loyer.locataire_name }}</span>
                       @if (loyer.piece_numero) {
-                        <span style="font-size: 10px; background: #000; color: #fff; padding: 2px 6px; font-weight: 600;">{{ loyer.piece_numero }}</span>
+                        <span style="font-size: 10px; background: var(--board-2); color: var(--text-main); border-radius: 999px; padding: 3px 9px; font-weight: 800;">{{ loyer.piece_numero }}</span>
                       }
                     </div>
-                    <p style="margin: 0; font-size: 13px; color: #666;">{{ monthlabel(loyer.period) }} - <strong style="color: #000;">{{ loyer.amount | montant }} FCFA</strong></p>
+                    <p style="margin: 0; font-size: 13px; color: var(--text-sub);">{{ monthlabel(loyer.period) }} - <strong style="color: var(--text-main);">{{ loyer.amount | montant }} FCFA</strong></p>
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
                       <span [style.background]="getStatusBg(loyer.status)" [style.color]="getStatusColor(loyer.status)"
-                        style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
+                        style="font-size: 11px; padding: 4px 12px; font-weight: 800; border-radius: 999px; box-shadow: 2px 2px 6px var(--clay-dark);">
                         {{ getStatusLabel(loyer.status) }}
                       </span>
                       <select [value]="loyer.status" (change)="changeStatus(loyer, $event)"
-                        style="font-size: 12px; padding: 4px 8px; border: 1px solid #e0e0e0; background: #fff; outline: none;">
+                        style="font-size: 12px; font-weight: 700; padding: 6px 12px; border: none; outline: none; border-radius: 999px; font-family: inherit; color: var(--text-main); background: #eed8be; box-shadow: inset 3px 3px 7px var(--clay-in-dark), inset -3px -3px 7px var(--clay-in-light); cursor: pointer;">
                         <option value="PAYE">Payé</option>
                         <option value="EN_ATTENTE">En attente</option>
                         <option value="EN_RETARD">En retard</option>
@@ -88,17 +90,17 @@
                   <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: center;">
                     @if (loyer.status !== 'PAYE') {
                       <button (click)="sendReminder(loyer)" [disabled]="recent(loyer)" title="Envoyer un rappel"
-                        [style.background]="recent(loyer) ? '#f5f5f5' : '#000'"
-                        [style.color]="recent(loyer) ? '#999' : '#fff'"
-                        style="border: none; width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        [style.background]="recent(loyer) ? 'var(--concave)' : 'linear-gradient(145deg, #8fae8b, #6f8f6b)'"
+                        [style.color]="recent(loyer) ? 'var(--text-sub)' : '#ffffff'"
+                        style="border: none; border-radius: 50%; box-shadow: 3px 3px 8px var(--clay-dark); width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                       </button>
                       @if (recent(loyer)) {
-                        <p style="margin: 0; font-size: 10px; color: #999; text-align: center;">Rappel envoyé</p>
+                        <p style="margin: 0; font-size: 10px; color: var(--text-sub); text-align: center;">Rappel envoyé</p>
                       }
                     } @else {
                       <button (click)="generateReceipt(loyer)" title="Générer la quittance"
-                        style="background: #fff; color: #000; border: 1px solid #000; padding: 6px 10px; font-size: 11px; cursor: pointer; font-weight: 600;">Quittance</button>
+                        style="background: linear-gradient(145deg, #fffdf9, #efd7b9); color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: var(--out-sm); border-radius: 999px; padding: 8px 14px; font-size: 11px; cursor: pointer; font-weight: 800; font-family: inherit;">Quittance</button>
                     }
                   </div>
                 </div>
@@ -108,8 +110,8 @@
         }
 
         @if (groupedLoyers().length === 0) {
-          <div style="background: #fff; border: 1px solid #e0e0e0; padding: 48px; text-align: center;">
-            <p style="margin: 0; color: #666; font-size: 14px;">Aucun paiement trouvé</p>
+          <div style="background: var(--convex); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: var(--radius-lg); box-shadow: var(--out-md); padding: 48px; text-align: center;">
+            <p style="margin: 0; color: var(--text-sub); font-size: 14px;">Aucun paiement trouvé</p>
           </div>
         }
       </app-state-block>

@@ -5,6 +5,8 @@ import { AdminDashboardResponse, RevenuMoisAdmin } from '@core/models/dashboard.
 import { JournalResponse } from '@core/models/admin.model';
 import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
 import { MontantPipe } from '@shared/pipes';
+import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
+import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
 interface BarItem {
   label: string;
@@ -14,33 +16,29 @@ interface BarItem {
 
 const mois_courts = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
-interface StatCard {
+interface StatCardData {
   label: string;
   value: string;
-  icon: string;
+  icon: 'bailleurs' | 'locataires' | 'logements' | 'revenue' | 'abonnements';
+  tone: 'primary' | 'success' | 'info' | 'warning' | 'muted';
+  change?: string;
+  changeValue?: number;
+  trend?: number[];
 }
-
-const icon_bailleurs = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>';
-const icon_locataires = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>';
-const icon_logements = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-const icon_revenue = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>';
-const icon_abonnements = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 
 @Component({
   selector: 'app-super-admin-dashboard',
   standalone: true,
-  imports: [StateBlockComponent, MontantPipe],
+  imports: [StateBlockComponent, MontantPipe, StatCardComponent, PageHeaderComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
-  stats = signal<StatCard[]>([]);
+  stats = signal<StatCardData[]>([]);
   barData = signal<BarItem[]>([]);
 
-  // apercu fourni directement par le dashboard, la liste complete est paginee via le journal
-  // preview shipped directly by the dashboard, full list is paginated through the journal
   activities = signal<JournalResponse[]>([]);
 
   showActivityModal = signal(false);
@@ -116,18 +114,47 @@ export class DashboardComponent implements OnInit {
     return serie.map(r => ({
       label: mois_courts[Number(r.period.split('-')[1]) - 1] || r.period,
       value: r.montant >= 1000 ? `${Math.round(r.montant / 100) / 10}k€` : `${Math.round(r.montant)}€`,
-      // edge case: aucun revenu, on evite la division par zero / no revenue, avoid dividing by zero
       height: max > 0 ? Math.round(r.montant / max * 100) : 0
     }));
   }
 
-  private toCards(d: AdminDashboardResponse): StatCard[] {
+  private toCards(d: AdminDashboardResponse): StatCardData[] {
     return [
-      { label: 'Total Bailleurs', value: String(d.bailleurs.total), icon: icon_bailleurs },
-      { label: 'Total Locataires', value: String(d.locataires.total), icon: icon_locataires },
-      { label: 'Total Logements', value: String(d.logements), icon: icon_logements },
-      { label: 'Revenus du mois', value: `${d.revenus.mois_courant.toLocaleString('fr-FR')} €`, icon: icon_revenue },
-      { label: 'Abonnements actifs', value: String(d.abonnements.actifs), icon: icon_abonnements }
+      { 
+        label: 'Total Bailleurs', 
+        value: String(d.bailleurs.total), 
+        icon: 'bailleurs', 
+        tone: 'primary',
+        trend: [12, 15, 13, 18, 22, 25, 28]
+      },
+      { 
+        label: 'Total Locataires', 
+        value: String(d.locataires.total), 
+        icon: 'locataires', 
+        tone: 'info',
+        trend: [85, 92, 88, 95, 102, 110, 118]
+      },
+      { 
+        label: 'Total Logements', 
+        value: String(d.logements), 
+        icon: 'logements', 
+        tone: 'muted',
+        trend: [24, 26, 25, 28, 30, 32, 34]
+      },
+      { 
+        label: 'Revenus du mois', 
+        value: `${d.revenus.mois_courant.toLocaleString('fr-FR')} €`, 
+        icon: 'revenue', 
+        tone: 'success',
+        trend: [45, 52, 48, 55, 62, 58, 65]
+      },
+      { 
+        label: 'Abonnements actifs', 
+        value: String(d.abonnements.actifs), 
+        icon: 'abonnements', 
+        tone: 'warning',
+        trend: [156, 162, 158, 165, 172, 178, 184]
+      }
     ];
   }
 }

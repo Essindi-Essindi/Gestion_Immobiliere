@@ -1,252 +1,298 @@
-<!-- Navigation Bar -->
-    <nav class="nav-bar">
-      <div class="nav-logo">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <span>Gestion Immobilière</span>
+<div class="lnd">
+  <!-- ============ NAV ============ -->
+  <header class="lnd-header" [class.lnd-header--solid]="scrolled">
+    <div class="lnd-container lnd-nav-inner">
+      <a class="lnd-brand" routerLink="/">Gestion<span class="lnd-brand-dot">.</span>Immobilière</a>
+
+      <nav class="lnd-nav-center">
+        <a href="#proprietaires" class="lnd-nav-link" (click)="scrollTo($event, 'proprietaires')">Propriétaires</a>
+        <a href="#locataires" class="lnd-nav-link" (click)="scrollTo($event, 'locataires')">Locataires</a>
+        <a href="#a-propos" class="lnd-nav-link" (click)="scrollTo($event, 'a-propos')">À propos</a>
+      </nav>
+
+      <div class="lnd-nav-right">
+        <div class="lnd-langs">
+          <span class="lnd-lang is-current">fr</span>
+          <span class="lnd-lang">en</span>
+        </div>
+        <a routerLink="/auth/bailleur/login" class="lnd-nav-link lnd-nav-cta">Se connecter</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="lnd-hero">
+    <div class="lnd-container lnd-hero-inner">
+      <h1 class="lnd-title-xl" appReveal>
+        <span>L'immobilier,</span>
+        <span>pensé</span>
+        <span class="lnd-title-last">pour vous</span>
+      </h1>
+
+      <div class="lnd-line lnd-line--white" appReveal [appRevealDelay]="160"></div>
+
+      <div class="lnd-stats">
+        <div class="lnd-stat" appReveal [appRevealDelay]="240">
+          <span class="lnd-stat-value">100%</span>
+          <span class="lnd-stat-desc">de la gestion en ligne, de la location à la quittance</span>
+        </div>
+        <div class="lnd-stat" appReveal [appRevealDelay]="360">
+          <span class="lnd-stat-value">4.8/5</span>
+          <span class="lnd-stat-desc">note de satisfaction de nos propriétaires et locataires</span>
+        </div>
+        <div class="lnd-stat" appReveal [appRevealDelay]="480">
+          <span class="lnd-stat-value">98%</span>
+          <span class="lnd-stat-desc">des loyers encaissés à temps grâce aux relances automatiques</span>
+        </div>
+        <div class="lnd-stat" appReveal [appRevealDelay]="600">
+          <span class="lnd-stat-value">24/7</span>
+          <span class="lnd-stat-desc">accès à votre tableau de bord, où que vous soyez</span>
+        </div>
       </div>
 
-      <div class="nav-links">
-        <a href="#features" class="nav-link">Fonctionnalités</a>
-        <a href="#how-it-works" class="nav-link">Comment ça marche</a>
-        <a routerLink="/auth/bailleur/login" class="nav-btn-outline">Espace Bailleur</a>
-        <a routerLink="/auth/locataire/login" class="nav-btn-filled">Espace Locataire</a>
-        <a routerLink="/auth/super-admin/login" class="nav-btn-white">Admin</a>
+      <div class="lnd-scroll-to">
+        <span>Scroll</span>
+        <svg class="lnd-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2v11M3.5 8.5 8 13l4.5-4.5"/></svg>
       </div>
-    </nav>
+    </div>
+    <div class="lnd-hero-bg">
+      <img src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Intérieur d'un appartement lumineux" loading="eager">
+    </div>
+  </section>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <span class="hero-badge">La gestion locative, enfin simple</span>
-      <h1 class="hero-title">Encaissez vos loyers à temps. Louez l'esprit tranquille.</h1>
-      <p class="hero-subtitle">
-        Logements, chambres, locataires, contrats, loyers, quittances et interventions :
-        tout votre patrimoine immobilier dans un seul tableau de bord, clair et sécurisé.
-      </p>
-      <div class="hero-buttons">
-        <a routerLink="/auth/bailleur/register" class="btn-primary">Créer mon compte bailleur</a>
-        <a routerLink="/auth/bailleur/login" class="btn-outline">Se connecter</a>
+  <!-- ============ PRESENTATION ============ -->
+  <section class="lnd-presentation lnd-section">
+    <div class="lnd-container">
+      <div class="lnd-headline lnd-headline--center">
+        <h2 class="lnd-title-sm" appReveal>La gestion immobilière dans sa forme la plus simple&nbsp;: centralisée, transparente et entièrement en ligne.</h2>
       </div>
-      <ul class="hero-trust">
-        <li>Inscription en 2 minutes</li>
-        <li>Aucune installation</li>
-        <li>Accessible sur mobile et ordinateur</li>
-      </ul>
 
-      <div class="hero-mock">
-        <div class="mock-bar"><span></span><span></span><span></span></div>
-        <div class="mock-body">
-          <div class="mock-stat"><small>Loyers</small><strong>Suivis en direct</strong><em>payés, en attente, en retard</em></div>
-          <div class="mock-stat"><small>Occupation</small><strong>Chambre par chambre</strong><em>qui loge où, en temps réel</em></div>
-          <div class="mock-stat"><small>Relances</small><strong>Par e-mail</strong><em>en un clic sur la cloche</em></div>
+      <div class="lnd-presentation-grid">
+        <div class="lnd-presentation-text" appReveal [appRevealDelay]="120">
+          <p>Gestion Immobilière réunit les propriétaires et leurs locataires sur une seule plateforme. Logements, chambres, contrats, loyers, quittances et interventions&nbsp;: chaque information est suivie, retrouvée et partagée en quelques secondes.</p>
+          <p>Nous accompagnons un cercle de bailleurs exigeants qui veulent encaisser leurs loyers à temps, réduire les impayés et offrir à leurs locataires une expérience claire et professionnelle — sans tableurs ni appels à répétition.</p>
         </div>
-      </div>
-    </section>
 
-    <!-- Problem / Solution strip -->
-    <section class="pain-section">
-      <div class="pain-inner">
-        <h2>Fini les tableurs, les relances oubliées et les quittances perdues.</h2>
-        <div class="pain-grid">
-          <div>
-            <span class="pain-before">Avant</span>
-            <p>Des fichiers éparpillés, des loyers suivis de mémoire, des appels pour chaque panne.</p>
+        <div class="lnd-presentation-team" appReveal>
+          <div class="lnd-visual">
+            <img src="https://images.pexels.com/photos/279746/pexels-photo-279746.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Immeuble résidentiel" loading="lazy">
           </div>
-          <div class="pain-arrow">→</div>
-          <div>
-            <span class="pain-after">Avec Gestion Immobilière</span>
-            <p>Une seule plateforme : chaque loyer, chaque contrat et chaque demande est suivi et retrouvé en quelques secondes.</p>
+          <div class="lnd-tag">
+            <svg class="lnd-icon" viewBox="0 0 10 11" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M5 1a3.5 3.5 0 0 0-3.5 3.5C1.5 7 5 10 5 10s3.5-3 3.5-5.5A3.5 3.5 0 0 0 5 1Z"/><circle cx="5" cy="4.5" r="1.2"/></svg>
+            <span class="lnd-caps">Douala · Yaoundé · partout en ligne</span>
           </div>
+          <p class="lnd-team-text">Une plateforme pensée pour durer&nbsp;: sécurisée, cloisonnée et toujours disponible.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-      <h2 class="section-title">Tout ce qu'il faut pour gérer sereinement</h2>
-      <p class="section-subtitle">Des outils concrets, pensés pour les bailleurs et simples pour les locataires</p>
+  <!-- ============ PROPRIÉTAIRES (stacking cards) ============ -->
+  <section id="proprietaires" class="lnd-stacking">
+    <div class="lnd-container">
+      <div class="lnd-headline lnd-headline--center lnd-headline--stack" appReveal>
+        <span class="lnd-caps">(propriétaires)</span>
+        <h2 class="lnd-title-md">Votre patrimoine,<br>notre expertise</h2>
+      </div>
+    </div>
 
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <div class="lnd-stack-list">
+      <article class="lnd-stack-card lnd-stack-card--cream">
+        <div class="lnd-stack-inner" appReveal>
+          <h3 class="lnd-title-xl">Gestion<br>locative</h3>
+          <div class="lnd-stack-visual">
+            <img src="https://images.pexels.com/photos/1571459/pexels-photo-1571459.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Séjour meublé" loading="lazy">
           </div>
-          <h3>Logements et chambres</h3>
-          <p>Décrivez chaque bien avec ses pièces, sa capacité et ses occupants. Colocation ou logement entier : vous voyez qui occupe quelle chambre.</p>
+          <div class="lnd-stack-content">
+            <p>Décrivez chaque bien, ses chambres et sa capacité. Invitez vos locataires par e-mail, suivez qui occupe quelle chambre et partagez les contrats de bail en PDF.</p>
+            <a routerLink="/auth/bailleur/register" class="lnd-btn">Découvrir
+              <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="lnd-stack-card lnd-stack-card--dark">
+        <div class="lnd-stack-inner" appReveal>
+          <h3 class="lnd-title-xl">Loyers &amp;<br>quittances</h3>
+          <div class="lnd-stack-visual">
+            <img src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Chambre élégante" loading="lazy">
+          </div>
+          <div class="lnd-stack-content">
+            <p>Repérez les impayés d'un regard, relancez le locataire par e-mail en un clic et émettez les quittances automatiquement dès que le loyer est réglé.</p>
+            <a routerLink="/auth/bailleur/register" class="lnd-btn lnd-btn--cream">Découvrir
+              <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="lnd-stack-card lnd-stack-card--kaki">
+        <div class="lnd-stack-inner" appReveal>
+          <h3 class="lnd-title-xl">Investir &amp;<br>optimiser</h3>
+          <div class="lnd-stack-visual">
+            <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Maison" loading="lazy">
+          </div>
+          <div class="lnd-stack-content">
+            <p>Suivez votre taux d'occupation et vos revenus en direct, gérez les interventions de vos locataires et pilotez la rentabilité de chaque bien depuis un tableau de bord unique.</p>
+            <a routerLink="/auth/bailleur/register" class="lnd-btn">Découvrir
+              <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ VIDÉO ============ -->
+  <section class="lnd-video lnd-section">
+    <div class="lnd-container">
+      <div class="lnd-headline lnd-headline--center lnd-headline--light" appReveal>
+        <span class="lnd-caps">(en vidéo)</span>
+        <h2 class="lnd-title-md">La gestion locative,<br>expliquée simplement</h2>
+        <p class="lnd-headline-text">Découvrez concrètement comment une plateforme de gestion locative simplifie le quotidien des propriétaires&nbsp;: candidatures, baux, suivi des paiements et communications, réunis au même endroit.</p>
+      </div>
+
+      <div class="lnd-video-frame" appReveal [appRevealDelay]="150">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/ZwbVVoz-L-w?rel=0"
+          title="Découvrez la plateforme de gestion locative"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOCATAIRES ============ -->
+  <section id="locataires" class="lnd-locataires lnd-section">
+    <div class="lnd-container">
+      <div class="lnd-headline lnd-headline--right" appReveal>
+        <span class="lnd-caps">(locataires)</span>
+        <h2 class="lnd-title-md">Trouvez un logement clair, élégant et clé en main</h2>
+      </div>
+
+      <div class="lnd-loc-content">
+        <div class="lnd-loc-gallery" appReveal>
+          <div class="lnd-loc-item">
+            <img src="https://images.pexels.com/photos/1571463/pexels-photo-1571463.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Salon meublé" loading="lazy">
+          </div>
+          <div class="lnd-loc-item is-sm">
+            <img src="https://images.pexels.com/photos/1571456/pexels-photo-1571456.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Intérieur lumineux" loading="lazy">
+          </div>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>Invitation des locataires</h3>
-          <p>Invitez un locataire par e-mail : il choisit lui-même son mot de passe et accède à son espace personnel en toute sécurité.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <h3>Contrats en PDF</h3>
-          <p>Stockez et partagez les contrats de bail. Le locataire retrouve son document à tout moment dans son espace.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </div>
-          <h3>Loyers et relances</h3>
-          <p>Repérez les impayés d'un regard et relancez le locataire par e-mail en un clic. Fini les oublis et les appels gênants.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><rect x="1" y="4" width="22" height="16"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          </div>
-          <h3>Quittances</h3>
-          <p>Une fois le loyer payé, émettez la quittance : votre locataire la télécharge quand il en a besoin.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="square"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>
-          </div>
-          <h3>Suivi des interventions</h3>
-          <p>Vos locataires signalent un problème depuis leur espace ; vous le traitez, répondez et suivez son avancement jusqu'à la résolution.</p>
+        <div class="lnd-btn-cards" appReveal [appRevealDelay]="150">
+          <a routerLink="/auth/locataire/login" class="lnd-btn-card">
+            <div class="lnd-btn-inner">
+              <svg class="lnd-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M8 5v6M5 8h6"/></svg>
+              <span>Accéder à mon espace</span>
+            </div>
+          </a>
+          <a routerLink="/auth/locataire/login" class="lnd-btn-card">
+            <div class="lnd-btn-inner">
+              <svg class="lnd-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg>
+              <span>Déclarer un problème</span>
+            </div>
+          </a>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Audiences -->
-    <section class="audience-section">
-      <h2 class="section-title">Un espace pour chacun</h2>
-      <p class="section-subtitle">Chaque profil voit exactement ce dont il a besoin</p>
-      <div class="audience-grid">
-        <div class="audience-card">
-          <h3>Bailleurs</h3>
-          <ul>
-            <li>Tableau de bord des revenus et de l'occupation</li>
-            <li>Gestion des logements, chambres et locataires</li>
-            <li>Loyers, relances et quittances</li>
+  <!-- ============ À PROPOS ============ -->
+  <section id="a-propos" class="lnd-about lnd-section">
+    <div class="lnd-container">
+      <div class="lnd-headline lnd-headline--light" appReveal>
+        <span class="lnd-caps">(à propos)</span>
+        <h2 class="lnd-title-md">La gestion immobilière<br>dans sa forme<br>la plus maîtrisée</h2>
+      </div>
+
+      <div class="lnd-about-content" appReveal [appRevealDelay]="150">
+        <div class="lnd-about-visual">
+          <img src="https://images.pexels.com/photos/439391/pexels-photo-439391.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Cuisine moderne" loading="lazy">
+        </div>
+        <a routerLink="/auth/bailleur/register" class="lnd-btn lnd-btn--cream">Créer mon compte
+          <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+        </a>
+      </div>
+    </div>
+    <div class="lnd-about-bg">
+      <img src="https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy">
+    </div>
+  </section>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="lnd-cta lnd-section">
+    <div class="lnd-container lnd-cta-inner">
+      <h2 class="lnd-title-md" appReveal>Prêt à reprendre le contrôle<br>de votre patrimoine&nbsp;?</h2>
+      <div class="lnd-cta-buttons" appReveal [appRevealDelay]="150">
+        <a routerLink="/auth/bailleur/register" class="lnd-btn lnd-btn--cream">Créer mon compte bailleur
+          <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+        </a>
+        <a routerLink="/auth/locataire/login" class="lnd-btn lnd-btn--ghost">Je suis locataire
+          <span class="lnd-btn-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M10 11.3 13.3 8 10 4.7M2 8h11"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="lnd-footer">
+    <div class="lnd-container">
+      <div class="lnd-footer-nav" appReveal>
+        <div class="lnd-footer-col">
+          <div class="lnd-line"></div>
+          <span class="lnd-caps">(propriétaires)</span>
+          <ul class="lnd-footer-list">
+            <li><a routerLink="/auth/bailleur/register" class="lnd-footer-link">Créer un compte</a></li>
+            <li><a routerLink="/auth/bailleur/login" class="lnd-footer-link">Gestion locative</a></li>
+            <li><a routerLink="/auth/bailleur/login" class="lnd-footer-link">Loyers &amp; quittances</a></li>
           </ul>
-          <a routerLink="/auth/bailleur/register" class="audience-link">Créer un compte →</a>
         </div>
-        <div class="audience-card">
-          <h3>Locataires</h3>
-          <ul>
-            <li>Historique des paiements et quittances</li>
-            <li>Contrat et informations du logement</li>
-            <li>Signalement des problèmes, suivi en direct</li>
+
+        <div class="lnd-footer-col">
+          <div class="lnd-line"></div>
+          <span class="lnd-caps">(locataires)</span>
+          <ul class="lnd-footer-list">
+            <li><a routerLink="/auth/locataire/login" class="lnd-footer-link">Mon espace</a></li>
+            <li><a routerLink="/auth/locataire/login" class="lnd-footer-link">Mes paiements</a></li>
+            <li><a routerLink="/auth/locataire/login" class="lnd-footer-link">Signaler un problème</a></li>
           </ul>
-          <a routerLink="/auth/locataire/login" class="audience-link">Accéder à mon espace →</a>
         </div>
-        <div class="audience-card">
-          <h3>Administrateurs</h3>
-          <ul>
-            <li>Supervision des comptes et abonnements</li>
-            <li>Journal d'activité complet</li>
-            <li>Paramètres de la plateforme</li>
+
+        <div class="lnd-footer-col">
+          <div class="lnd-line"></div>
+          <span class="lnd-caps">(plateforme)</span>
+          <ul class="lnd-footer-list">
+            <li><a routerLink="/auth/super-admin/login" class="lnd-footer-link">Espace admin</a></li>
+            <li><a href="#a-propos" class="lnd-footer-link" (click)="scrollTo($event, 'a-propos')">À propos</a></li>
+            <li><a href="#proprietaires" class="lnd-footer-link" (click)="scrollTo($event, 'proprietaires')">Fonctionnalités</a></li>
           </ul>
-          <a routerLink="/auth/super-admin/login" class="audience-link">Espace administrateur →</a>
+        </div>
+
+        <div class="lnd-footer-col">
+          <div class="lnd-line"></div>
+          <span class="lnd-caps">(réseaux sociaux)</span>
+          <ul class="lnd-footer-list">
+            <li><a href="#" class="lnd-footer-link">LinkedIn</a></li>
+            <li><a href="#" class="lnd-footer-link">Instagram</a></li>
+            <li><a href="#" class="lnd-footer-link">X / Twitter</a></li>
+          </ul>
         </div>
       </div>
-    </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="steps-section">
-      <h2 class="section-title">Opérationnel en 3 étapes</h2>
-      <p class="section-subtitle">Pas de formation, pas d'installation</p>
-
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <h3>Créez votre compte</h3>
-          <p>Inscrivez-vous en quelques minutes. Vos données sont protégées et vos accès sécurisés.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <h3>Ajoutez vos biens</h3>
-          <p>Renseignez vos logements et leurs chambres, puis invitez vos locataires par e-mail.</p>
-        </div>
-
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <h3>Pilotez au quotidien</h3>
-          <p>Suivez les loyers, relancez en un clic, émettez les quittances et traitez les demandes.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Security / benefits -->
-    <section class="benefits-section">
-      <div class="benefits-inner">
-        <div>
-          <h2>Pensé pour votre tranquillité</h2>
-          <p>Vos données et celles de vos locataires restent privées : chaque utilisateur n'accède qu'à ses propres informations.</p>
-        </div>
-        <ul class="benefits-list">
-          <li><strong>Accès sécurisé</strong><span>Connexion protégée, mot de passe modifiable à tout moment.</span></li>
-          <li><strong>Vos données, cloisonnées</strong><span>Un bailleur ne voit jamais les biens d'un autre.</span></li>
-          <li><strong>Historique traçable</strong><span>Chaque action importante est journalisée.</span></li>
+      <div class="lnd-footer-btm" appReveal>
+        <span>© 2026 Gestion Immobilière</span>
+        <div class="lnd-line lnd-line--grow"></div>
+        <ul class="lnd-footer-btm-list">
+          <li><a href="#" class="lnd-footer-link">Mentions légales</a></li>
+          <li><a href="#" class="lnd-footer-link">Confidentialité</a></li>
         </ul>
       </div>
-    </section>
 
-    <!-- FAQ -->
-    <section class="faq-section">
-      <h2 class="section-title">Questions fréquentes</h2>
-      <div class="faq-list">
-        <details>
-          <summary>Mes locataires doivent-ils créer un compte ?</summary>
-          <p>Vous les invitez par e-mail : ils reçoivent un lien, choisissent leur mot de passe et accèdent à leur espace en quelques secondes.</p>
-        </details>
-        <details>
-          <summary>Puis-je gérer une colocation ?</summary>
-          <p>Oui. Chaque logement peut avoir plusieurs chambres avec une capacité, et vous assignez chaque locataire à sa chambre.</p>
-        </details>
-        <details>
-          <summary>Comment relancer un loyer impayé ?</summary>
-          <p>Depuis la page Loyers, un clic sur la cloche envoie un e-mail de rappel au locataire concerné.</p>
-        </details>
-        <details>
-          <summary>Puis-je changer mon mot de passe ?</summary>
-          <p>Oui, chaque compte (bailleur, locataire, administrateur) peut modifier son mot de passe depuis ses paramètres.</p>
-        </details>
-      </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="cta-section">
-      <h2>Prêt à simplifier votre gestion locative ?</h2>
-      <p>Rejoignez la plateforme et reprenez le contrôle de votre patrimoine.</p>
-      <div class="hero-buttons cta-buttons">
-        <a routerLink="/auth/bailleur/register" class="btn-white">Créer mon compte bailleur</a>
-        <a routerLink="/auth/locataire/login" class="btn-ghost">Je suis locataire</a>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          <span>Gestion Immobilière</span>
-        </div>
-
-        <div class="footer-links">
-          <a routerLink="/auth/bailleur/login" class="footer-link">Espace Bailleur</a>
-          <a routerLink="/auth/locataire/login" class="footer-link">Espace Locataire</a>
-          <a routerLink="/auth/super-admin/login" class="footer-link">Admin</a>
-        </div>
-
-        <div class="footer-copy">© 2026 Gestion Immobilière. Tous droits réservés.</div>
-      </div>
-    </footer>
+      <div class="lnd-footer-brand" appReveal [appRevealDelay]="150">Gestion<span class="lnd-brand-dot">.</span>Immobilière</div>
+    </div>
+  </footer>
+</div>

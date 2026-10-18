@@ -1,130 +1,104 @@
-<app-state-block [loading]="loading()" [error]="error()">
-<div style="padding:24px;background:#f5f5f5;min-height:100vh;">
-      <div style="margin-bottom:24px;">
-        <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Bonjour, {{ userName }}</h1>
-        <p style="margin:0;color:#757575;font-size:14px;">Bienvenue dans votre espace locataire</p>
+﻿<app-state-block [loading]="loading()" [error]="error()">
+  <app-page-header
+    title="Bonjour, {{ userName }}"
+    subtitle="Bienvenue dans votre espace locataire"
+    description="Retrouvez ici un aperçu de votre logement, vos paiements et vos échéances."
+  ></app-page-header>
+
+  <div class="stats-grid">
+    @for (stat of stats(); track stat.label) {
+      <app-stat-card
+        [value]="stat.value"
+        [label]="stat.label"
+        [icon]="stat.icon"
+        [tone]="stat.tone"
+      ></app-stat-card>
+    }
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <h2>Mon Contrat</h2>
+        @if (dashboard()?.contrat) {
+          <span class="badge badge--success">Actif</span>
+        } @else {
+          <span class="badge badge--muted">Inactif</span>
+        }
       </div>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;">
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;background:#000;display:flex;align-items:center;justify-content:center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 0 2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </div>
-            <div>
-              <p style="margin:0;font-size:16px;font-weight:700;color:#000;">{{ dashboard()?.logement_address || '-' }}</p>
-              <p style="margin:0;font-size:13px;color:#757575;">Mon Logement
-                @if (room()) {
-                  <span style="background:#000;color:#fff;font-size:10px;padding:2px 6px;font-weight:600;margin-left:4px;">{{ room() }}</span>
-                }
-              </p>
-            </div>
+      <div class="card-body">
+        <div class="contract-info">
+          <div class="info-item">
+            <p class="info-label">Logement</p>
+            <p class="info-value">{{ dashboard()?.logement_address || '-' }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Loyer mensuel</p>
+            <p class="info-value">{{ dashboard()?.loyer | montant }} €</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Début</p>
+            <p class="info-value">{{ dashboard()?.contrat?.start_date ? (dashboard()!.contrat!.start_date | dateFr) : '-' }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Fin</p>
+            <p class="info-value">{{ dashboard()?.contrat?.end_date ? (dashboard()!.contrat!.end_date! | dateFr) : 'Indéterminée' }}</p>
           </div>
         </div>
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;background:#424242;display:flex;align-items:center;justify-content:center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </div>
-            <div>
-              <p style="margin:0;font-size:22px;font-weight:700;color:#000;">{{ dashboard()?.loyer | montant }} €</p>
-              <p style="margin:0;font-size:13px;color:#757575;">Mon Loyer</p>
-            </div>
-          </div>
-        </div>
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;background:#616161;display:flex;align-items:center;justify-content:center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <div>
-              <p style="margin:0;font-size:22px;font-weight:700;color:#000;">{{ dashboard()?.dernier_paiement ? (dashboard()!.dernier_paiement! | dateFr) : 'Aucun' }}</p>
-              <p style="margin:0;font-size:13px;color:#757575;">Dernier paiement</p>
-            </div>
-          </div>
-        </div>
-        <div style="background:#fff;border:1px solid #e0e0e0;padding:20px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;background:#333;display:flex;align-items:center;justify-content:center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="0"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            <div>
-              <p style="margin:0;font-size:22px;font-weight:700;color:#000;">{{ dashboard()?.prochaine_echeance || '-' }}</p>
-              <p style="margin:0;font-size:13px;color:#757575;">Prochaine échéance</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
-        <div style="background:#fff;border:1px solid #e0e0e0;">
-          <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
-            <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Mon Contrat</h2>
-            @if (dashboard()?.contrat) {
-              <span style="padding:3px 10px;background:#000;color:#fff;font-size:11px;font-weight:600;">Actif</span>
-            } @else {
-              <span style="padding:3px 10px;background:#e0e0e0;color:#424242;font-size:11px;font-weight:600;">Inactif</span>
-            }
-          </div>
-          <div style="padding:20px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-              <div>
-                <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Logement</p>
-                <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ dashboard()?.logement_address || '-' }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Loyer mensuel</p>
-                <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ dashboard()?.loyer | montant }} €</p>
-              </div>
-              <div>
-                <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Début</p>
-                <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ dashboard()?.contrat?.start_date ? (dashboard()!.contrat!.start_date | dateFr) : '-' }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 4px;font-size:12px;color:#757575;text-transform:uppercase;">Fin</p>
-                <p style="margin:0;font-size:14px;color:#000;font-weight:500;">{{ dashboard()?.contrat?.end_date ? (dashboard()!.contrat!.end_date! | dateFr) : 'Indéterminée' }}</p>
-              </div>
-            </div>
-            <a routerLink="/locataire/contrat" style="display:inline-block;margin-top:16px;padding:10px 20px;background:#000;color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">Voir le contrat</a>
-          </div>
-        </div>
-
-        <div style="background:#fff;border:1px solid #e0e0e0;">
-          <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-            <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Notifications récentes</h2>
-          </div>
-          <div style="padding:12px 20px;">
-            @for (notif of dashboard()?.dernieres_notifications; track notif.id) {
-              <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f0f0f0;" [style.background]="notif.is_read ? 'transparent' : '#fafafa'">
-                <div style="width:36px;height:36px;background:#e0e0e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#424242" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                </div>
-                <div style="flex:1;min-width:0;">
-                  <p style="margin:0 0 2px;font-size:13px;font-weight:600;color:#000;">{{ notif.title }}</p>
-                  <p style="margin:0 0 4px;font-size:12px;color:#616161;">{{ notif.message }}</p>
-                  <span style="font-size:11px;color:#9e9e9e;">{{ timeAgo(notif.created_at) }}</span>
-                </div>
-                @if (!notif.is_read) {
-                  <div style="width:8px;height:8px;background:#000;flex-shrink:0;margin-top:6px;"></div>
-                }
-              </div>
-            } @empty {
-              <p style="margin:8px 0;font-size:13px;color:#9e9e9e;">Aucune notification récente.</p>
-            }
-            <a routerLink="/locataire/notifications" style="display:inline-block;margin-top:12px;font-size:13px;color:#000;font-weight:500;text-decoration:none;">Voir toutes les notifications →</a>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <a routerLink="/locataire/problemes" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Signaler un problème
-        </a>
-        <a routerLink="/locataire/paiements" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:#fff;color:#000;border:1px solid #e0e0e0;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="0"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Voir mes paiements
+        <a routerLink="/locataire/contrat" class="btn-action btn-action--primary">
+          Voir le contrat
         </a>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Notifications récentes</h2>
+      </div>
+      <div class="card-body">
+        <div class="notification-list">
+          @for (notif of dashboard()?.dernieres_notifications; track notif.id) {
+            <div class="notification-item" [class.unread]="!notif.is_read">
+              <div class="notification-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+              </div>
+              <div class="notification-content">
+                <p class="notification-title">{{ notif.title }}</p>
+                <p class="notification-message">{{ notif.message }}</p>
+                <span class="notification-time">{{ timeAgo(notif.created_at) }}</span>
+              </div>
+              @if (!notif.is_read) {
+                <div class="notification-unread-dot"></div>
+              }
+            </div>
+          } @empty {
+            <p class="empty-state">Aucune notification récente.</p>
+          }
+        </div>
+        <a routerLink="/locataire/notifications" class="btn-more">Voir toutes les notifications →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <a routerLink="/locataire/problemes" class="btn-action btn-action--primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Signaler un problème
+    </a>
+    <a routerLink="/locataire/paiements" class="btn-action btn-action--outline">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="1" y="4" width="22" height="16" rx="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      Voir mes paiements
+    </a>
+  </div>
 </app-state-block>

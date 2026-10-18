@@ -1,114 +1,171 @@
 <app-state-block [loading]="loading()" [error]="error()">
-<div style="padding:24px;background:#f5f5f5;min-height:100vh;">
-      <div style="margin-bottom:24px;">
-        <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mon Logement</h1>
-        <p style="margin:0;color:#757575;font-size:14px;">Détails de votre logement actuel
-          @if (locataire?.roomNumber) {
-            <span style="background:#000;color:#fff;font-size:11px;padding:3px 8px;font-weight:600;margin-left:8px;">Chambre {{ locataire.roomNumber }}</span>
-          }
-        </p>
-      </div>
+  <div style="padding:32px;background: var(--bg);min-height:100vh;border-radius:32px;position:relative;">
 
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;">
-        <div style="background:#fff;border:1px solid #e0e0e0;">
-          <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between;">
-            <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Informations du logement</h2>
-            <span style="padding:4px 12px;background:#000;color:#fff;font-size:12px;font-weight:600;">{{ statusLabel(logement.status) }}</span>
-          </div>
-          <div style="padding:20px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Adresse</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.address?.street }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Ville</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.address?.city }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Code postal</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.address?.postalCode }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Type</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.type }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Surface</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.surface }} m²</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Ma chambre</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ locataire?.roomNumber || 'Logement entier' }}</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Loyer mensuel</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.rent | montant }} €</p>
-              </div>
-              <div>
-                <p style="margin:0 0 6px;font-size:12px;color:#757575;text-transform:uppercase;">Charges</p>
-                <p style="margin:0;font-size:15px;color:#000;font-weight:500;">{{ logement.charges | montant }} €</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:16px;">
-          <div style="background:#fff;border:1px solid #e0e0e0;">
-            <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-              <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Dépôt de garantie</h2>
-            </div>
-            <div style="padding:20px;text-align:center;">
-              <p style="margin:0;font-size:28px;font-weight:700;color:#000;">{{ logement.deposit | montant }} €</p>
-              <p style="margin:4px 0 0;font-size:13px;color:#757575;">Versement initial</p>
-            </div>
-          </div>
-
-          <div style="background:#fff;border:1px solid #e0e0e0;">
-            <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-              <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Mes colocataires</h2>
-            </div>
-            <div style="padding:16px 20px;">
-              @if (colocataires.length === 0) {
-                <p style="margin:0;font-size:13px;color:#999;">Vous occupez ce logement seul.</p>
-              } @else {
-                @for (mate of colocataires; track mate.id) {
-                  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;">
-                    <span style="font-size:14px;color:#000;font-weight:500;">{{ mate.firstName }}</span>
-                    <span style="font-size:11px;color:#666;">{{ mate.roomNumber ? 'Ch. ' + mate.roomNumber : '' }}</span>
-                  </div>
-                }
-              }
-            </div>
-          </div>
+    <!-- ============ PAGE HEADER ============ -->
+    <div style="margin-bottom:32px;padding-bottom:20px;position:relative;">
+      <div style="display:flex;align-items:flex-start;gap:16px;">
+        <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
+        <div>
+          <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mon Logement</h1>
+          <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">
+            Détails de votre logement actuel
+            @if (locataire?.roomNumber) {
+              <span style="display:inline-block;margin-left:10px;padding:5px 14px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;border-radius:999px;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow:0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);vertical-align:middle;">
+                Chambre {{ locataire.roomNumber }}
+              </span>
+            }
+          </p>
         </div>
       </div>
-
-      <div style="background:#fff;border:1px solid #e0e0e0;margin-bottom:24px;">
-        <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-          <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Pièces du logement</h2>
-        </div>
-        <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-          @for (piece of logement.pieces || []; track piece.numero) {
-            <div style="border:1px solid #e0e0e0;padding:14px;" [style.background]="piece.numero === locataire?.roomNumber ? '#000' : '#fff'">
-              <p style="margin:0 0 2px;font-size:15px;font-weight:700;" [style.color]="piece.numero === locataire?.roomNumber ? '#fff' : '#000'">{{ piece.numero }}</p>
-              <p style="margin:0;font-size:12px;" [style.color]="piece.numero === locataire?.roomNumber ? '#ccc' : '#757575'">{{ pieceTypeLabel(piece.type) }}</p>
-              @if (piece.capacite > 0) {
-                <p style="margin:6px 0 0;font-size:11px;" [style.color]="piece.numero === locataire?.roomNumber ? '#ccc' : '#999'">
-                  {{ piece.occupants.length }}/{{ piece.capacite }} occupant(s)
-                  @if (piece.numero === locataire?.roomNumber) { - ma chambre }
-                </p>
-              } @else {
-                <p style="margin:6px 0 0;font-size:11px;" [style.color]="piece.numero === locataire?.roomNumber ? '#ccc' : '#999'">Pièce commune</p>
-              }
-            </div>
-          }
-        </div>
-      </div>
-
-      <a routerLink="/locataire/dashboard" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Contacter le bailleur
-      </a>
+      <!-- sage gradient divider -->
+      <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
     </div>
+
+    <!-- ============ MAIN GRID ============ -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:28px;align-items:start;">
+
+      <!-- ---- LOGEMENT INFO PANEL ---- -->
+      <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+        <!-- sage blob -->
+        <span style="position:absolute;top:-80px;right:-80px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+
+        <!-- header -->
+        <div style="position:relative;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Informations du logement</h2>
+          <span style="display:inline-block;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow:0 4px 14px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);">
+            {{ statusLabel(logement.status) }}
+          </span>
+          <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+        </div>
+
+        <!-- body -->
+        <div style="position:relative;padding:28px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px 28px;">
+
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Adresse</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ logement.address?.street }}</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Ville</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ logement.address?.city }}</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Code postal</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ logement.address?.postalCode }}</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Type</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ logement.type }}</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Surface</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ logement.surface }} m²</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Ma chambre</p>
+              <p style="margin:0;font-size:15px;color: var(--text-main);font-weight:600;line-height:1.45;">{{ locataire?.roomNumber || 'Logement entier' }}</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Loyer mensuel</p>
+              <p style="margin:0;font-size:15px;color:#4f6a4c;font-weight:800;line-height:1.45;text-shadow:0 0 12px rgba(111,143,107,0.12);">{{ logement.rent | montant }} €</p>
+            </div>
+            <div>
+              <p style="margin:0 0 6px;font-size:11px;font-weight:700;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;">Charges</p>
+              <p style="margin:0;font-size:15px;color:#4f6a4c;font-weight:800;line-height:1.45;text-shadow:0 0 12px rgba(111,143,107,0.12);">{{ logement.charges | montant }} €</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- SIDE COLUMN ---- -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- Deposit panel -->
+        <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+          <span style="position:absolute;top:-70px;right:-70px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.12;filter:blur(2px);pointer-events:none;"></span>
+
+          <div style="position:relative;padding:22px 26px;">
+            <h2 style="margin:0;font-size:15px;font-weight:800;color: var(--text-sub);letter-spacing:0.10em;text-transform:uppercase;">Dépôt de garantie</h2>
+            <span style="position:absolute;left:26px;right:26px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+          </div>
+          <div style="position:relative;padding:28px 26px;text-align:center;">
+            <p style="margin:0;font-size:34px;font-weight:800;letter-spacing:-0.02em;color:#4f6a4c;text-shadow:0 0 20px rgba(111,143,107,0.20);">{{ logement.deposit | montant }} €</p>
+            <p style="margin:6px 0 0;font-size:12px;color: var(--text-sub);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">Versement initial</p>
+          </div>
+        </div>
+
+        <!-- Colocataires panel -->
+        <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+          <span style="position:absolute;top:-70px;right:-70px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+
+          <div style="position:relative;padding:22px 26px;">
+            <h2 style="margin:0;font-size:15px;font-weight:800;color: var(--text-sub);letter-spacing:0.10em;text-transform:uppercase;">Mes colocataires</h2>
+            <span style="position:absolute;left:26px;right:26px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+          </div>
+
+          <div style="position:relative;padding:20px 26px;">
+            @if (colocataires.length === 0) {
+              <p style="margin:0;font-size:13px;color: var(--text-sub);font-weight:600;text-align:center;padding:12px;background:var(--concave);border-radius:20px;box-shadow:var(--in-xs), inset 0 0 0 1px rgba(111,143,107,0.12);">Vous occupez ce logement seul.</p>
+            } @else {
+              @for (mate of colocataires; track mate.id) {
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;position:relative;">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--concave);box-shadow:var(--in-xs), 0 0 0 2px rgba(111,143,107,0.20);color:#4f6a4c;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </span>
+                    <span style="font-size:14px;color: var(--text-main);font-weight:700;">{{ mate.firstName }}</span>
+                  </div>
+                  <span style="display:inline-block;padding:4px 12px;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:#4f6a4c;background:rgba(111,143,107,0.12);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);">{{ mate.roomNumber ? 'Ch. ' + mate.roomNumber : '' }}</span>
+                  <span style="position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PIECES PANEL ============ -->
+    <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);margin-bottom:28px;overflow:hidden;">
+      <span style="position:absolute;top:-80px;right:-80px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+
+      <div style="position:relative;padding:22px 28px;">
+        <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Pièces du logement</h2>
+        <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
+      </div>
+
+      <div style="position:relative;padding:24px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        @for (piece of logement.pieces || []; track piece.numero) {
+          <div style="position:relative;padding:18px;border-radius:24px;transition:transform 0.2s ease, box-shadow 0.2s ease;"
+               [style.background]="piece.numero === locataire?.roomNumber ? 'linear-gradient(135deg, #8fae8b 0%, #6f8f6b 100%)' : 'var(--bg)'"
+               [style.box-shadow]="piece.numero === locataire?.roomNumber ? '0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6)' : 'var(--out-sm), inset 0 0 0 1px rgba(111,143,107,0.15)'">
+
+            <p style="margin:0 0 4px;font-size:16px;font-weight:800;letter-spacing:-0.01em;"
+               [style.color]="piece.numero === locataire?.roomNumber ? '#fff' : 'var(--text-main)'">{{ piece.numero }}</p>
+
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.02em;"
+               [style.color]="piece.numero === locataire?.roomNumber ? 'rgba(111,143,107,0.85)' : 'var(--text-sub)'">{{ pieceTypeLabel(piece.type) }}</p>
+
+            @if (piece.capacite > 0) {
+              <p style="margin:8px 0 0;font-size:11px;font-weight:700;letter-spacing:0.02em;"
+                 [style.color]="piece.numero === locataire?.roomNumber ? 'rgba(111,143,107,0.85)' : 'var(--text-sub)'">
+                {{ piece.occupants.length }}/{{ piece.capacite }} occupant(s)
+                @if (piece.numero === locataire?.roomNumber) { — ma chambre }
+              </p>
+            } @else {
+              <p style="margin:8px 0 0;font-size:11px;font-weight:700;letter-spacing:0.02em;"
+                 [style.color]="piece.numero === locataire?.roomNumber ? 'rgba(111,143,107,0.85)' : 'var(--text-sub)'">Pièce commune</p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ============ CTA ============ -->
+    <a routerLink="/locataire/dashboard" style="display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border:none;border-radius:999px;font-size:14px;font-weight:800;letter-spacing:0.02em;text-decoration:none;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow: var(--out-sm), 0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Contacter le bailleur
+    </a>
+  </div>
 </app-state-block>

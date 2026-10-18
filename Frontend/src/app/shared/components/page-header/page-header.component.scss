@@ -1,0 +1,120 @@
+/* ============================================================
+   PAGE HEADER — clay
+   ============================================================ */
+:host { display: block; }
+
+.page-header {
+  position: relative;
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+}
+
+/* soft sand divider */
+.page-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(143, 160, 139, 0.6), rgba(246, 191, 168, 0.6), transparent);
+  pointer-events: none;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.header-main {
+  flex: 1;
+  min-width: 220px;
+  position: relative;
+  padding-left: 20px;
+}
+
+/* clay vertical accent bar */
+.header-main::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #c9d6c2, #6f8f6b);
+  box-shadow: 2px 2px 6px var(--clay-dark), inset 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.page-title {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+.page-description {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--text-sub);
+  line-height: 1.6;
+  padding: 14px 22px;
+  border-radius: 20px;
+  background: #eed8be;
+  box-shadow: inset 4px 4px 10px var(--clay-in-dark), inset -4px -4px 10px var(--clay-in-light);
+}
+.page-description::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--sage-deep);
+  box-shadow: 1px 1px 3px var(--clay-dark);
+  vertical-align: middle;
+  transform: translateY(-1px);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+
+.header-actions ::ng-deep button,
+.header-actions ::ng-deep a {
+  border-radius: 999px;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s ease, filter 0.2s ease;
+}
+.header-actions ::ng-deep button:hover,
+.header-actions ::ng-deep a:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+@media (max-width: 640px) {
+  .page-header { margin-bottom: 22px; padding-bottom: 18px; }
+  .header-content { flex-direction: column; align-items: stretch; gap: 18px; }
+  .header-main { padding-left: 16px; }
+  .page-title { font-size: 24px; }
+  .page-description { padding: 12px 18px; font-size: 13px; }
+  .header-actions { justify-content: flex-start; padding-top: 0; }
+}

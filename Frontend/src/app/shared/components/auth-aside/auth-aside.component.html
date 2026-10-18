@@ -1,0 +1,51 @@
+<aside class="aside" [attr.aria-label]="role || 'Illustration'">
+  <div class="media" aria-hidden="true">
+    @if (hasVideo) {
+      <video class="media__video" [poster]="poster" autoplay muted loop playsinline>
+        <source [src]="video" type="video/mp4" />
+      </video>
+    }
+
+    @if (hasImages) {
+      @for (image of images; track image; let i = $index) {
+        <span
+          class="media__slide"
+          [class.is-active]="slidesVisible && i === activeIndex()"
+          [style.backgroundImage]="'url(' + image + ')'"
+        ></span>
+      }
+    }
+
+    <span class="media__scrim"></span>
+    <span class="media__grain"></span>
+  </div>
+
+  <div class="content">
+    <span class="brand">Gestion Immobilière<span class="brand__dot">.</span></span>
+
+    <div class="lead">
+      @if (eyebrow) {
+        <span class="lead__eyebrow">{{ eyebrow }}</span>
+      }
+      <h2 class="lead__title">{{ title }}</h2>
+      @if (subtitle) {
+        <p class="lead__subtitle">{{ subtitle }}</p>
+      }
+    </div>
+
+    @if (hasImages) {
+      <div class="thumbs">
+        @for (image of images; track image; let i = $index) {
+          <button
+            type="button"
+            class="thumb"
+            [class.is-active]="i === activeIndex() && slidesVisible"
+            [style.backgroundImage]="'url(' + image + ')'"
+            (click)="select(i)"
+            [attr.aria-label]="'Visuel ' + (i + 1)"
+          ></button>
+        }
+      </div>
+    }
+  </div>
+</aside>

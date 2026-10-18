@@ -6,12 +6,30 @@ import { DashboardResponse } from '@core/models/dashboard.model';
 import { NotificationResponse } from '@core/models/notification.model';
 import { MontantPipe, DateFrPipe } from '@shared/pipes';
 import { StateBlockComponent } from '@shared/components/state-block/state-block.component';
+import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
+import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+
+interface StatCardData {
+  label: string;
+  value: string | number;
+  icon: 'logements' | 'locataires' | 'money' | 'alert';
+  tone: 'primary' | 'info' | 'success' | 'warning';
+  trend?: number[];
+}
 
 @Component({
   selector: 'app-proprietaire-dashboard',
   standalone: true,
-  imports: [RouterModule, MontantPipe, DateFrPipe, StateBlockComponent],
-  templateUrl: './dashboard.component.html'
+  imports: [
+    RouterModule,
+    MontantPipe,
+    DateFrPipe,
+    StateBlockComponent,
+    StatCardComponent,
+    PageHeaderComponent
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   loading = signal(true);
@@ -23,6 +41,42 @@ export class DashboardComponent implements OnInit {
   maxRevenu = computed(() => {
     const revenus = this.stats()?.revenus_6_mois || [];
     return Math.max(...revenus.map(r => r.attendu), 1);
+  });
+
+  statsCards = computed<StatCardData[]>(() => {
+    const s = this.stats();
+    if (!s) return [];
+
+    return [
+      {
+        label: 'Total Logements',
+        value: s.logements.total,
+        icon: 'logements',
+        tone: 'primary',
+        trend: [22, 24, 23, 25, 27, 28, 30]
+      },
+      {
+        label: 'Locataires actifs',
+        value: s.locataires.actifs,
+        icon: 'locataires',
+        tone: 'info',
+        trend: [18, 20, 19, 22, 24, 25, 27]
+      },
+      {
+        label: 'Encaissé ce mois',
+        value: `${(s.loyers_mois.encaisse || 0).toLocaleString('fr-FR')} FCFA`,
+        icon: 'money',
+        tone: 'success',
+        trend: [120000, 135000, 128000, 142000, 155000, 148000, 162000]
+      },
+      {
+        label: 'Loyers en retard',
+        value: s.arrieres.nb_loyers,
+        icon: 'alert',
+        tone: 'warning',
+        trend: [5, 4, 6, 3, 2, 3, 2]
+      }
+    ];
   });
 
   showEcheModal = signal(false);
@@ -73,12 +127,12 @@ export class DashboardComponent implements OnInit {
 
   getNotifColor(type: string): string {
     switch (type) {
-      case 'WARNING': return '#888';
-      case 'ALERT': return '#000';
-      case 'ERROR': return '#555';
-      case 'SUCCESS': return '#333';
-      case 'INFO': return '#aaa';
-      default: return '#ccc';
+      case 'WARNING': return '#d9a13b';
+      case 'ALERT': return '#a86b3c';
+      case 'ERROR': return '#c05640';
+      case 'SUCCESS': return '#5e9c62';
+      case 'INFO': return '#3b82f6';
+      default: return '#b9a893';
     }
   }
 

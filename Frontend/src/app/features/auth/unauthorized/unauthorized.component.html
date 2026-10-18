@@ -1,9 +1,10 @@
 <div class="page">
-      <div class="header">
-        <div class="header-inner">
-          <span class="logo-text">Gestion Immobilière</span>
-        </div>
-      </div>
+      <app-auth-aside
+        role="Accès restreint"
+        eyebrow="Erreur 403"
+        [title]="'Accès\nrestreint'"
+        subtitle="Vous n'avez pas les permissions nécessaires. Retournez à l'accueil ou contactez un administrateur."
+      ></app-auth-aside>
       <div class="body">
         <div class="card">
           <div class="error-code">403</div>

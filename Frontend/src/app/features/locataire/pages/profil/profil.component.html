@@ -1,54 +1,119 @@
 <app-state-block [loading]="loading()" [error]="error()">
-<div style="padding:24px;background:#f5f5f5;min-height:100vh;">
-      <div style="margin-bottom:24px;">
-        <h1 style="margin:0 0 4px;font-size:24px;font-weight:700;color:#000;">Mon Profil</h1>
-        <p style="margin:0;color:#757575;font-size:14px;">Gérez vos informations personnelles</p>
-      </div>
+  <div style="padding:32px;background: var(--bg);min-height:100vh;border-radius:32px;position:relative;">
 
-      @if (profile(); as p) {
-        <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px;">
-          <div style="background:#fff;border:1px solid #e0e0e0;">
-            <div style="padding:24px;text-align:center;">
-              <div style="width:80px;height:80px;background:#e0e0e0;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
-              <p style="margin:0 0 4px;font-size:18px;font-weight:700;color:#000;">{{ p.first_name }} {{ p.last_name }}</p>
-              <p style="margin:0 0 4px;font-size:14px;color:#616161;">{{ p.email }}</p>
-              <p style="margin:0;font-size:14px;color:#9e9e9e;">{{ p.phone }}</p>
-              @if (p.logement_address) {
-                <p style="margin:12px 0 0;font-size:12px;color:#9e9e9e;">{{ p.logement_address }}</p>
-              }
+    <!-- ============ PAGE HEADER ============ -->
+    <div style="margin-bottom:32px;padding-bottom:20px;position:relative;">
+      <div style="display:flex;align-items:flex-start;gap:16px;">
+        <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
+        <div>
+          <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mon Profil</h1>
+          <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Gérez vos informations personnelles</p>
+        </div>
+      </div>
+      <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
+    </div>
+
+    @if (profile(); as p) {
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;margin-bottom:28px;align-items:start;">
+
+        <!-- ============ IDENTITY CARD ============ -->
+        <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+          <span style="position:absolute;top:-80px;right:-80px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.14;filter:blur(2px);pointer-events:none;"></span>
+
+          <div style="position:relative;padding:36px 28px;text-align:center;">
+
+            <!-- Avatar with sage ring -->
+            <div style="position:relative;width:96px;height:96px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;background: var(--concave);border-radius:50%;box-shadow: var(--in-sm), 0 0 0 3px var(--bg), 0 0 0 5px rgba(111,143,107,0.35), 0 0 40px rgba(111,143,107,0.20);">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4f6a4c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
             </div>
+
+            <p style="margin:0 0 6px;font-size:20px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">{{ p.first_name }} {{ p.last_name }}</p>
+
+            <p style="margin:0 0 4px;font-size:14px;color: var(--text-sub);font-weight:600;word-break:break-word;">{{ p.email }}</p>
+            <p style="margin:0;font-size:14px;color: var(--text-sub);font-weight:600;">{{ p.phone }}</p>
+
+            @if (p.logement_address) {
+              <div style="display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:8px 16px;font-size:12px;font-weight:700;letter-spacing:0.02em;color:#4f6a4c;background:rgba(111,143,107,0.12);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                {{ p.logement_address }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ============ PERSONAL INFO FORM ============ -->
+        <div style="position:relative;background: var(--convex);border:none;border-radius:32px;box-shadow: var(--out-md), 0 0 0 1px rgba(111,143,107,0.12), 0 12px 32px rgba(111,143,107,0.06);overflow:hidden;">
+
+          <span style="position:absolute;top:-90px;right:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#c9d6c2,#6f8f6b 60%,transparent 75%);opacity:0.10;filter:blur(2px);pointer-events:none;"></span>
+
+          <div style="position:relative;padding:22px 28px;">
+            <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Informations personnelles</h2>
+            <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.4;"></span>
           </div>
 
-          <div style="background:#fff;border:1px solid #e0e0e0;">
-            <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;">
-              <h2 style="margin:0;font-size:16px;font-weight:600;color:#000;">Informations personnelles</h2>
-            </div>
-            <div style="padding:20px;">
-              <!-- email non modifiable (identifiant de connexion) / email not editable (login id) -->
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div>
-                  <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Nom</label>
-                  <input type="text" [(ngModel)]="lastName" style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;box-sizing:border-box;" />
-                </div>
-                <div>
-                  <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Prénom</label>
-                  <input type="text" [(ngModel)]="firstName" style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;box-sizing:border-box;" />
-                </div>
-                <div>
-                  <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Email</label>
-                  <input type="email" [ngModel]="p.email" disabled style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#f5f5f5;color:#757575;box-sizing:border-box;" />
-                </div>
-                <div>
-                  <label style="display:block;margin-bottom:6px;font-size:13px;color:#616161;font-weight:500;">Téléphone</label>
-                  <input type="tel" [(ngModel)]="phone" style="width:100%;padding:10px 12px;border:1px solid #e0e0e0;font-size:14px;background:#fff;color:#000;box-sizing:border-box;" />
-                </div>
+          <div style="position:relative;padding:28px;">
+
+            <!-- fields grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px 24px;margin-bottom:28px;">
+
+              <!-- Nom -->
+              <div>
+                <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Nom</label>
+                <input type="text" [(ngModel)]="lastName" style="width:100%;padding:14px 22px;border:none;outline:none;border-radius:999px;font-size:14px;font-family:inherit;background: var(--bg);color: var(--text-main);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;" />
               </div>
-              <button (click)="sauvegarder()" [disabled]="saving()" style="padding:10px 24px;background:#000;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;">{{ saving() ? 'Enregistrement...' : 'Sauvegarder' }}</button>
+
+              <!-- Prénom -->
+              <div>
+                <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Prénom</label>
+                <input type="text" [(ngModel)]="firstName" style="width:100%;padding:14px 22px;border:none;outline:none;border-radius:999px;font-size:14px;font-family:inherit;background: var(--bg);color: var(--text-main);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;" />
+              </div>
+
+              <!-- Email (disabled) -->
+              <div>
+                <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">
+                  Email
+                  <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:0.06em;color:#4f6a4c;background:rgba(111,143,107,0.14);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(111,143,107,0.30);">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Verrouillé
+                  </span>
+                </label>
+                <input type="email" [ngModel]="p.email" disabled style="width:100%;padding:14px 22px;border:none;outline:none;border-radius:999px;font-size:14px;font-family:inherit;background: var(--concave);color: var(--text-sub);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.10);cursor:not-allowed;opacity:0.9;" />
+              </div>
+
+              <!-- Téléphone -->
+              <div>
+                <label style="display:block;margin-bottom:10px;padding-left:6px;font-size:11px;color: var(--text-sub);font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">Téléphone</label>
+                <input type="tel" [(ngModel)]="phone" style="width:100%;padding:14px 22px;border:none;outline:none;border-radius:999px;font-size:14px;font-family:inherit;background: var(--bg);color: var(--text-main);box-sizing:border-box;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.15);transition:box-shadow 0.2s ease;" />
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div style="display:flex;justify-content:flex-end;">
+              <button
+                (click)="sauvegarder()"
+                [disabled]="saving()"
+                style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 36px;border:none;border-radius:999px;font-size:14px;font-weight:800;letter-spacing:0.02em;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow: var(--out-sm), 0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, opacity 0.2s ease;"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                {{ saving() ? 'Enregistrement...' : 'Sauvegarder' }}
+              </button>
             </div>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    }
+  </div>
 </app-state-block>

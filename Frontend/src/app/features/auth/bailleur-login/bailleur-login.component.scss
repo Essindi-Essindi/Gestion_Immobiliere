@@ -1,154 +1,368 @@
+﻿/* ============================================================================
+   AUTH — the bridge: editorial (landing) ⇄ clay (dashboard)
+   shared by every auth screen. Split layout: media panel (app-auth-aside) + clay form.
+   ============================================================================ */
+:host {
+  --ink: #141416;
+  --ink-2: #2c2b2f;
+  --cream: #fffdf1;
+  --kaki: #dcd9c8;
+  --kaki-dark: #97968d;
+  --brown: #5f4242;
+  --sage: #6f8f6b;
+  --sage-deep: #8fa08b;
+  --clay-dark: rgba(120, 90, 65, 0.28);
+  --clay-light: rgba(255, 255, 255, 0.92);
+  --clay-in-dark: rgba(120, 90, 65, 0.2);
+  --clay-in-light: rgba(255, 255, 255, 0.9);
+  --serif: "Fraunces", Georgia, serif;
+  --sans: "Inter", "Sora", system-ui, sans-serif;
+  --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: block;
+}
+
 .page {
-      min-height: 100vh;
-      background: #f5f5f5;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    .header {
-      background: #000000;
-      height: 64px;
-      display: flex;
-      align-items: center;
-    }
-    .header-inner {
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .logo-text {
-      color: #ffffff;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-    .body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 60px 24px;
-    }
-    .card {
-      background: #ffffff;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 420px;
-      padding: 40px;
-    }
-    .card-title {
-      margin: 0 0 8px;
-      font-size: 24px;
-      font-weight: 700;
-      color: #000000;
-    }
-    .card-subtitle {
-      margin: 0 0 32px;
-      font-size: 14px;
-      color: #666666;
-    }
-    .alert {
-      padding: 12px 16px;
-      margin-bottom: 24px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .alert-error {
-      background: #000000;
-      color: #ffffff;
-      border: 1px solid #333333;
-    }
-    .field {
-      margin-bottom: 20px;
-    }
-    .field-label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #000000;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .field-input {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 15px;
-      color: #000000;
-      background: #ffffff;
-      border: 1px solid #e0e0e0;
-      border-radius: 0;
-      outline: none;
-      box-sizing: border-box;
-      font-family: inherit;
-    }
-    .field-input:focus {
-      border-color: #000000;
-    }
-    .field-input::placeholder {
-      color: #aaaaaa;
-    }
-    .btn-primary {
-      width: 100%;
-      padding: 14px;
-      margin-top: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #ffffff;
-      background: #000000;
-      border: none;
-      border-radius: 0;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    .btn-primary:hover:not(:disabled) {
-      background: #222222;
-    }
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .links {
-      margin-top: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-    }
-    .link {
-      font-size: 14px;
-      font-weight: 500;
-      color: #000000;
-      text-decoration: none;
-    }
-    .link:hover {
-      text-decoration: underline;
-    }
-    .divider {
-      margin: 28px 0;
-      border-top: 1px solid #e0e0e0;
-    }
-    .alt-links {
-      text-align: center;
-    }
-    .alt-title {
-      margin: 0 0 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #666666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .link-alt {
-      display: block;
-      padding: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #000000;
-      text-decoration: none;
-      border: 1px solid #e0e0e0;
-      margin-bottom: 8px;
-      transition: background 0.15s;
-    }
-    .link-alt:hover {
-      background: #f5f5f5;
-    }
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--ink);
+}
+
+/* ============================================================================
+   RIGHT — clay form panel (dashboard DNA)
+   ============================================================================ */
+.body {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2.5rem;
+  background:
+    radial-gradient(700px 520px at 85% 8%, #fbeedf 0%, transparent 60%),
+    radial-gradient(620px 520px at 8% 92%, #e7efe4 0%, transparent 55%),
+    linear-gradient(150deg, #fff8f0 0%, #f2d8c2 100%);
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding: 2.9rem 2.6rem 2.6rem;
+  border-radius: 40px;
+  background: linear-gradient(145deg, #fffdf9, #f7e7d6);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    18px 18px 46px rgba(70, 55, 40, 0.32),
+    -14px -14px 40px rgba(255, 255, 255, 0.55),
+    inset 1px 1px 2px var(--clay-light);
+  overflow: hidden;
+  transition: box-shadow 0.35s ease, transform 0.35s var(--ease);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    22px 22px 56px rgba(70, 55, 40, 0.36),
+    -16px -16px 46px rgba(255, 255, 255, 0.6),
+    inset 1px 1px 2px var(--clay-light);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  right: -90px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(246, 191, 168, 0.85), transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 60%, rgba(201, 214, 194, 0.9), transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.card > * { position: relative; z-index: 1; }
+
+/* ============================================================================
+   TITLES — serif type bridges landing into the clay card
+   ============================================================================ */
+.card-title {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-size: 1.95rem;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--ink);
+}
+.card-title::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 4px;
+  margin: 0.9rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c9d6c2, var(--sage));
+  box-shadow: 1px 1px 3px var(--clay-dark);
+}
+.card-subtitle {
+  margin: 0 auto 32px;
+  max-width: 360px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+  color: #8a7d74;
+}
+
+/* ============================================================================
+   ALERTS
+   ============================================================================ */
+.alert {
+  padding: 15px 22px;
+  margin-bottom: 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  text-align: center;
+}
+.alert-error {
+  color: #9a3b2e;
+  background: #f8e0d9;
+  box-shadow: inset 2px 2px 6px rgba(154, 59, 46, 0.12);
+}
+.alert-success {
+  color: #3f6b47;
+  background: #dde8d8;
+  box-shadow: inset 2px 2px 6px rgba(63, 107, 71, 0.12);
+}
+
+/* ============================================================================
+   FIELDS — clay pills
+   ============================================================================ */
+.field { margin-bottom: 20px; }
+.field-label {
+  display: block;
+  margin-bottom: 9px;
+  padding-left: 8px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a7d74;
+}
+.field-input {
+  width: 100%;
+  padding: 15px 22px;
+  font-size: 15px;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: #eed8be;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  box-shadow: inset 6px 6px 12px var(--clay-in-dark), inset -6px -6px 12px var(--clay-in-light);
+  outline: none;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+.field-input:focus {
+  box-shadow: inset 6px 6px 12px var(--clay-in-dark), inset -6px -6px 12px var(--clay-in-light), 0 0 0 2px #b5c1b1;
+}
+.field-input::placeholder { color: #a99a8e; opacity: 0.85; }
+
+/* ============================================================================
+   PRIMARY BUTTON — clay sage pill
+   ============================================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 17px 24px;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-family: var(--sans);
+  color: #fff;
+  background: linear-gradient(145deg, #8fae8b, #6f8f6b);
+  border: none;
+  border-radius: 999px;
+  box-shadow:
+    7px 7px 18px rgba(90, 110, 85, 0.45),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.45),
+    inset -3px -3px 6px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 10px 10px 26px rgba(90, 110, 85, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: inset 5px 5px 12px rgba(60, 80, 55, 0.5), inset -5px -5px 12px rgba(255, 255, 255, 0.2);
+}
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; filter: grayscale(0.2); }
+
+/* ============================================================================
+   LINKS
+   ============================================================================ */
+.links {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  align-items: center;
+}
+.link {
+  position: relative;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sage);
+  padding-bottom: 3px;
+  transition: color 0.2s ease;
+}
+.link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--sage), #c9d6c2);
+  transition: width 0.25s ease, left 0.25s ease;
+}
+.link:hover { color: var(--ink); }
+.link:hover::after { left: 0; width: 100%; }
+
+/* ============================================================================
+   DIVIDER
+   ============================================================================ */
+.divider {
+  margin: 30px 0;
+  border: none;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(143, 160, 139, 0.55), rgba(246, 191, 168, 0.55), transparent);
+}
+
+/* ============================================================================
+   ALT LINKS — clay pills
+   ============================================================================ */
+.alt-links { text-align: center; }
+.alt-title {
+  margin: 0 0 16px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a7d74;
+}
+.link-alt {
+  display: block;
+  padding: 15px 22px;
+  margin-bottom: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  background: linear-gradient(145deg, #fff8f0, #f0d9be);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  box-shadow: 5px 5px 12px var(--clay-dark), -5px -5px 12px var(--clay-light);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s ease, color 0.2s ease;
+}
+.link-alt:hover {
+  transform: translateY(-2px);
+  color: var(--sage);
+  box-shadow: 7px 7px 16px var(--clay-dark), -6px -6px 14px var(--clay-light);
+}
+.link-alt:active { transform: scale(0.98); box-shadow: inset 4px 4px 8px var(--clay-in-dark), inset -4px -4px 8px var(--clay-in-light); }
+
+/* ============================================================================
+   MISC (register / unauthorized)
+   ============================================================================ */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.optional {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #a99a8e;
+}
+.actions {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.error-code {
+  margin-bottom: 10px;
+  font-family: var(--serif);
+  font-size: 76px;
+  font-weight: 300;
+  line-height: 1;
+  text-align: center;
+  background: linear-gradient(145deg, #e99a7d, var(--sage));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.title {
+  margin-bottom: 8px;
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--ink);
+}
+.message {
+  margin: 0 auto;
+  max-width: 360px;
+  font-size: 15px;
+  line-height: 1.55;
+  text-align: center;
+  color: #8a7d74;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .body {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: auto;
+    padding: 2.5rem 1.25rem 3rem;
+  }
+  .card { max-width: 520px; }
+}
+
+@media (max-width: 560px) {
+  .card { padding: 2.2rem 1.5rem 2rem; border-radius: 32px; }
+  .card-title { font-size: 1.6rem; }
+  .row { grid-template-columns: 1fr; }
+}

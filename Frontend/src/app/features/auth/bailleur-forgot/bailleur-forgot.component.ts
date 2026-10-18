@@ -3,11 +3,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '@core/auth/auth.service';
+import { AuthAsideComponent } from '@shared/components/auth-aside/auth-aside.component';
 
 @Component({
   selector: 'app-bailleur-forgot',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, AuthAsideComponent],
   templateUrl: './bailleur-forgot.component.html',
   styleUrl: './bailleur-forgot.component.scss'
 })
