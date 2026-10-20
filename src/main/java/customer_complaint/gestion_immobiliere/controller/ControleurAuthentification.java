@@ -1,6 +1,8 @@
 package customer_complaint.gestion_immobiliere.controller;
 
 import customer_complaint.gestion_immobiliere.config.Acces;
+import customer_complaint.gestion_immobiliere.dto.BailleurRequest;
+import customer_complaint.gestion_immobiliere.dto.BailleurResponse;
 import customer_complaint.gestion_immobiliere.dto.ChangePasswordRequest;
 import customer_complaint.gestion_immobiliere.dto.ForgotPasswordRequest;
 import customer_complaint.gestion_immobiliere.dto.LoginRequest;
@@ -9,6 +11,7 @@ import customer_complaint.gestion_immobiliere.service.ServiceMotDePasse;
 import customer_complaint.gestion_immobiliere.dto.LoginResponse;
 import customer_complaint.gestion_immobiliere.dto.RefreshRequest;
 import customer_complaint.gestion_immobiliere.service.ServiceAuthentification;
+import customer_complaint.gestion_immobiliere.service.ServiceBailleur;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,11 +28,22 @@ public class ControleurAuthentification {
 
     private final ServiceAuthentification service_authentification;
     private final ServiceMotDePasse service_mot_de_passe;
+    private final ServiceBailleur service_bailleur;
 
     public ControleurAuthentification(ServiceAuthentification service_authentification,
-                                      ServiceMotDePasse service_mot_de_passe) {
+                                      ServiceMotDePasse service_mot_de_passe,
+                                      ServiceBailleur service_bailleur) {
         this.service_authentification = service_authentification;
         this.service_mot_de_passe = service_mot_de_passe;
+        this.service_bailleur = service_bailleur;
+    }
+
+    // inscription en ligne d'un bailleur : compte actif immediatement
+    // online landlord signup: account active immediately
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BailleurResponse register(@Valid @RequestBody BailleurRequest request) {
+        return service_bailleur.inscrire(request);
     }
 
     @PostMapping("/login")

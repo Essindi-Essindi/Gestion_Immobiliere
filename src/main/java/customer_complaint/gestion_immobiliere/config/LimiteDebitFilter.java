@@ -42,7 +42,8 @@ public class LimiteDebitFilter extends OncePerRequestFilter {
             switch (request.getRequestURI()) {
                 case "/api/authentification/login", "/api/authentification/refresh" ->
                         attente = limiteur.essayer("login:" + ip, login_max, login_fenetre);
-                case "/api/authentification/forgot-password", "/api/authentification/reset-password" ->
+                case "/api/authentification/forgot-password", "/api/authentification/reset-password",
+                     "/api/authentification/register" ->
                         attente = limiteur.essayer("reset:" + ip, reset_max, reset_fenetre);
                 default -> {
                 }

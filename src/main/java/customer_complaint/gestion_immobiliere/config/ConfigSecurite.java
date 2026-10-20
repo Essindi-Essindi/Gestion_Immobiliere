@@ -98,7 +98,8 @@ public class ConfigSecurite {
                         .requestMatchers(HttpMethod.POST, "/api/authentification/login",
                                 "/api/authentification/refresh", "/api/authentification/logout",
                                 "/api/authentification/forgot-password",
-                                "/api/authentification/reset-password").permitAll()
+                                "/api/authentification/reset-password",
+                                "/api/authentification/register").permitAll()
                         // premiere barriere par espace, AVANT la validation du corps : un mauvais role recoit 403, pas 400
                         // first barrier per area, BEFORE body validation: a wrong role gets 403, not 400
                         .requestMatchers("/api/admin/**", "/api/admins/**").hasRole("ADMIN")
