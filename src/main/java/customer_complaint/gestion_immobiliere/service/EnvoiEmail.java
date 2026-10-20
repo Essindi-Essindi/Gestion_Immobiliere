@@ -67,6 +67,17 @@ public class EnvoiEmail {
                         + "\n\nSi vous avez déjà payé, ignorez ce message.", null);
     }
 
+    // inscription en ligne : le compte est actif, le bailleur peut se connecter
+    // online signup: the account is active, the landlord can log in
+    @Async
+    public void envoyer_bienvenue_bailleur(String destinataire, String prenom, String lien_connexion) {
+        envoyer(destinataire, "Bienvenue sur la plateforme de gestion locative",
+                "Bonjour " + prenom + ",\n\nVotre compte bailleur est créé et actif. Vous pouvez vous connecter dès "
+                        + "maintenant :\n" + lien_connexion + "\n\nIdentifiant : " + destinataire
+                        + "\n\nSi vous n'êtes pas à l'origine de cette inscription, ignorez ce message.",
+                lien_connexion);
+    }
+
     @Async
     public void envoyer_alerte_mot_de_passe(String destinataire) {
         envoyer(destinataire, "Votre mot de passe a été modifié",

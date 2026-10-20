@@ -10,6 +10,10 @@ public interface ServiceBailleur {
 
     BailleurResponse create(BailleurRequest request);
 
+    // inscription en ligne : compte actif immediatement, l'admin peut le suspendre
+    // online signup: account active immediately, an admin can suspend it
+    BailleurResponse inscrire(BailleurRequest request);
+
     List<BailleurResponse> list();
 
     BailleurResponse get(Long id);

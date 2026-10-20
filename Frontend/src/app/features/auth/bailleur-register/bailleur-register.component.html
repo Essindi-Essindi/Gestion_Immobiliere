@@ -13,6 +13,9 @@
           @if (errorMessage()) {
             <div class="alert alert-error">{{ errorMessage() }}</div>
           }
+          @if (successMessage()) {
+            <div class="alert alert-success">{{ successMessage() }}</div>
+          }
 
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="row">
@@ -31,22 +34,22 @@
             </div>
             <div class="field">
               <label class="field-label" for="phone">Téléphone</label>
-              <input id="phone" class="field-input" type="tel" formControlName="phone" placeholder="+237 6XX XXX XXX" />
+              <input id="phone" class="field-input" type="tel" formControlName="phone" placeholder="+33 6 12 34 56 78" />
             </div>
             <div class="field">
-              <label class="field-label" for="company">Société <span class="optional">(optionnel)</span></label>
-              <input id="company" class="field-input" type="text" formControlName="company" placeholder="Nom de votre société" />
+              <label class="field-label" for="address">Adresse <span class="optional">(optionnel)</span></label>
+              <input id="address" class="field-input" type="text" formControlName="address" placeholder="12 rue des Lilas, Paris" />
             </div>
             <div class="field">
               <label class="field-label" for="password">Mot de passe</label>
-              <input id="password" class="field-input" type="password" formControlName="password" placeholder="••••••••" />
+              <input id="password" class="field-input" type="password" formControlName="password" placeholder="10 caractères minimum" />
             </div>
             <div class="field">
               <label class="field-label" for="confirmPassword">Confirmer mot de passe</label>
               <input id="confirmPassword" class="field-input" type="password" formControlName="confirmPassword" placeholder="••••••••" />
             </div>
-            <button type="submit" class="btn-primary" disabled>
-              <span>S'inscrire</span>
+            <button type="submit" class="btn-primary" [disabled]="isLoading() || registerForm.disabled">
+              <span>{{ isLoading() ? 'Envoi...' : 'S\'inscrire' }}</span>
             </button>
           </form>
 

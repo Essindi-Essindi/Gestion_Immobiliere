@@ -98,7 +98,8 @@ public class ConfigSecurite {
                         .requestMatchers(HttpMethod.POST, "/api/authentification/login",
                                 "/api/authentification/refresh", "/api/authentification/logout",
                                 "/api/authentification/forgot-password",
-                                "/api/authentification/reset-password").permitAll()
+                                "/api/authentification/reset-password",
+                                "/api/authentification/register").permitAll()
                         // controle de disponibilite (UptimeRobot), sans donnee sensible / availability check, no sensitive data
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()

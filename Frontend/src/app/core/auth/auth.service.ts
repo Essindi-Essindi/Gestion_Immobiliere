@@ -159,6 +159,11 @@ export class AuthService {
     });
   }
 
+  // inscription en ligne d'un bailleur : compte actif immediatement / online landlord signup: active immediately
+  registerBailleur(data: { last_name: string; first_name: string; email: string; password: string; phone?: string; address?: string }): Promise<void> {
+    return firstValueFrom(this.http.post<void>(`${this.api}/register`, data));
+  }
+
   forgotPassword(email: string): Promise<void> {
     return firstValueFrom(this.http.post<void>(`${this.api}/forgot-password`, { email }));
   }

@@ -89,6 +89,10 @@ public class ServiceMotDePasse {
         return url_frontend() + "/auth/locataire/login";
     }
 
+    public String lien_connexion_bailleur() {
+        return url_frontend() + "/auth/bailleur/login";
+    }
+
     // edge case: CORS_ORIGIN peut lister plusieurs URL, on garde la premiere / may list several URLs, keep the first
     private String url_frontend() {
         return frontend_url.split(",")[0].trim();

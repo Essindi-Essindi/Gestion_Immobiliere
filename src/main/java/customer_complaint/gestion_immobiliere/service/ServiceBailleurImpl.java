@@ -8,7 +8,9 @@ import customer_complaint.gestion_immobiliere.exception.RequeteInvalide;
 import customer_complaint.gestion_immobiliere.exception.RessourceIntrouvable;
 import customer_complaint.gestion_immobiliere.model.Bailleur;
 import customer_complaint.gestion_immobiliere.model.Contrat;
+import customer_complaint.gestion_immobiliere.model.JournalAudit;
 import customer_complaint.gestion_immobiliere.model.Quittance;
+import customer_complaint.gestion_immobiliere.repository.AdminRepository;
 import customer_complaint.gestion_immobiliere.repository.BailleurRepository;
 import customer_complaint.gestion_immobiliere.repository.ContratRepository;
 import customer_complaint.gestion_immobiliere.repository.QuittanceRepository;
@@ -34,6 +36,44 @@ public class ServiceBailleurImpl implements ServiceBailleur {
     private final PasswordEncoder password_encoder;
     private final UtilisateurCourant utilisateur;
     private final ServiceDocument service_document;
+    private final AdminRepository admin_repository;
+    private final ServiceNotification service_notification;
+    private final EnvoiEmail envoi_email;
+    private final ServiceParametres service_parametres;
+    private final ServiceMotDePasse service_mot_de_passe;
+
+    // le compte est actif tout de suite ; l'admin peut ensuite le suspendre / active right away; an admin can suspend it later
+    @Override
+    public BailleurResponse inscrire(BailleurRequest request) {
+        // l'admin peut fermer les inscriptions dans les parametres / an admin can close signups in the settings
+        if (!service_parametres.courant().isOpen_registration()) {
+            throw new RequeteInvalide("Les inscriptions sont fermées pour le moment");
+        }
+        if (request.password() == null) {
+            throw new RequeteInvalide("Le mot de passe est obligatoire");
+        }
+        String email = verification_email.normaliser(request.email());
+        verification_email.assurer_libre(email);
+
+        Bailleur bailleur = new Bailleur();
+        bailleur.setLast_name(request.last_name());
+        bailleur.setFirst_name(request.first_name());
+        bailleur.setEmail(email);
+        bailleur.setPassword(password_encoder.encode(request.password()));
+        bailleur.setPhone(request.phone());
+        bailleur.setAddress(request.address());
+        Bailleur cree = bailleur_repository.save(bailleur);
+
+        String nom = cree.getFirst_name() + " " + cree.getLast_name();
+        service_audit.journal_pour("ANONYME", null, nom, JournalAudit.create, "BAILLEUR_INSCRIT",
+                "Inscription en ligne (" + cree.getEmail() + ")", "BAILLEUR", cree.getId());
+        // tous les admins sont prevenus / every admin is notified
+        admin_repository.findAll().forEach(admin -> service_notification.creer("ADMIN", admin.getId(), "INFO",
+                "Nouveau bailleur inscrit", nom + " vient de créer son compte.", "BAILLEUR", cree.getId()));
+        envoi_email.envoyer_bienvenue_bailleur(cree.getEmail(), cree.getFirst_name(),
+                service_mot_de_passe.lien_connexion_bailleur());
+        return BailleurResponse.from(cree);
+    }
 
     @Override
     public BailleurResponse create(BailleurRequest request) {
