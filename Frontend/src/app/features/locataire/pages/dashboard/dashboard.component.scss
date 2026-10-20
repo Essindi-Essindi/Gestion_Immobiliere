@@ -76,7 +76,7 @@
 
 .card-header h2 {
   margin: 0;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.01em;
@@ -112,8 +112,8 @@
 .dot-login  { background: var(--board-2); }
 
 .activity-content { flex: 1; min-width: 0; }
-.activity-text { margin: 0 0 3px; font-size: 13px; color: var(--text-main); line-height: 1.45; }
-.activity-time { font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.02em; }
+.activity-text { margin: 0 0 3px; font-size: 12px; color: var(--text-main); line-height: 1.45; }
+.activity-time { font-size: 10.5px; color: var(--text-tertiary); letter-spacing: 0.02em; }
 
 /* ============================================================
    NOTIFICATION LIST ITEMS
@@ -169,13 +169,13 @@
 .notification-content { flex: 1; min-width: 0; }
 .notification-title {
   margin: 0 0 3px;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.005em;
 }
-.notification-message { margin: 0 0 5px; font-size: 12.5px; color: var(--text-sub); line-height: 1.45; }
-.notification-time { font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.02em; }
+.notification-message { margin: 0 0 5px; font-size: 11.5px; color: var(--text-sub); line-height: 1.45; }
+.notification-time { font-size: 10.5px; color: var(--text-tertiary); letter-spacing: 0.02em; }
 
 /* ============================================================
    UNREAD DOT
@@ -202,20 +202,20 @@
 .info-item { min-width: 0; }
 .info-label {
   margin: 0 0 6px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--text-sub);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
-.info-value { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.45; }
+.info-value { margin: 0; font-size: 13px; font-weight: 600; color: var(--text-main); line-height: 1.45; }
 
 /* ============================================================
    BADGES
    ============================================================ */
 .badge {
   padding: 6px 16px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -240,7 +240,7 @@
   padding: 17px 24px;
   border: none;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -276,7 +276,7 @@
   background: linear-gradient(145deg, #fff8f0, #f0d9be);
   color: var(--text-main);
   padding: 13px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -296,7 +296,7 @@
   margin: 0;
   padding: 26px 12px;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-sub);
   font-weight: 600;
   background: var(--concave);
@@ -317,9 +317,9 @@
   .grid-2 { gap: 16px; margin-bottom: 20px; }
   .card { border-radius: 26px; }
   .card-header { padding: 16px 20px; }
-  .card-header h2 { font-size: 15px; }
+  .card-header h2 { font-size: 13.5px; }
   .card-body { padding: 20px; }
   .contract-info { grid-template-columns: 1fr; gap: 18px; }
-  .btn-action { padding: 14px 20px; font-size: 13px; }
+  .btn-action { padding: 14px 20px; font-size: 12px; }
   .notification-icon { width: 36px; height: 36px; }
 }

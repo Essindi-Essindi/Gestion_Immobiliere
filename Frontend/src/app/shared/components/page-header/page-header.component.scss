@@ -52,7 +52,7 @@
 
 .page-title {
   margin: 0 0 8px;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.03em;
@@ -61,7 +61,7 @@
 
 .page-subtitle {
   margin: 0;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--text-sub);
   line-height: 1.5;
@@ -69,7 +69,7 @@
 
 .page-description {
   margin: 16px 0 0;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-sub);
   line-height: 1.6;
   padding: 14px 22px;
@@ -114,7 +114,7 @@
   .page-header { margin-bottom: 22px; padding-bottom: 18px; }
   .header-content { flex-direction: column; align-items: stretch; gap: 18px; }
   .header-main { padding-left: 16px; }
-  .page-title { font-size: 24px; }
-  .page-description { padding: 12px 18px; font-size: 13px; }
+  .page-title { font-size: 20px; }
+  .page-description { padding: 12px 18px; font-size: 12px; }
   .header-actions { justify-content: flex-start; padding-top: 0; }
 }

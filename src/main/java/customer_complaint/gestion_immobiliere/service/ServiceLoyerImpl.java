@@ -79,7 +79,7 @@ public class ServiceLoyerImpl implements ServiceLoyer {
             if (!deja_paye) {
                 service_notification.creer("LOCATAIRE", loyer.getContrat().getLocataire().getId(), "SUCCESS",
                         "Paiement enregistré", "Votre loyer de " + loyer.getPeriod() + " (" + loyer.getAmount()
-                                + " EUR) a été enregistré comme payé.", "LOYER", loyer.getId());
+                                + " €) a été enregistré comme payé.", "LOYER", loyer.getId());
             }
         } else {
             // EN_ATTENTE / EN_RETARD : le paiement est annule, le retard se deduit de l'echeance
@@ -106,7 +106,7 @@ public class ServiceLoyerImpl implements ServiceLoyer {
                 contrat.getLogement().getAddress(),
                 contrat.getBailleur().getFirst_name() + " " + contrat.getBailleur().getLast_name());
         service_notification.creer("LOCATAIRE", contrat.getLocataire().getId(), "WARNING", "Rappel de paiement",
-                "Votre loyer de " + loyer.getPeriod() + " (" + loyer.getAmount() + " FCFA) n'a pas encore été réglé.",
+                "Votre loyer de " + loyer.getPeriod() + " (" + loyer.getAmount() + " €) n'a pas encore été réglé.",
                 "LOYER", loyer.getId());
         return LoyerResponse.from(loyer_repository.save(loyer));
     }

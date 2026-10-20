@@ -91,7 +91,7 @@ public class ServiceLocataireImpl implements ServiceLocataire {
             envoi_email.envoyer_invitation(email, nom_invitant, service_mot_de_passe.lien("/set-password", token),
                     invitation_hours);
         } else {
-            envoi_email.envoyer_compte_cree(email, nom_invitant);
+            envoi_email.envoyer_compte_cree(email, nom_invitant, request.password(), service_mot_de_passe.lien_connexion());
         }
         service_audit.creation("LOCATAIRE", cree.getId(), "Locataire " + cree.getFirst_name() + " " + cree.getLast_name());
         return LocataireResponse.from(cree);
@@ -119,6 +119,12 @@ public class ServiceLocataireImpl implements ServiceLocataire {
         Locataire locataire = visible(id);
         String email = verification_email.normaliser(request.email());
         boolean reinviter = false;
+        // mot de passe temporaire : modifiable seulement tant que le locataire ne l'a pas change lui-meme
+        // temporary password: editable only until the tenant has changed it themselves
+        boolean nouveau_temporaire = request.password() != null;
+        if (nouveau_temporaire && !locataire.isMust_change_password()) {
+            throw new ConflitDonnees("Ce locataire a déjà choisi son mot de passe : vous ne pouvez plus le modifier");
+        }
         if (!email.equals(locataire.getEmail())) {
             // un bailleur ne peut pas rediriger l'e-mail d'un compte actif : "mot de passe oublie" = prise de controle
             // a landlord cannot redirect an active account's email: forgot-password would be a takeover
@@ -127,9 +133,8 @@ public class ServiceLocataireImpl implements ServiceLocataire {
             }
             verification_email.assurer_libre(email);
             locataire.setEmail(email);
-            reinviter = locataire.isMust_change_password();
+            reinviter = locataire.isMust_change_password() && !nouveau_temporaire;
         }
-        // le mot de passe n'est jamais modifiable ici : voir "mot de passe oublie" / never editable here: use forgot-password
         // rattachement a un autre logement : impossible tant qu un contrat est en cours / re-attaching is blocked while a contract is ongoing
         if (request.logement_id() != null && (locataire.getLogement() == null
                 || !locataire.getLogement().getId().equals(request.logement_id()))) {
@@ -149,6 +154,14 @@ public class ServiceLocataireImpl implements ServiceLocataire {
         }
         appliquer(locataire, request);
         Locataire maj = locataire_repository.save(locataire);
+        if (nouveau_temporaire) {
+            service_mot_de_passe.remplacer_temporaire(maj.getId(), password_encoder.encode(request.password()));
+            String nom_bailleur = maj.getBailleur() != null
+                    ? maj.getBailleur().getFirst_name() + " " + maj.getBailleur().getLast_name()
+                    : "Votre gestionnaire";
+            envoi_email.envoyer_compte_cree(maj.getEmail(), nom_bailleur, request.password(),
+                    service_mot_de_passe.lien_connexion());
+        }
 
         // compte pas encore active : l'ancien lien est annule, une nouvelle invitation part a la nouvelle adresse
         if (reinviter) {

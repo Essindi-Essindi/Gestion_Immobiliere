@@ -28,18 +28,18 @@
 }
 .logo-text {
   color: var(--text-main);
-  font-size: 19px;
+  font-size: 16.5px;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
-.header-subtitle { color: var(--text-sub); font-size: 13px; font-weight: 600; }
+.header-subtitle { color: var(--text-sub); font-size: 12px; font-weight: 600; }
 
 .body { padding: 44px 24px; }
 .container { max-width: 600px; margin: 0 auto; }
 
 .page-title {
   margin: 0 0 30px;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text-main);
@@ -48,7 +48,7 @@
 .toast {
   padding: 15px 24px;
   margin-bottom: 24px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   border-radius: 999px;
   box-shadow: var(--out-md);
@@ -64,8 +64,8 @@
   padding: 34px 30px;
   margin-bottom: 22px;
 }
-.section-title { margin: 0 0 6px; font-size: 18px; font-weight: 800; color: var(--text-main); }
-.section-desc { margin: 0 0 24px; font-size: 14px; color: var(--text-sub); }
+.section-title { margin: 0 0 6px; font-size: 16px; font-weight: 800; color: var(--text-main); }
+.section-desc { margin: 0 0 24px; font-size: 13px; color: var(--text-sub); }
 .section-divider { height: 24px; }
 
 .field { margin-bottom: 20px; }
@@ -73,7 +73,7 @@
   display: block;
   margin-bottom: 8px;
   padding-left: 6px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--text-sub);
   text-transform: uppercase;
@@ -82,7 +82,7 @@
 .field-input {
   width: 100%;
   padding: 14px 20px;
-  font-size: 15px;
+  font-size: 13.5px;
   color: var(--text-main);
   background: #eed8be;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -104,7 +104,7 @@
   width: 100%;
   padding: 15px;
   margin-top: 8px;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 800;
   color: #fff;
   background: linear-gradient(145deg, #8fae8b, #6f8f6b);

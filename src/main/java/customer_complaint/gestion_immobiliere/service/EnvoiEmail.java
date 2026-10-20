@@ -50,14 +50,18 @@ public class EnvoiEmail {
                         + "\n\nSi vous ne connaissez pas cette personne, ignorez ce message.", lien);
     }
 
-    // le bailleur a donne un mot de passe temporaire : on ne l'envoie jamais par e-mail
+    // le bailleur a choisi un mot de passe a usage unique : le locataire le recoit avec le lien de connexion
+    // the landlord chose a one-time password: the tenant gets it with the login link
     @Async
-    public void envoyer_compte_cree(String destinataire, String invitant) {
+    public void envoyer_compte_cree(String destinataire, String invitant, String mot_de_passe, String lien_connexion) {
         envoyer(destinataire, "Votre accès à la plateforme de gestion locative",
-                "Bonjour,\n\n" + invitant + " a créé votre compte locataire.\n"
-                        + "Connectez-vous avec le mot de passe temporaire qu'il/elle vous a communiqué : "
-                        + "il vous sera demandé d'en choisir un nouveau dès la première connexion.\n\n"
-                        + "Si vous ne connaissez pas cette personne, ignorez ce message.", null);
+                "Bonjour,\n\n" + invitant + " a créé votre compte locataire.\n\n"
+                        + "Lien de connexion :\n" + lien_connexion + "\n\n"
+                        + "Identifiant : " + destinataire + "\n"
+                        + "Mot de passe temporaire : " + mot_de_passe + "\n\n"
+                        + "Ce mot de passe ne sert qu'une fois : dès votre première connexion, il vous sera "
+                        + "demandé d'en choisir un nouveau, que personne d'autre ne connaîtra.\n\n"
+                        + "Si vous ne connaissez pas cette personne, ignorez ce message.", lien_connexion);
     }
 
     @Async
@@ -65,7 +69,7 @@ public class EnvoiEmail {
                                      String bailleur) {
         envoyer(destinataire, "Rappel : loyer de " + periode,
                 "Bonjour,\n\nSauf erreur de notre part, le loyer de " + periode + " (" + montant
-                        + " FCFA) pour le logement " + logement + " n'a pas encore été réglé.\n"
+                        + " €) pour le logement " + logement + " n'a pas encore été réglé.\n"
                         + "Merci de régulariser votre situation.\n\n" + bailleur
                         + "\n\nSi vous avez déjà payé, ignorez ce message.", null);
     }

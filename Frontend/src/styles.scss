@@ -92,7 +92,7 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -233,7 +233,7 @@ button:focus-visible {
 
 .card-header h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -251,7 +251,7 @@ button:focus-visible {
 }
 
 .form-group label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -263,7 +263,7 @@ button:focus-visible {
 .form-group textarea {
   padding: 12px 16px;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-main);
   font-family: inherit;
   background: #eed8be;
@@ -298,7 +298,7 @@ button:focus-visible {
 .badge {
   display: inline-block;
   padding: 3px 12px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -314,13 +314,13 @@ button:focus-visible {
 
 .muted {
   color: var(--text-tertiary);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* ---------- STATUS BADGES ---------- */
 .status {
   display: inline-block;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   padding: 3px 12px;
   border-radius: var(--radius-full);

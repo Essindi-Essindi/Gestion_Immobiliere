@@ -4,7 +4,9 @@
 -- Pre-requis : lance le backend au moins une fois (JWT_SECRET defini) pour que Hibernate
 -- cree les tables (ddl-auto=update), puis arrete-le et execute ce script.
 -- Mot de passe pour TOUS les comptes ci-dessous : password123 (a changer via "Mon compte" : la regle actuelle exige 10+ caracteres forts)
--- Comptes locataires : locataire1..4@immo.com ; locataire1 et locataire4 partagent le logement 1 (CH-1 et CH-2)
+-- Comptes locataires : locataire1..6@immo.com ; locataire1 et locataire4 partagent le logement 1 (CH-1 et CH-2)
+-- Trous volontaires / intentional gaps : locataire5 et locataire6 sans logement, bailleur4 sans logement,
+-- logement 4 vacant avec 2 chambres libres, chambre CH-2 du logement 2 libre
 --
 -- USE gestion_immobiliere; -- decommente/adapte si besoin
 
@@ -41,6 +43,11 @@ INSERT INTO bailleur (last_name, first_name, email, password, phone, address, ac
 VALUES ('Bernard', 'Marc', 'bailleur3@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000013', '3 place Bellecour, Lyon', 0, NOW(), 'Abonnement impaye', @admin1_id, NOW(), NOW());
 SET @bailleur3_id = LAST_INSERT_ID();
 
+-- bailleur sans aucun logement ni abonnement, pour tester l'ecran vide / landlord with no home or subscription, to test the empty screen
+INSERT INTO bailleur (last_name, first_name, email, password, phone, address, active, admin_id, created_at, updated_at)
+VALUES ('Mbarga', 'Eric', 'bailleur4@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000014', '27 rue Pasteur, Lille', 1, @admin1_id, NOW(), NOW());
+SET @bailleur4_id = LAST_INSERT_ID();
+
 -- ===================== LOGEMENT =====================
 INSERT INTO logement (address, postal_code, city, country, type, area, rent, charges, status, bailleur_id, created_at, updated_at)
 VALUES ('5 avenue Victor Hugo, Lyon', '69003', 'Lyon', 'France', 'T2', 45.0, 650.0, 50.0, 'LOUE', @bailleur1_id, NOW(), NOW());
@@ -53,6 +60,11 @@ SET @logement2_id = LAST_INSERT_ID();
 INSERT INTO logement (address, postal_code, city, country, type, area, rent, charges, status, bailleur_id, created_at, updated_at)
 VALUES ('2 quai des Brumes, Marseille', '13002', 'Marseille', 'France', 'STUDIO', 28.0, 480.0, 30.0, 'LOUE', @bailleur2_id, NOW(), NOW());
 SET @logement3_id = LAST_INSERT_ID();
+
+-- logement vacant, aucun locataire ni contrat / vacant home, no tenant nor contract
+INSERT INTO logement (address, postal_code, city, country, type, area, rent, charges, status, bailleur_id, created_at, updated_at)
+VALUES ('14 rue Nationale, Lille', '59000', 'Lille', 'France', 'T3', 62.0, 720.0, 60.0, 'VACANT', @bailleur1_id, NOW(), NOW());
+SET @logement4_id = LAST_INSERT_ID();
 
 -- ===================== PIECE (chambres, salon...) =====================
 -- capacite 0 = piece commune ; unique (logement_id, numero)
@@ -76,6 +88,11 @@ INSERT INTO piece (logement_id, numero, type, capacite) VALUES (@logement3_id, '
 SET @piece5_id = LAST_INSERT_ID();
 INSERT INTO piece (logement_id, numero, type, capacite) VALUES (@logement3_id, 'CUI-1', 'CUISINE', 0);
 
+-- logement 4 : vacant, 2 chambres libres + salon
+INSERT INTO piece (logement_id, numero, type, capacite) VALUES (@logement4_id, 'CH-1', 'CHAMBRE', 1);
+INSERT INTO piece (logement_id, numero, type, capacite) VALUES (@logement4_id, 'CH-2', 'CHAMBRE', 1);
+INSERT INTO piece (logement_id, numero, type, capacite) VALUES (@logement4_id, 'SAL-1', 'SALON', 0);
+
 -- ===================== LOCATAIRE =====================
 INSERT INTO locataire (last_name, first_name, email, password, phone, birth_date, must_change_password, active, bailleur_id, logement_id, piece_id, admin_id, created_at, updated_at)
 VALUES ('Ngo', 'Marie', 'locataire1@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000021', '1998-05-14', 0, 1, @bailleur1_id, @logement1_id, @piece1_id, @admin1_id, NOW(), NOW());
@@ -94,6 +111,15 @@ SET @locataire3_id = LAST_INSERT_ID();
 INSERT INTO locataire (last_name, first_name, email, password, phone, birth_date, must_change_password, active, bailleur_id, logement_id, piece_id, admin_id, created_at, updated_at)
 VALUES ('Fotso', 'Sarah', 'locataire4@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000024', '1999-09-09', 0, 1, @bailleur1_id, @logement1_id, @piece2_id, @admin1_id, NOW(), NOW());
 SET @locataire4_id = LAST_INSERT_ID();
+
+-- locataires sans logement ni chambre : le bailleur doit encore les affecter / tenants with no home nor room: the landlord still has to assign them
+INSERT INTO locataire (last_name, first_name, email, password, phone, birth_date, must_change_password, active, bailleur_id, logement_id, piece_id, admin_id, created_at, updated_at)
+VALUES ('Mballa', 'Jean', 'locataire5@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000025', '1997-03-30', 0, 1, @bailleur1_id, NULL, NULL, @admin1_id, NOW(), NOW());
+SET @locataire5_id = LAST_INSERT_ID();
+
+INSERT INTO locataire (last_name, first_name, email, password, phone, birth_date, must_change_password, active, bailleur_id, logement_id, piece_id, admin_id, created_at, updated_at)
+VALUES ('Tchoumi', 'Nadine', 'locataire6@immo.com', '$2b$10$D1jikoDzri31eI/qtVBbjO3lUpjGtALA8ywlsrXnUBlaCeK0tT85m', '0600000026', '2001-12-01', 0, 1, @bailleur2_id, NULL, NULL, @admin1_id, NOW(), NOW());
+SET @locataire6_id = LAST_INSERT_ID();
 
 -- ===================== CONTRAT =====================
 INSERT INTO contrat (start_date, end_date, monthly_rent, deposit, resiliation_demandee, logement_id, bailleur_id, locataire_id, created_at, updated_at)
@@ -201,7 +227,7 @@ VALUES ('FACT-0003', @abonnement3_id, @bailleur3_id, 'Premium', DATE_FORMAT(DATE
 
 -- ===================== PARAMETRE_PLATEFORME (ligne unique id=1) =====================
 INSERT INTO parametre_plateforme (id, platform_name, support_email, currency, timezone, maintenance_mode, email_notifications, open_registration, max_logements_basic, max_logements_premium, max_upload_size_mb, session_duration_minutes, created_at, updated_at)
-VALUES (1, 'Gestion Immobilière', 'support@gestion-immo.com', 'XAF', 'Europe/Paris', 0, 1, 1, 5, 25, 10, 60, NOW(), NOW())
+VALUES (1, 'Gestion Immobilière', 'support@gestion-immo.com', 'EUR', 'Europe/Paris', 0, 1, 1, 5, 25, 10, 60, NOW(), NOW())
 ON DUPLICATE KEY UPDATE platform_name = platform_name;
 
 -- ===================== JOURNAL_AUDIT =====================

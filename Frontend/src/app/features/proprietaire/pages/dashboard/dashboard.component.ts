@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit {
       },
       {
         label: 'Encaissé ce mois',
-        value: `${(s.loyers_mois.encaisse || 0).toLocaleString('fr-FR')} FCFA`,
+        value: `${(s.loyers_mois.encaisse || 0).toLocaleString('fr-FR')} €`,
         icon: 'money',
         tone: 'success',
         trend: [120000, 135000, 128000, 142000, 155000, 148000, 162000]

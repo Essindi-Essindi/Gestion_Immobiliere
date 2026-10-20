@@ -6,8 +6,8 @@
       <div style="display:flex;align-items:flex-start;gap:16px;">
         <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
         <div>
-          <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mes Quittances</h1>
-          <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Reçus de paiement insérés par votre bailleur</p>
+          <h1 style="margin:0 0 6px;font-size:25px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mes Quittances</h1>
+          <p style="margin:0;color: var(--text-sub);font-size:13.5px;font-weight:500;">Reçus de paiement insérés par votre bailleur</p>
         </div>
       </div>
       <span style="position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,#6f8f6b 20%,#c9d6c2 50%,#6f8f6b 80%,transparent);opacity:0.45;"></span>
@@ -20,12 +20,12 @@
 
       <!-- panel header -->
       <div style="position:relative;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Liste des quittances</h2>
+        <h2 style="margin:0;font-size:15px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Liste des quittances</h2>
 
         <select
           [(ngModel)]="filterYear"
           (change)="refresh()"
-          style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;"
+          style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:12px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;"
         >
           <option value="all">Toutes les années</option>
           @for (y of years; track y) {
@@ -41,24 +41,24 @@
           <table style="width:100%;border-collapse:collapse;min-width:600px;">
             <thead>
               <tr style="background:transparent;">
-                <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Mois / Année<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
-                <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Montant<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
-                <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Date d'émission<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
-                <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Action<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+                <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Mois / Année<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+                <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Montant<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+                <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Date d'émission<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
+                <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">Action<span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span></th>
               </tr>
             </thead>
             <tbody>
               @for (q of quittances(); track q.id) {
                 <tr style="position:relative;">
-                  <td style="padding:18px 28px;font-size:14px;font-weight:700;color: var(--text-main);position:relative;">
+                  <td style="padding:18px 28px;font-size:13px;font-weight:700;color: var(--text-main);position:relative;">
                     {{ periodLabel(q.period) }}
                     <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                   </td>
-                  <td style="padding:18px 28px;font-size:14px;font-weight:800;color:#4f6a4c;position:relative;text-shadow:0 0 12px rgba(111,143,107,0.10);">
+                  <td style="padding:18px 28px;font-size:13px;font-weight:800;color:#4f6a4c;position:relative;text-shadow:0 0 12px rgba(111,143,107,0.10);">
                     {{ q.amount | montant }} €
                     <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                   </td>
-                  <td style="padding:18px 28px;font-size:13.5px;font-weight:600;color: var(--text-sub);position:relative;">
+                  <td style="padding:18px 28px;font-size:12.5px;font-weight:600;color: var(--text-sub);position:relative;">
                     {{ q.issue_date | dateFr }}
                     <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                   </td>
@@ -66,7 +66,7 @@
                     <button
                       (click)="telecharger(q)"
                       [disabled]="downloadingId() === q.id"
-                      style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:none;border-radius:999px;font-size:12.5px;font-weight:800;letter-spacing:0.02em;font-family:inherit;cursor:pointer;color:#4f6a4c;background:rgba(111,143,107,0.12);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.35);transition:background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;"
+                      style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:none;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:0.02em;font-family:inherit;cursor:pointer;color:#4f6a4c;background:rgba(111,143,107,0.12);box-shadow:inset 0 0 0 1px rgba(111,143,107,0.35);transition:background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -95,8 +95,8 @@
               </svg>
             </span>
 
-            <p style="margin:0;font-size:16px;font-weight:800;color: var(--text-main);letter-spacing:-0.005em;">Aucune quittance disponible</p>
-            <p style="margin:0;font-size:13px;color: var(--text-sub);max-width:340px;line-height:1.55;">Les quittances apparaîtront ici après chaque paiement validé</p>
+            <p style="margin:0;font-size:14px;font-weight:800;color: var(--text-main);letter-spacing:-0.005em;">Aucune quittance disponible</p>
+            <p style="margin:0;font-size:12px;color: var(--text-sub);max-width:340px;line-height:1.55;">Les quittances apparaîtront ici après chaque paiement validé</p>
           </div>
         </div>
       }

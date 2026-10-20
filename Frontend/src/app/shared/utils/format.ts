@@ -1,5 +1,5 @@
 export function formatMontant(v: number | null | undefined): string {
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Number(v ?? 0));
+  return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(v ?? 0));
 }
 
 export function formatDate(d: Date | string | null | undefined): string {

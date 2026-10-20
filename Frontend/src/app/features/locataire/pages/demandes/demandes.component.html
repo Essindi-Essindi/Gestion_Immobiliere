@@ -6,12 +6,12 @@
       <div style="display:flex;align-items:flex-start;gap:16px;">
         <span style="flex-shrink:0;width:4px;align-self:stretch;border-radius:999px;background:linear-gradient(180deg,#c9d6c2 0%,#6f8f6b 45%,#4f6a4c 100%);box-shadow:0 0 14px rgba(111,143,107,0.35);"></span>
         <div>
-          <h1 style="margin:0 0 6px;font-size:30px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mes Demandes</h1>
-          <p style="margin:0;color: var(--text-sub);font-size:15px;font-weight:500;">Suivi de tous vos signalements</p>
+          <h1 style="margin:0 0 6px;font-size:25px;font-weight:800;color: var(--text-main);letter-spacing:-0.02em;line-height:1.15;text-shadow: var(--emboss-text-strong);">Mes Demandes</h1>
+          <p style="margin:0;color: var(--text-sub);font-size:13.5px;font-weight:500;">Suivi de tous vos signalements</p>
         </div>
       </div>
 
-      <a routerLink="/locataire/problemes" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 26px;border:none;border-radius:999px;font-size:14px;font-weight:800;letter-spacing:0.02em;text-decoration:none;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow: var(--out-sm), 0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;">
+      <a routerLink="/locataire/problemes" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 26px;border:none;border-radius:999px;font-size:13px;font-weight:800;letter-spacing:0.02em;text-decoration:none;cursor:pointer;color:#fff;background:linear-gradient(135deg,#8fae8b 0%,#6f8f6b 100%);box-shadow: var(--out-sm), 0 8px 24px rgba(111,143,107,0.35), inset 0 1px 0 rgba(255,255,255,0.6);transition:transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nouveau signalement
       </a>
@@ -28,13 +28,13 @@
 
       <!-- panel header -->
       <div style="position:relative;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-        <h2 style="margin:0;font-size:17px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Toutes les demandes</h2>
+        <h2 style="margin:0;font-size:15px;font-weight:800;color: var(--text-main);letter-spacing:-0.01em;text-shadow: var(--emboss-text-strong);">Toutes les demandes</h2>
 
         <!-- filter select — pill shaped, sage focus -->
         <select
           [(ngModel)]="filterStatus"
           (change)="refresh()"
-          style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:13px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;transition:box-shadow 0.2s ease;">
+          style="appearance:none;-webkit-appearance:none;padding:10px 40px 10px 18px;font-size:12px;font-weight:700;font-family:inherit;color: var(--text-main);background: var(--bg);border:none;outline:none;border-radius:999px;box-shadow: var(--in-md), 0 0 0 1px rgba(111,143,107,0.20);cursor:pointer;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236f8f6b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 16px center;transition:box-shadow 0.2s ease;">
           <option value="all">Tous les statuts</option>
           <option value="NOUVEAU">Nouveau</option>
           <option value="EN_COURS">En cours</option>
@@ -50,19 +50,19 @@
         <table style="width:100%;border-collapse:collapse;min-width:560px;">
           <thead>
             <tr style="background:transparent;">
-              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
+              <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
                 Titre
                 <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span>
               </th>
-              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
+              <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
                 Statut
                 <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span>
               </th>
-              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
+              <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
                 Date
                 <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span>
               </th>
-              <th style="padding:16px 28px;text-align:left;font-size:11px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
+              <th style="padding:16px 28px;text-align:left;font-size:10.5px;font-weight:800;color: var(--text-sub);text-transform:uppercase;letter-spacing:0.12em;position:relative;">
                 Réponse
                 <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#6f8f6b 50%,transparent);opacity:0.35;"></span>
               </th>
@@ -71,23 +71,23 @@
           <tbody>
             @for (d of demandes(); track d.id) {
               <tr style="position:relative;transition:background 0.2s ease;">
-                <td style="padding:18px 28px;font-size:14px;color: var(--text-main);font-weight:700;position:relative;">
+                <td style="padding:18px 28px;font-size:13px;color: var(--text-main);font-weight:700;position:relative;">
                   {{ d.title }}
                   <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
                 <td style="padding:18px 28px;position:relative;">
-                  <span style="display:inline-block;padding:6px 16px;font-size:12px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.25);"
+                  <span style="display:inline-block;padding:6px 16px;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.25);"
                         [style.background]="getStatutBg(d.status)"
                         [style.color]="getStatutColor(d.status)">
                     {{ formatStatut(d.status) }}
                   </span>
                   <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
-                <td style="padding:18px 28px;font-size:13.5px;color: var(--text-sub);font-weight:600;position:relative;">
+                <td style="padding:18px 28px;font-size:12.5px;color: var(--text-sub);font-weight:600;position:relative;">
                   {{ d.created_at | dateFr }}
                   <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
-                <td style="padding:18px 28px;font-size:13.5px;color: var(--text-sub);position:relative;">
+                <td style="padding:18px 28px;font-size:12.5px;color: var(--text-sub);position:relative;">
                   {{ d.response || '—' }}
                   <span style="position:absolute;left:28px;right:28px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(111,143,107,0.18),transparent);"></span>
                 </td>
@@ -105,7 +105,7 @@
                         <line x1="16" y1="17" x2="8" y2="17"/>
                       </svg>
                     </span>
-                    <p style="margin:0;font-size:14px;font-weight:700;color: var(--text-sub);letter-spacing:0.01em;">Aucune demande trouvée</p>
+                    <p style="margin:0;font-size:13px;font-weight:700;color: var(--text-sub);letter-spacing:0.01em;">Aucune demande trouvée</p>
                   </div>
                 </td>
               </tr>

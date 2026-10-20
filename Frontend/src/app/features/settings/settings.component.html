@@ -3,7 +3,7 @@
         <div class="header-inner">
           <span class="logo-text">Gestion Immobilière</span>
           <span class="header-subtitle">Paramètres</span>
-          <button type="button" (click)="back()" style="margin-left: auto; background: var(--convex); color: var(--text-main); border: none; box-shadow: var(--out-sm); padding: 6px 14px; font-size: 13px; cursor: pointer; border-radius: var(--radius-md)">← Retour</button>
+          <button type="button" (click)="back()" style="margin-left: auto; background: var(--convex); color: var(--text-main); border: none; box-shadow: var(--out-sm); padding: 6px 14px; font-size: 12px; cursor: pointer; border-radius: var(--radius-md)">← Retour</button>
         </div>
       </div>
       <div class="body">
@@ -65,7 +65,7 @@
               <div class="field">
                 <label class="field-label" for="newPassword">Nouveau mot de passe</label>
                 <input id="newPassword" class="field-input" type="password" formControlName="newPassword" placeholder="••••••••" />
-                <p style="margin: 6px 0 0; font-size: 12px; color: var(--text-sub);" [style.color]="passwordForm.get('newPassword')?.dirty && passwordForm.get('newPassword')?.invalid ? 'var(--error-dark)' : 'var(--text-sub)'">10 caractères minimum, avec majuscule, minuscule, chiffre et caractère spécial, sans espace.</p>
+                <p style="margin: 6px 0 0; font-size: 11px; color: var(--text-sub);" [style.color]="passwordForm.get('newPassword')?.dirty && passwordForm.get('newPassword')?.invalid ? 'var(--error-dark)' : 'var(--text-sub)'">10 caractères minimum, avec majuscule, minuscule, chiffre et caractère spécial, sans espace.</p>
               </div>
               <div class="field">
                 <label class="field-label" for="confirmPassword">Confirmer le nouveau mot de passe</label>

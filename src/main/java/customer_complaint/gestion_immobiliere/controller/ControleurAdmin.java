@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admins")
 public class ControleurAdmin {
+    // main place for most of the admin endpoints
 
     private final ServiceAdmin service_admin;
 

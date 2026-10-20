@@ -81,7 +81,29 @@ public class ServiceMotDePasse {
     }
 
     public String lien(String chemin, String token) {
-        return frontend_url + chemin + "?token=" + token;
+        return url_frontend() + chemin + "?token=" + token;
+    }
+
+    // page de connexion du locataire, pour l'e-mail avec identifiants / tenant login page, for the credentials email
+    public String lien_connexion() {
+        return url_frontend() + "/auth/locataire/login";
+    }
+
+    // edge case: CORS_ORIGIN peut lister plusieurs URL, on garde la premiere / may list several URLs, keep the first
+    private String url_frontend() {
+        return frontend_url.split(",")[0].trim();
+    }
+
+    // le bailleur remplace un mot de passe temporaire que le locataire n'a pas encore change
+    // landlord replaces a temporary password the tenant has not changed yet
+    @Transactional
+    public void remplacer_temporaire(Long locataire_id, String hash) {
+        locataire_repository.findById(locataire_id).ifPresent(l -> {
+            l.setPassword(hash);
+            l.setMust_change_password(true);
+        });
+        reset_repository.invalidate_all(locataire_id, "LOCATAIRE");
+        service_session.revoquer_compte("LOCATAIRE", locataire_id);
     }
 
     // sert au lien "mot de passe oublie" ET au lien d'invitation d'un locataire / serves both forgot and invitation links

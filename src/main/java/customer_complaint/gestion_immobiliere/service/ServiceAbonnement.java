@@ -64,7 +64,7 @@ public class ServiceAbonnement {
         PlanAbonnement plan = new PlanAbonnement();
         appliquer(plan, request);
         PlanAbonnement cree = plan_repository.save(plan);
-        service_audit.creation("PLAN", cree.getId(), "Plan " + cree.getName() + " à " + cree.getPrice() + " EUR");
+        service_audit.creation("PLAN", cree.getId(), "Plan " + cree.getName() + " à " + cree.getPrice() + " €");
         return PlanResponse.from(cree, 0);
     }
 
@@ -75,7 +75,7 @@ public class ServiceAbonnement {
         }
         appliquer(plan, request);
         PlanAbonnement maj = plan_repository.save(plan);
-        service_audit.modification("PLAN", id, "Plan " + maj.getName() + " modifié (prix " + maj.getPrice() + " EUR)");
+        service_audit.modification("PLAN", id, "Plan " + maj.getName() + " modifié (prix " + maj.getPrice() + " €)");
         return PlanResponse.from(maj, abonnement_repository.count_actuels_by_plan(id));
     }
 
@@ -248,7 +248,7 @@ public class ServiceAbonnement {
         double encaisse = factures.stream().filter(f -> Statuts.payee.equals(f.getStatus()))
                 .mapToDouble(Facture::getAmount).sum();
         service_audit.journal(JournalAudit.create, "FACTURATION_SIMULEE", factures.size() + " facture(s), "
-                + encaisse + " EUR encaissés (simulation au " + jour + ")", "FACTURE", null);
+                + encaisse + " € encaissés (simulation au " + jour + ")", "FACTURE", null);
         return new SimulationFacturationResponse(jour, (int) factures.stream().map(f -> f.getAbonnement().getId())
                 .distinct().count(), payees, factures.size() - payees, encaisse,
                 factures.stream().map(FactureResponse::from).toList());

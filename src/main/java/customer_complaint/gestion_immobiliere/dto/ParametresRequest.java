@@ -12,7 +12,7 @@ public record ParametresRequest(
         @NotBlank(message = "Le nom de la plateforme est obligatoire") @Size(max = 100) String platform_name,
         @NotBlank(message = "L'e-mail du support est obligatoire")
         @Email(regexp = Regles.email, message = "Format d'e-mail invalide") @Size(max = 150) String support_email,
-        @NotBlank @Pattern(regexp = "[A-Z]{3}", message = "La devise doit être un code ISO sur 3 lettres (ex: EUR)") String currency,
+        @NotBlank @Pattern(regexp = "EUR", message = "La devise de la plateforme est l'euro (EUR)") String currency,
         @NotBlank(message = "Le fuseau horaire est obligatoire") @Size(max = 50) String timezone,
         @NotNull Boolean maintenance_mode,
         @NotNull Boolean email_notifications,
