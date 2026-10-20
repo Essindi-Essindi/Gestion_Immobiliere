@@ -99,6 +99,9 @@ public class ConfigSecurite {
                                 "/api/authentification/refresh", "/api/authentification/logout",
                                 "/api/authentification/forgot-password",
                                 "/api/authentification/reset-password").permitAll()
+                        // controle de disponibilite (UptimeRobot), sans donnee sensible / availability check, no sensitive data
+                        .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                        .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()
                         // premiere barriere par espace, AVANT la validation du corps : un mauvais role recoit 403, pas 400
                         // first barrier per area, BEFORE body validation: a wrong role gets 403, not 400
                         .requestMatchers("/api/admin/**", "/api/admins/**").hasRole("ADMIN")

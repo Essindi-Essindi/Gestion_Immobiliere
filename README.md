@@ -196,3 +196,15 @@ Au **premier démarrage sur une base vide**, l'API exécute automatiquement `sql
 - Le service API s'endort après 15 minutes sans trafic : la première requête suivante prend environ une minute.
 - Les services Aiven gratuits peuvent être arrêtés après une longue inactivité.
 - Brevo gratuit : 300 e-mails par jour.
+
+### 10.7 Garder les services éveillés (UptimeRobot)
+Deux adresses de contrôle sont disponibles :
+
+| Service | Adresse | Réponse attendue |
+|---|---|---|
+| API | `https://VOTRE-API.onrender.com/api/health` | `200` avec `{"status":"UP","database":"UP"}` (`503` si la base est injoignable) |
+| Frontend | `https://VOTRE-SITE.onrender.com/health.json` | `200` avec `{"status":"UP"}` |
+
+Dans [UptimeRobot](https://uptimerobot.com) : **Add New Monitor** > type **HTTP(s)** > coller l'adresse > intervalle **5 minutes** (le plan gratuit de Render endort l'API après 15 minutes sans requête). Le contrôle de l'API interroge aussi la base, ce qui évite qu'Aiven la mette en veille.
+
+> Un site statique Render ne s'endort jamais : surveiller le frontend est facultatif, utile surtout pour être alerté en cas de panne.
