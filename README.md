@@ -141,3 +141,58 @@ sql/            jeu de données de test
 | Le script SQL échoue sur `ALTER TABLE` ou `INSERT` | Le backend n'a pas encore créé les tables : refaire l'étape 2 |
 | Erreur `Duplicate entry` | Le script a déjà été exécuté : supprimer la base et recommencer |
 | Page blanche / erreur réseau côté Angular | Le backend n'est pas lancé sur le port 8080 |
+
+## 10. Version déployée (Render + Aiven + Brevo)
+
+Architecture : l'**API** est un service Docker Render, le **frontend** est un site statique Render déployé séparément, la **base MySQL** est chez Aiven et les **e-mails** passent par l'API HTTP de Brevo (le plan gratuit de Render bloque le SMTP).
+
+> Render n'exécute pas `docker-compose`. Il construit directement le [`Dockerfile`](Dockerfile). Le fichier [`docker-compose.yml`](docker-compose.yml) sert uniquement à tester la même image en local avec une base MySQL (`docker compose up --build`).
+
+### 10.1 Aiven (base de données)
+1. Créer un service **MySQL** (plan gratuit). Noter l'hôte, le port, l'utilisateur (`avnadmin`), le mot de passe et la base (`defaultdb`).
+2. Vérifier que l'accès réseau est ouvert (Allowed IP addresses).
+3. L'URL à utiliser côté API : `jdbc:mysql://HOTE:PORT/defaultdb?sslMode=REQUIRED&serverTimezone=UTC`.
+
+### 10.2 Brevo (e-mails)
+1. Créer une **clé API** (SMTP & API > API Keys).
+2. Ajouter et valider un **expéditeur** (Senders) : c'est l'adresse à mettre dans `MAIL_FROM`.
+
+### 10.3 Render : l'API (service Docker)
+1. Pousser le dépôt sur GitHub, puis Render > **New > Web Service** > choisir le dépôt.
+2. Langage **Docker**, type d'instance **Free**, chemin du Dockerfile `./Dockerfile` (valeur par défaut).
+3. Renseigner les variables d'environnement :
+
+| Variable | Valeur |
+|---|---|
+| `DB_URL` | l'URL JDBC Aiven ci-dessus |
+| `DB_USER`, `DB_PASSWORD` | identifiants Aiven |
+| `JWT_SECRET` | une chaîne aléatoire de 32 caractères minimum (ex. `openssl rand -base64 48`) |
+| `CORS_ORIGIN` | l'URL du frontend, sans `/` final (à renseigner après l'étape 10.4) |
+| `BREVO_API_KEY` | la clé API Brevo |
+| `MAIL_FROM` | l'expéditeur validé dans Brevo |
+
+Le profil `prod` est déjà activé par le Dockerfile. Une fois déployée, noter l'URL de l'API (ex. `https://gestion-immobiliere-api.onrender.com`).
+
+### 10.4 Render : le frontend (site statique)
+1. Dans `Frontend/src/environments/environment.prod.ts`, vérifier que `apiUrl` vaut l'URL de l'API suivie de `/api`, puis pousser le changement.
+2. Render > **New > Static Site** > choisir le même dépôt, puis :
+
+| Réglage | Valeur |
+|---|---|
+| Root Directory | `Frontend` |
+| Build Command | `npm ci && npm run build` |
+| Publish Directory | `dist/gestion-immobiliere/browser` |
+| Variable d'environnement | `NODE_VERSION` = `22.12.0` |
+| Redirects / Rewrites | source `/*`, destination `/index.html`, action **Rewrite** |
+
+3. Une fois le site en ligne, copier son URL dans la variable `CORS_ORIGIN` de l'API (point 10.3), puis redémarrer l'API. Sans cela, le navigateur bloquera les appels.
+
+### 10.5 Données initiales
+Au **premier démarrage sur une base vide**, l'API exécute automatiquement `sql/seed-test-data.sql` (variable `SEED_DATABASE=true`, activée par défaut en production). Les tables sont créées par Hibernate juste avant. Aux démarrages suivants, rien n'est rechargé. Les comptes de test du point 6 existent donc sur le site déployé.
+
+> Les comptes de test ont tous le mot de passe `password123`. Sur un site public, changez-le ou mettez `SEED_DATABASE=false` avant le premier démarrage.
+
+### 10.6 Limites du plan gratuit
+- Le service API s'endort après 15 minutes sans trafic : la première requête suivante prend environ une minute.
+- Les services Aiven gratuits peuvent être arrêtés après une longue inactivité.
+- Brevo gratuit : 300 e-mails par jour.

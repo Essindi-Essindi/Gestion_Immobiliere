@@ -110,6 +110,19 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <!-- le script SQL de test est embarque dans le jar (chargement au premier demarrage) -->
+            <resource>
+                <directory>sql</directory>
+                <targetPath>seed</targetPath>
+                <includes>
+                    <include>seed-test-data.sql</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.gestion-immobiliere.com/api'
+  // adresse de l'API sur Render : a adapter si le nom du service change / API address on Render: adjust if the service name changes
+  apiUrl: 'https://gestion-immobiliere-api.onrender.com/api'
 };

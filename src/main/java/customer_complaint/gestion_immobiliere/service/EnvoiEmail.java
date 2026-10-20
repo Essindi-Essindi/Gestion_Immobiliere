@@ -1,11 +1,7 @@
 package customer_complaint.gestion_immobiliere.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
@@ -16,18 +12,15 @@ import org.springframework.web.util.HtmlUtils;
 @Slf4j
 public class EnvoiEmail {
 
-    private final ObjectProvider<JavaMailSender> mail_sender;
-    private final String from;
+    private final ExpediteurMail expediteur;
     private final boolean log_link;
     private final ServiceParametres service_parametres;
 
-    public EnvoiEmail(ObjectProvider<JavaMailSender> mail_sender,
-                      @Value("${app.mail.from:no-reply@gestion-immobiliere.local}") String from,
+    public EnvoiEmail(ExpediteurMail expediteur,
                       @Value("${app.reset.log-link:false}") boolean log_link,
                       ServiceParametres service_parametres) {
         this.service_parametres = service_parametres;
-        this.mail_sender = mail_sender;
-        this.from = from;
+        this.expediteur = expediteur;
         this.log_link = log_link;
     }
 
@@ -96,21 +89,12 @@ public class EnvoiEmail {
         if (log_link && lien != null) {
             log.info("[DEV] lien envoyé à {} : {}", destinataire, lien);
         }
-        JavaMailSender sender = mail_sender.getIfAvailable();
-        if (sender == null) {
-            log.warn("SMTP non configuré (SPRING_MAIL_HOST) : e-mail « {} » non envoyé", sujet);
+        if (!expediteur.disponible()) {
+            log.warn("Envoi d'e-mails non configuré (SMTP ou Brevo) : e-mail « {} » non envoyé", sujet);
             return;
         }
         try {
-            MimeMessage message = sender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            // nom d'affichage + reply-to + version html : moins de spam / display name + reply-to + html part: less spam
-            helper.setFrom(from, "Gestion Immobilière");
-            helper.setReplyTo(from);
-            helper.setTo(destinataire);
-            helper.setSubject(sujet);
-            helper.setText(texte, en_html(texte, lien));
-            sender.send(message);
+            expediteur.envoyer(destinataire, sujet, texte, en_html(texte, lien), null, null);
         } catch (Exception e) {
             log.error("Échec d'envoi de l'e-mail « {} »", sujet, e);
         }

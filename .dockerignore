@@ -1,0 +1,9 @@
+.git
+.idea
+.mvn/wrapper/maven-wrapper.jar
+target
+.env
+*.docx
+*.pptx
+Frontend
+HELP.md

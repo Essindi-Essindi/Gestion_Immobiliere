@@ -1,14 +1,7 @@
 package customer_complaint.gestion_immobiliere.service;
 
 import customer_complaint.gestion_immobiliere.dto.DocumentResponse;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -26,14 +19,11 @@ import java.util.List;
 public class EnvoiDocument {
 
     private final ServiceDocument service_document;
-    private final ObjectProvider<JavaMailSender> mail_sender;
-    private final String from;
+    private final ExpediteurMail expediteur;
 
-    public EnvoiDocument(ServiceDocument service_document, ObjectProvider<JavaMailSender> mail_sender,
-                         @Value("${app.mail.from:no-reply@gestion-immobiliere.local}") String from) {
+    public EnvoiDocument(ServiceDocument service_document, ExpediteurMail expediteur) {
         this.service_document = service_document;
-        this.mail_sender = mail_sender;
-        this.from = from;
+        this.expediteur = expediteur;
     }
 
     // declenche automatiquement apres la creation du contrat / de la quittance / triggered automatically after creation
@@ -85,20 +75,13 @@ public class EnvoiDocument {
         }
     }
 
-    private void envoyer(ServiceDocument.EnvoiPrepare envoi, String destinataire, String nom) throws MessagingException {
-        JavaMailSender sender = mail_sender.getIfAvailable();
-        if (sender == null) {
-            throw new IllegalStateException("SMTP non configuré (SPRING_MAIL_HOST)");
+    private void envoyer(ServiceDocument.EnvoiPrepare envoi, String destinataire, String nom) throws Exception {
+        if (!expediteur.disponible()) {
+            throw new IllegalStateException("Envoi d'e-mails non configuré (SMTP ou Brevo)");
         }
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom(from);
-        helper.setTo(destinataire);
-        helper.setSubject(envoi.sujet());
-        helper.setText("Bonjour " + nom + ",\n\nVeuillez trouver ci-joint " + envoi.description() + ".\n\n"
-                + "Ce document reste disponible à tout moment dans votre espace personnel.\n");
-        helper.addAttachment(envoi.file_name(), new ByteArrayResource(envoi.contenu()), "application/pdf");
-        sender.send(message);
+        String texte = "Bonjour " + nom + ",\n\nVeuillez trouver ci-joint " + envoi.description() + ".\n\n"
+                + "Ce document reste disponible à tout moment dans votre espace personnel.\n";
+        expediteur.envoyer(destinataire, envoi.sujet(), texte, null, envoi.file_name(), envoi.contenu());
     }
 
     // message court : sans trace de pile, sans donnee sensible / short message: no stack trace, nothing sensitive

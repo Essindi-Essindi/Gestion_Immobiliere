@@ -1,0 +1,46 @@
+# Test local de l'image de production : base MySQL + API (comme sur Render + Aiven)
+# Local test of the production image: MySQL database + API (like Render + Aiven)
+#
+#   docker compose up --build
+#   -> API sur http://localhost:8080/api ; lancer ensuite le frontend avec "npm start" dans Frontend/
+#
+# Render n'execute pas docker-compose : il construit le Dockerfile (voir README, point 10).
+# Render does not run docker-compose: it builds the Dockerfile (see README, point 10).
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion_immobiliere
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - db_data:/var/lib/mysql
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://db:3306/gestion_immobiliere?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USER: root
+      DB_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET:-cle-locale-de-test-au-moins-32-caracteres}
+      CORS_ORIGIN: http://localhost:4200
+      # e-mails : sans cle Brevo, rien n'est envoye (simple avertissement dans les logs)
+      MAIL_PROVIDER: brevo
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@gestion-immobiliere.local}
+      SEED_DATABASE: "true"
+
+volumes:
+  db_data:
